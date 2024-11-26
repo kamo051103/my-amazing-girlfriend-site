@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Amazing Girlfriend Is</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-image: url("photo.JPG");
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Login</h1>
+    <form id="login-form">
+        <label for="name">Enter your name:</label>
+        <input type="text" id="name" name="name" required>
+        <input type="submit" value="Login">
+    </form>
+
+    <script>
+        let cuteMessage = localStorage.getItem('cuteMessage') || "Hello Baby"; // Default message or stored message
+        let backgroundUrl = "photo.JPG"; // Default background image
+        let cuteVideo = "video.MP4"; // Default video
+
+        // Retrieve saved background URL from local storage
+        const savedBackgroundUrl = localStorage.getItem('backgroundUrl');
+        if (savedBackgroundUrl) {
+            backgroundUrl = savedBackgroundUrl; // Update backgroundUrl variable
+            document.body.style.backgroundImage = `url('${backgroundUrl}')`;
+        }
+
+        // Retrieve saved cute video from local storage
+        const savedCuteVideo = localStorage.getItem('cuteVideo');
+        if (savedCuteVideo) {
+            cuteVideo = savedCuteVideo; // Update cuteVideo variable
+        }
+
+        const form = document.getElementById('login-form');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+
+            if (name === 'Zodwa') {
+                document.body.innerHTML = `
+                    <h1>How Amazing Girlfriend Is</h1>
+                    <div id="options">
+                        <button id="paragraph-btn">Cute Paragraph</button>
+                        <button id="video-btn">Cute Video</button>
+                    </div>
+                    <div id="content"></div>
+                    <button id="logout-btn">Log Out</button>
+                `;
+                const paragraphBtn = document.getElementById('paragraph-btn');
+                const videoBtn = document.getElementById('video-btn');
+                const contentDiv = document.getElementById('content');
+                const logoutBtn = document.getElementById('logout-btn');
+
+                // Display the cute message stored in localStorage when "Cute Paragraph" is clicked
+                paragraphBtn.addEventListener('click', () => {
+                    contentDiv.innerHTML = `<p>${cuteMessage}</p>`;
+                });
+
+                // Display the cute video when "Cute Video" is clicked
+                videoBtn.addEventListener('click', () => {
+                    contentDiv.innerHTML = `
+                        <video width="100%" height="600" controls>
+                            <source src="${cuteVideo}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    `;
+                });
+
+                // Handle logout
+                logoutBtn.addEventListener('click', () => {
+                    document.body.innerHTML = `
+                        <h1>Login</h1>
+                        <form id="login-form">
+                            <label for="name">Enter your name:</label>
+                            <input type="text" id="name" name="name" required>
+                            <input type="submit" value="Login">
+                        </form>
+                    `;
+                });
+
+            } else if (name === 'Admin') {
+                document.body.innerHTML = `
+                    <h1>Admin Page</h1>
+                    <button id="update-paragraph-btn">Update Cute Message</button>
+                    <button id="change-background-btn">Change Background</button>
+                    <button id="change-video-btn">Change Cute Video</button>
+                    <button id="logout-btn">Log Out</button>
+                `;
+                const updateParagraphBtn = document.getElementById('update-paragraph-btn');
+                const changeBackgroundBtn = document.getElementById('change-background-btn');
+                const changeVideoBtn = document.getElementById('change-video-btn');
+                const logoutBtn = document.getElementById('logout-btn');
+
+                // Update the cute message
+                updateParagraphBtn.addEventListener('click', () => {
+                    const newCuteMessage = prompt("Enter new cute message:");
+                    cuteMessage = newCuteMessage;
+                    localStorage.setItem('cuteMessage', cuteMessage); // Save to localStorage
+                    
+                    // Immediately update the displayed message for Zodwa (if Zodwa is logged in)
+                    const contentDiv = document.getElementById('content');
+                    if (contentDiv) {
+                        contentDiv.innerHTML = `<p>${cuteMessage}</p>`;
+                    }
+                });
+
+                // Change background image
+                changeBackgroundBtn.addEventListener('click', () => {
+                    const newBackgroundUrl = prompt("Enter new background URL:");
+                    backgroundUrl = newBackgroundUrl;
+                    localStorage.setItem('backgroundUrl', backgroundUrl); // Save to local storage
+                    document.body.style.backgroundImage = `url('${backgroundUrl}')`;
+                });
+
+                // Change cute video
+                changeVideoBtn.addEventListener('click', () => {
+                    const newCuteVideo = prompt("Enter new cute video URL:");
+                    cuteVideo = newCuteVideo;
+                    localStorage.setItem('cuteVideo', cuteVideo); // Save to local storage
+
+                    // Immediately display the new video
+                    const contentDiv = document.getElementById('content');
+                    contentDiv.innerHTML = `
+                        <video width="100%" height="600" controls>
+                            <source src="${cuteVideo}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    `;
+                });
+
+                // Handle logout
+                logoutBtn.addEventListener('click', () => {
+                    document.body.innerHTML = `
+                        <h1>Login</h1>
+                        <form id="login-form">
+                            <label for="name">Enter your name:</label>
+                            <input type="text" id="name" name="name" required>
+                            <input type="submit" value="Login">
+                        </form>
+                    `;
+                });
+
+            } else {
+                alert('Incorrect name. Try again!');
+            }
+        });
+    </script>
+</body>
+</html>
