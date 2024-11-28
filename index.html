@@ -31,6 +31,10 @@
             border-radius: 5px;
             font-size: 16px;
         }
+
+        #content {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -46,21 +50,21 @@
 
     <script>
         window.onload = function() {
-            // Fetch the data from your data.json file on GitHub
-            fetch('https://raw.githubusercontent.com/kamo051103/my-amazing-girlfriend-site/main/data.json')
+            // Fetch data from GitHub
+            fetch('https://raw.githubusercontent.com/kamo051103/my-amazing-girlfriend-site/main/data.json') 
                 .then(response => response.json())
                 .then(data => {
-                    let cuteMessage = data.cuteMessage || "Hello Baby";  // Default cute message
-                    let backgroundUrl = localStorage.getItem('backgroundUrl') || data.backgroundUrl;  // Use localStorage if available
-                    let cuteVideo = localStorage.getItem('cuteVideo') || data.cuteVideo;  // Use localStorage if available
+                    let cuteMessage = data.cuteMessage || "Hello Baby";  // Default message
+                    let backgroundUrl = data.backgroundUrl || "photo.JPG";  // Default background
+                    let cuteVideo = data.cuteVideo || "video.MP4";  // Default video
 
-                    // Set background image from localStorage or data.json
+                    // Set background image from GitHub data
                     document.body.style.backgroundImage = `url('${backgroundUrl}')`;
 
                     const form = document.getElementById('login-form');
                     form.addEventListener('submit', (e) => {
-                        e.preventDefault();  // Prevent form submission from reloading the page
-                        const name = document.getElementById('name').value.trim();  // Get the input name
+                        e.preventDefault();  // Prevent page reload
+                        const name = document.getElementById('name').value.trim();
 
                         if (name === 'Zodwa') {
                             // Content for Zodwa
@@ -148,7 +152,7 @@
                             const newBackgroundUrl = prompt("Enter new background URL:");
                             backgroundUrl = newBackgroundUrl;
                             document.body.style.backgroundImage = `url('${backgroundUrl}')`;
-                            localStorage.setItem('backgroundUrl', backgroundUrl); // Save to localStorage
+                            // You can also save this new background URL to localStorage if desired
                         });
 
                         // Change cute video
@@ -182,7 +186,6 @@
                     }
 
                     function setupLoginForm() {
-                        // Reinitialize the login form
                         const form = document.getElementById('login-form');
                         form.addEventListener('submit', (e) => {
                             e.preventDefault();
