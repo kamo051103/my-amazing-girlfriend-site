@@ -50,8 +50,8 @@
 
     <script>
         window.onload = function() {
-            // Fetch the data from your GitHub JSON
-            fetch('https://raw.githubusercontent.com/kamo051103/my-amazing-girlfriend-site/main/data.json')
+            // Fetch the data from your GitHub JSON with cache busting to ensure the latest version is fetched
+            fetch('https://raw.githubusercontent.com/kamo051103/my-amazing-girlfriend-site/main/data.json?time=' + new Date().getTime())
                 .then(response => response.json())
                 .then(data => {
                     let cuteMessage = data.cuteMessage || "Hello Baby";  // Default cute message
@@ -79,7 +79,7 @@
 
                         if (name === 'Zodwa') {
                             // Content for Zodwa
-                            document.body.innerHTML = `
+                            document.body.innerHTML = ` 
                                 <h1>How Amazing Girlfriend Is</h1>
                                 <div id="options">
                                     <button id="paragraph-btn">Cute Paragraph</button>
@@ -91,7 +91,7 @@
                             setupZodwaPage(cuteMessage, cuteVideo);
                         } else if (name === 'Admin') {
                             // Content for Admin
-                            document.body.innerHTML = `
+                            document.body.innerHTML = ` 
                                 <h1>Admin Page</h1>
                                 <button id="update-paragraph-btn">Update Cute Message</button>
                                 <button id="change-background-btn">Change Background</button>
@@ -127,7 +127,7 @@
 
                         // Handle logout
                         logoutBtn.addEventListener('click', () => {
-                            document.body.innerHTML = `
+                            document.body.innerHTML = ` 
                                 <h1>Login</h1>
                                 <div id="login-form">
                                     <label for="name">Enter your name:</label>
@@ -182,7 +182,7 @@
 
                         // Handle logout
                         logoutBtn.addEventListener('click', () => {
-                            document.body.innerHTML = `
+                            document.body.innerHTML = ` 
                                 <h1>Login</h1>
                                 <div id="login-form">
                                     <label for="name">Enter your name:</label>
@@ -201,7 +201,7 @@
                             const name = document.getElementById('name').value.trim();
 
                             if (name === 'Zodwa') {
-                                document.body.innerHTML = `
+                                document.body.innerHTML = ` 
                                     <h1>How Amazing Girlfriend Is</h1>
                                     <div id="options">
                                         <button id="paragraph-btn">Cute Paragraph</button>
@@ -212,7 +212,7 @@
                                 `;
                                 setupZodwaPage(cuteMessage, cuteVideo);
                             } else if (name === 'Admin') {
-                                document.body.innerHTML = `
+                                document.body.innerHTML = ` 
                                     <h1>Admin Page</h1>
                                     <button id="update-paragraph-btn">Update Cute Message</button>
                                     <button id="change-background-btn">Change Background</button>
