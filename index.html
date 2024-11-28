@@ -106,26 +106,30 @@
         }
 
         window.onload = function() {
-            // Fetch the data from GitHub JSON with cache busting to ensure the latest version is fetched
-            fetch('https://raw.githubusercontent.com/kamo051103/my-amazing-girlfriend-site/main/data.json?time=' + new Date().getTime())
+            // First, try to load the data from localStorage
+            let cuteMessage = localStorage.getItem('cuteMessage') || "Hello Baby"; // Default if not available
+            let backgroundUrl = localStorage.getItem('backgroundUrl') || "https://your-website-link/photo.jpg";  // Default background
+            let cuteVideo = localStorage.getItem('cuteVideo') || "https://your-website-link/video.mp4";  // Default video
+
+            // Fetch from GitHub only if not present in localStorage
+            fetch('https://raw.githubusercontent.com/your-username/your-repo-name/main/data.json?time=' + new Date().getTime())
                 .then(response => response.json())
                 .then(data => {
-                    let cuteMessage = data.cuteMessage || "Hello Baby";  // Default cute message
-                    let backgroundUrl = data.backgroundUrl || "https://your-website-link/photo.jpg";  // Default background image
-                    let cuteVideo = data.cuteVideo || "https://your-website-link/video.mp4";  // Default video
+                    // Override localStorage values with data from GitHub if available
+                    if (data.cuteMessage) {
+                        cuteMessage = data.cuteMessage;
+                        localStorage.setItem('cuteMessage', cuteMessage);  // Save to localStorage
+                    }
+                    if (data.backgroundUrl) {
+                        backgroundUrl = data.backgroundUrl;
+                        localStorage.setItem('backgroundUrl', backgroundUrl);  // Save to localStorage
+                    }
+                    if (data.cuteVideo) {
+                        cuteVideo = data.cuteVideo;
+                        localStorage.setItem('cuteVideo', cuteVideo);  // Save to localStorage
+                    }
 
-                    // Use localStorage if available as fallback, only if no data is in GitHub (should not be the case most of the time)
-                    if (localStorage.getItem("cuteMessage") && !data.cuteMessage) {
-                        cuteMessage = localStorage.getItem("cuteMessage");
-                    }
-                    if (localStorage.getItem("backgroundUrl") && !data.backgroundUrl) {
-                        backgroundUrl = localStorage.getItem("backgroundUrl");
-                    }
-                    if (localStorage.getItem("cuteVideo") && !data.cuteVideo) {
-                        cuteVideo = localStorage.getItem("cuteVideo");
-                    }
-
-                    // Set the background image from GitHub data
+                    // Set the background image from GitHub or localStorage data
                     document.body.style.backgroundImage = `url('${backgroundUrl}')`;
 
                     const form = document.getElementById('login-form');
@@ -207,19 +211,12 @@
                             localStorage.setItem('cuteMessage', newCuteMessage);  // Save to localStorage
 
                             // Update on Zodwa page if logged in
-                            cuteMessage = newCuteMessage;
-                            const contentDiv = document.getElementById('content');
-                            if (contentDiv) {
-                                contentDiv.innerHTML = `<p>${cuteMessage}</p>`;
-                            }
-
-                            // Update data.json on GitHub
                             const newData = {
                                 cuteMessage: newCuteMessage,
-                                backgroundUrl: localStorage.getItem('backgroundUrl') || "default-image-url",
-                                cuteVideo: localStorage.getItem('cuteVideo') || "default-video-url"
+                                backgroundUrl: localStorage.getItem('backgroundUrl'),
+                                cuteVideo: localStorage.getItem('cuteVideo')
                             };
-                            updateDataJson(newData);
+                            updateDataJson(newData);  // Commit the new data to GitHub
                         });
 
                         // Change background image
@@ -228,13 +225,13 @@
                             localStorage.setItem('backgroundUrl', newBackgroundUrl);  // Save to localStorage
                             document.body.style.backgroundImage = `url('${newBackgroundUrl}')`;
 
-                            // Update data.json on GitHub
+                            // Update data on GitHub
                             const newData = {
                                 cuteMessage: localStorage.getItem('cuteMessage') || "Hello Baby",
                                 backgroundUrl: newBackgroundUrl,
-                                cuteVideo: localStorage.getItem('cuteVideo') || "default-video-url"
+                                cuteVideo: localStorage.getItem('cuteVideo')
                             };
-                            updateDataJson(newData);
+                            updateDataJson(newData);  // Commit the new data to GitHub
                         });
 
                         // Change cute video
@@ -242,13 +239,13 @@
                             const newCuteVideo = prompt("Enter new cute video URL:");
                             localStorage.setItem('cuteVideo', newCuteVideo);  // Save to localStorage
 
-                            // Update data.json on GitHub
+                            // Update data on GitHub
                             const newData = {
                                 cuteMessage: localStorage.getItem('cuteMessage') || "Hello Baby",
                                 backgroundUrl: localStorage.getItem('backgroundUrl') || "default-image-url",
                                 cuteVideo: newCuteVideo
                             };
-                            updateDataJson(newData);
+                            updateDataJson(newData);  // Commit the new data to GitHub
                         });
 
                         // Handle logout
