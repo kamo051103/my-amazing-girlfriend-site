@@ -61,6 +61,12 @@
                     // Set the background image from the JSON data
                     document.body.style.backgroundImage = `url('${backgroundUrl}')`;
 
+                    // Set the default cute message if available
+                    let contentDiv = document.getElementById('content');
+                    if (contentDiv) {
+                        contentDiv.innerHTML = `<p>${cuteMessage}</p>`;
+                    }
+
                     const form = document.getElementById('login-form');
                     form.addEventListener('submit', (e) => {
                         e.preventDefault();  // Prevent form submission from reloading the page
@@ -196,7 +202,16 @@
                         });
                     }
                 })
-                .catch(error => console.error('Error fetching settings:', error));
+                .catch(error => {
+                    console.error('Error fetching settings:', error);
+
+                    // If fetch fails, set fallback values
+                    document.body.style.backgroundImage = "url('https://your-website-link/photo.jpg')";
+                    let contentDiv = document.getElementById('content');
+                    if (contentDiv) {
+                        contentDiv.innerHTML = `<p>Hello Baby</p>`;
+                    }
+                });
         };
     </script>
 </body>
