@@ -114,18 +114,18 @@
                     let backgroundUrl = data.backgroundUrl || "https://your-website-link/photo.jpg";  // Default background image
                     let cuteVideo = data.cuteVideo || "https://your-website-link/video.mp4";  // Default video
 
-                    // Use localStorage if available
-                    if (localStorage.getItem("cuteMessage")) {
+                    // Use localStorage if available as fallback, only if no data is in GitHub (should not be the case most of the time)
+                    if (localStorage.getItem("cuteMessage") && !data.cuteMessage) {
                         cuteMessage = localStorage.getItem("cuteMessage");
                     }
-                    if (localStorage.getItem("backgroundUrl")) {
+                    if (localStorage.getItem("backgroundUrl") && !data.backgroundUrl) {
                         backgroundUrl = localStorage.getItem("backgroundUrl");
                     }
-                    if (localStorage.getItem("cuteVideo")) {
+                    if (localStorage.getItem("cuteVideo") && !data.cuteVideo) {
                         cuteVideo = localStorage.getItem("cuteVideo");
                     }
 
-                    // Set the background image from localStorage or fallback to JSON
+                    // Set the background image from GitHub data
                     document.body.style.backgroundImage = `url('${backgroundUrl}')`;
 
                     const form = document.getElementById('login-form');
