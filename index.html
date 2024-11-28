@@ -35,6 +35,11 @@
         #options button {
             margin: 10px;
         }
+
+        #content img {
+            margin: 10px;
+            max-width: 300px;
+        }
     </style>
 </head>
 <body>
@@ -50,67 +55,54 @@
 
     <script>
         window.onload = function() {
-            // Fetch the latest data from your GitHub JSON (with cache busting)
+            // Fetch the latest data from your GitHub JSON
             fetch('https://raw.githubusercontent.com/kamo051103/my-amazing-girlfriend-site/main/data.json?time=' + new Date().getTime())
                 .then(response => response.json())
                 .then(data => {
-                    let cuteMessage = data.cuteMessage || "Hello Baby";  // Default cute message
-                    let backgroundUrl = data.backgroundUrl || "https://your-website-link/photo.jpg";  // Default background image
-                    let cuteVideo = data.cuteVideo || "https://your-website-link/video.mp4";  // Default video
+                    let cuteMessage = data.cuteMessage || "Hello Baby";  
+                    let backgroundUrl = data.backgroundUrl || "https://your-website-link/photo.jpg";  
+                    let cuteVideo = data.cuteVideo || "https://your-website-link/video.mp4";
+                    let additionalImages = data.additionalImages || [];
+                    let additionalVideos = data.additionalVideos || [];
 
-                    // Set the background image from the JSON data
+                    // Set the background image from JSON data
                     document.body.style.backgroundImage = `url('${backgroundUrl}')`;
-
-                    // Set the default cute message if available
-                    let contentDiv = document.getElementById('content');
-                    if (contentDiv) {
-                        contentDiv.innerHTML = `<p>${cuteMessage}</p>`;
-                    }
 
                     const form = document.getElementById('login-form');
                     form.addEventListener('submit', (e) => {
-                        e.preventDefault();  // Prevent form submission from reloading the page
-                        const name = document.getElementById('name').value.trim();  // Get the input name
+                        e.preventDefault();
+                        const name = document.getElementById('name').value.trim(); 
 
                         if (name === 'Zodwa') {
-                            // Content for Zodwa
                             document.body.innerHTML = `
                                 <h1>How Amazing Girlfriend Is</h1>
                                 <div id="options">
                                     <button id="paragraph-btn">Cute Paragraph</button>
                                     <button id="video-btn">Cute Video</button>
+                                    <button id="image-btn">Cute Images</button>
                                 </div>
                                 <div id="content"></div>
                                 <button id="logout-btn">Log Out</button>
                             `;
-                            setupZodwaPage(cuteMessage, cuteVideo);
-                        } else if (name === 'Admin') {
-                            // Content for Admin
-                            document.body.innerHTML = `
-                                <h1>Admin Page</h1>
-                                <button id="update-paragraph-btn">Update Cute Message</button>
-                                <button id="change-background-btn">Change Background</button>
-                                <button id="change-video-btn">Change Cute Video</button>
-                                <button id="logout-btn">Log Out</button>
-                            `;
-                            setupAdminPage();
+                            setupZodwaPage(cuteMessage, cuteVideo, additionalImages, additionalVideos);
                         } else {
                             alert('Incorrect name. Try again!');
                         }
                     });
 
-                    function setupZodwaPage(cuteMessage, cuteVideo) {
+                    function setupZodwaPage(cuteMessage, cuteVideo, additionalImages, additionalVideos) {
                         const paragraphBtn = document.getElementById('paragraph-btn');
                         const videoBtn = document.getElementById('video-btn');
+                        const imageBtn = document.getElementById('image-btn');
                         const contentDiv = document.getElementById('content');
                         const logoutBtn = document.getElementById('logout-btn');
 
-                        // Display cute message when "Cute Paragraph" is clicked
+                        // Show cute paragraph
                         paragraphBtn.addEventListener('click', () => {
                             contentDiv.innerHTML = `<p>${cuteMessage}</p>`;
                         });
 
-                        // Display cute video when "Cute Video" is clicked
+                        // Show cute video
                         videoBtn.addEventListener('click', () => {
                             contentDiv.innerHTML = `
                                 <video width="100%" height="600" controls>
@@ -120,40 +112,13 @@
                             `;
                         });
 
-                        // Handle logout
-                        logoutBtn.addEventListener('click', () => {
-                            document.body.innerHTML = `
-                                <h1>Login</h1>
-                                <div id="login-form">
-                                    <label for="name">Enter your name:</label>
-                                    <input type="text" id="name" name="name" required>
-                                    <input type="submit" value="Login">
-                                </div>
-                            `;
-                            setupLoginForm();
-                        });
-                    }
-
-                    function setupAdminPage() {
-                        const updateParagraphBtn = document.getElementById('update-paragraph-btn');
-                        const changeBackgroundBtn = document.getElementById('change-background-btn');
-                        const changeVideoBtn = document.getElementById('change-video-btn');
-                        const logoutBtn = document.getElementById('logout-btn');
-
-                        // Admin changes are made directly to the JSON file in GitHub
-                        updateParagraphBtn.addEventListener('click', () => {
-                            const newCuteMessage = prompt("Enter new cute message:");
-                            alert("Please update the 'data.json' file in GitHub to reflect this change for all users.");
-                        });
-
-                        changeBackgroundBtn.addEventListener('click', () => {
-                            const newBackgroundUrl = prompt("Enter new background URL:");
-                            alert("Please update the 'data.json' file in GitHub to reflect this change for all users.");
-                        });
-
-                        changeVideoBtn.addEventListener('click', () => {
-                            const newCuteVideo = prompt("Enter new cute video URL:");
-                            alert("Please update the 'data.json' file in GitHub to reflect this change for all users.");
+                        // Show additional images
+                        imageBtn.addEventListener('click', () => {
+                            let imagesHTML = '';
+                            additionalImages.forEach(image => {
+                                imagesHTML += `<img src="${image}" alt="Cute Image">`;
+                            });
+                            contentDiv.innerHTML = imagesHTML;
                         });
 
                         // Handle logout
@@ -175,27 +140,18 @@
                         form.addEventListener('submit', (e) => {
                             e.preventDefault();
                             const name = document.getElementById('name').value.trim();
-
                             if (name === 'Zodwa') {
                                 document.body.innerHTML = `
                                     <h1>How Amazing Girlfriend Is</h1>
                                     <div id="options">
                                         <button id="paragraph-btn">Cute Paragraph</button>
                                         <button id="video-btn">Cute Video</button>
+                                        <button id="image-btn">Cute Images</button>
                                     </div>
                                     <div id="content"></div>
                                     <button id="logout-btn">Log Out</button>
                                 `;
-                                setupZodwaPage(cuteMessage, cuteVideo);
-                            } else if (name === 'Admin') {
-                                document.body.innerHTML = `
-                                    <h1>Admin Page</h1>
-                                    <button id="update-paragraph-btn">Update Cute Message</button>
-                                    <button id="change-background-btn">Change Background</button>
-                                    <button id="change-video-btn">Change Cute Video</button>
-                                    <button id="logout-btn">Log Out</button>
-                                `;
-                                setupAdminPage();
+                                setupZodwaPage(cuteMessage, cuteVideo, additionalImages, additionalVideos);
                             } else {
                                 alert('Incorrect name. Try again!');
                             }
@@ -204,8 +160,7 @@
                 })
                 .catch(error => {
                     console.error('Error fetching settings:', error);
-
-                    // If fetch fails, set fallback values
+                    // Fallback to default
                     document.body.style.backgroundImage = "url('https://your-website-link/photo.jpg')";
                     let contentDiv = document.getElementById('content');
                     if (contentDiv) {
