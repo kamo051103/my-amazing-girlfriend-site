@@ -3,138 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Page</title>
+    <title>How Amazing Girlfriend Is</title>
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
+            background-size: cover;
+            background-position: center;
             font-family: Arial, sans-serif;
             text-align: center;
         }
 
-        #options button {
-            margin: 10px;
-            padding: 10px 20px;
+        #login-form {
+            display: inline-block;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+        }
+
+        input[type="text"], input[type="submit"] {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
             font-size: 16px;
         }
 
-        #content {
-            margin-top: 20px;
+        #options button {
+            margin: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>Admin Page</h1>
-    <button id="update-paragraph-btn">Update Cute Message</button>
-    <button id="change-background-btn">Change Background</button>
-    <button id="change-video-btn">Change Cute Video</button>
-    <button id="logout-btn">Log Out</button>
-
-    <div id="content"></div>
+    <!-- Login Form -->
+    <div id="login-form">
+        <h1>Login</h1>
+        <form id="login-form">
+            <label for="name">Enter your name:</label>
+            <input type="text" id="name" name="name" required>
+            <input type="submit" value="Login">
+        </form>
+    </div>
 
     <script>
-        // GitHub API Setup
-        const repoOwner = 'your-github-username';  // Replace with your GitHub username
-        const repoName = 'your-repo-name';  // Replace with your repository name
-        const filePath = 'data.json';  // The path to your data.json file in the repo
-        const branch = 'main';  // The branch name (usually 'main')
-        const token = 'your-personal-access-token';  // Replace with your GitHub personal access token
+        window.onload = function() {
+            // Fetch the data from your GitHub JSON with cache busting to ensure the latest version is fetched
+            fetch('https://raw.githubusercontent.com/kamo051103/my-amazing-girlfriend-site/main/data.json?time=' + new Date().getTime())
+                .then(response => response.json())
+                .then(data => {
+                    let cuteMessage = data.cuteMessage || "Hello Baby";  // Default cute message
+                    let backgroundUrl = data.backgroundUrl || "https://your-website-link/photo.jpg";  // Default background image
+                    let cuteVideo = data.cuteVideo || "https://your-website-link/video.mp4";  // Default video
 
-        // Function to fetch current content of data.json from GitHub
-        async function getFileContent() {
-            const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}?ref=${branch}`;
+                    // Use localStorage if available
+                    if (localStorage.getItem("cuteMessage")) {
+                        cuteMessage = localStorage.getItem("cuteMessage");
+                    }
+                    if (localStorage.getItem("backgroundUrl")) {
+                        backgroundUrl = localStorage.getItem("backgroundUrl");
+                    }
+                    if (localStorage.getItem("cuteVideo")) {
+                        cuteVideo = localStorage.getItem("cuteVideo");
+                    }
 
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `token ${token}`, // Authorization header with your token
-                },
-            });
+                    // Set the background image from localStorage or fallback to JSON
+                    document.body.style.backgroundImage = `url('${backgroundUrl}')`;
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch file content');
-            }
+                    const form = document.getElementById('login-form');
+                    form.addEventListener('submit', (e) => {
+                        e.preventDefault();  // Prevent form submission from reloading the page
+                        const name = document.getElementById('name').value.trim();  // Get the input name
 
-            const data = await response.json();
-            return data; // Returns the file data including sha
-        }
+                        if (name === 'Zodwa') {
+                            // Content for Zodwa
+                            document.body.innerHTML = ` 
+                                <h1>How Amazing Girlfriend Is</h1>
+                                <div id="options">
+                                    <button id="paragraph-btn">Cute Paragraph</button>
+                                    <button id="video-btn">Cute Video</button>
+                                </div>
+                                <div id="content"></div>
+                                <button id="logout-btn">Log Out</button>
+                            `;
+                            setupZodwaPage(cuteMessage, cuteVideo);
+                        } else if (name === 'Admin') {
+                            // Content for Admin
+                            document.body.innerHTML = ` 
+                                <h1>Admin Page</h1>
+                                <button id="update-paragraph-btn">Update Cute Message</button>
+                                <button id="change-background-btn">Change Background</button>
+                                <button id="change-video-btn">Change Cute Video</button>
+                                <button id="logout-btn">Log Out</button>
+                            `;
+                            setupAdminPage();
+                        } else {
+                            alert('Incorrect name. Try again!');
+                        }
+                    });
 
-        // Function to update data.json file on GitHub
-        async function updateDataJson(newContent) {
-            try {
-                // Fetch the current file details (including SHA)
-                const currentFile = await getFileContent();
-                const sha = currentFile.sha; // Get the SHA of the current file version
+                    function setupZodwaPage(cuteMessage, cuteVideo) {
+                        const paragraphBtn = document.getElementById('paragraph-btn');
+                        const videoBtn = document.getElementById('video-btn');
+                        const contentDiv = document.getElementById('content');
+                        const logoutBtn = document.getElementById('logout-btn');
 
-                // Prepare the API URL for updating the file
-                const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+                        // Display cute message when "Cute Paragraph" is clicked
+                        paragraphBtn.addEventListener('click', () => {
+                            contentDiv.innerHTML = `<p>${cuteMessage}</p>`;
+                        });
 
-                // Prepare the body for the PUT request
-                const body = JSON.stringify({
-                    message: 'Update data.json from Admin Page',  // Commit message for update
-                    content: btoa(JSON.stringify(newContent)),  // Base64 encoded content to update (new data)
-                    sha: sha,  // SHA of the file to update
-                    branch: branch,  // GitHub branch
-                });
+                        // Display cute video when "Cute Video" is clicked
+                        videoBtn.addEventListener('click', () => {
+                            contentDiv.innerHTML = `
+                                <video width="100%" height="600" controls>
+                                    <source src="${cuteVideo}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            `;
+                        });
 
-                // Send the PUT request to update the file on GitHub
-                const response = await fetch(url, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: body,
-                });
+                        // Handle logout
+                        logoutBtn.addEventListener('click', () => {
+                            document.body.innerHTML = ` 
+                                <h1>Login</h1>
+                                <div id="login-form">
+                                    <label for="name">Enter your name:</label>
+                                    <input type="text" id="name" name="name" required>
+                                    <input type="submit" value="Login">
+                                </div>
+                            `;
+                            setupLoginForm();
+                        });
+                    }
 
-                if (!response.ok) {
-                    throw new Error('Failed to update file');
-                }
+                    function setupAdminPage() {
+                        const updateParagraphBtn = document.getElementById('update-paragraph-btn');
+                        const changeBackgroundBtn = document.getElementById('change-background-btn');
+                        const changeVideoBtn = document.getElementById('change-video-btn');
+                        const logoutBtn = document.getElementById('logout-btn');
 
-                const result = await response.json();
-                console.log('File updated successfully:', result);
-                alert('data.json updated successfully!');
-            } catch (error) {
-                console.error('Error updating file:', error);
-                alert('Failed to update data.json');
-            }
-        }
+                        // Update the cute message
+                        updateParagraphBtn.addEventListener('click', () => {
+                            const newCuteMessage = prompt("Enter new cute message:");
+                            localStorage.setItem('cuteMessage', newCuteMessage);  // Save to localStorage
 
-        // Example: Update data.json with new content
-        const newData = {
-            "cuteMessage": "Hello Baby, I love you more!",  // New cute message
-            "backgroundUrl": "https://new-image-link.com/photo.jpg",  // New image URL
-            "cuteVideo": "https://new-video-link.com/video.mp4",  // New video URL
-            "photoLinks": [
-                "https://new-image-link.com/photo1.jpg",
-                "https://new-image-link.com/photo2.jpg"
-            ],
-            "videoLinks": [
-                "https://new-video-link.com/video1.mp4",
-                "https://new-video-link.com/video2.mp4"
-            ]
+                            // Update on Zodwa page if logged in
+                            cuteMessage = newCuteMessage;
+                            updateGitHubData({ cuteMessage }); // Update the data on GitHub
+                            const contentDiv = document.getElementById('content');
+                            if (contentDiv) {
+                                contentDiv.innerHTML = `<p>${cuteMessage}</p>`;
+                            }
+                        });
+
+                        // Change background image
+                        changeBackgroundBtn.addEventListener('click', () => {
+                            const newBackgroundUrl = prompt("Enter new background URL:");
+                            localStorage.setItem('backgroundUrl', newBackgroundUrl);  // Save to localStorage
+                            document.body.style.backgroundImage = `url('${newBackgroundUrl}')`;
+                            updateGitHubData({ backgroundUrl: newBackgroundUrl }); // Update the data on GitHub
+                        });
+
+                        // Change cute video
+                        changeVideoBtn.addEventListener('click', () => {
+                            const newCuteVideo = prompt("Enter new cute video URL:");
+                            localStorage.setItem('cuteVideo', newCuteVideo);  // Save to localStorage
+
+                            // Immediately display the new video
+                            const contentDiv = document.getElementById('content');
+                            contentDiv.innerHTML = `
+                                <video width="100%" height="600" controls>
+                                    <source src="${newCuteVideo}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            `;
+                            updateGitHubData({ cuteVideo: newCuteVideo }); // Update the data on GitHub
+                        });
+
+                        // Handle logout
+                        logoutBtn.addEventListener('click', () => {
+                            document.body.innerHTML = ` 
+                                <h1>Login</h1>
+                                <div id="login-form">
+                                    <label for="name">Enter your name:</label>
+                                    <input type="text" id="name" name="name" required>
+                                    <input type="submit" value="Login">
+                                </div>
+                            `;
+                            setupLoginForm();
+                        });
+                    }
+
+                    function updateGitHubData(newData) {
+                        const repoOwner = 'your-username';  // Replace with your GitHub username
+                        const repoName = 'your-repo-name';  // Replace with your GitHub repository name
+                        const filePath = 'data.json';       // Replace with your GitHub file path
+                        const token = 'your-personal-access-token';  // Replace with your GitHub personal access token
+                        const branch = 'main';  // Replace with your branch name (main or master)
+
+                        // Fetch the current file data from GitHub
+                        fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}?ref=${branch}`, {
+                            headers: { 'Authorization': `token ${token}` },
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            const sha = data.sha;  // Get the sha of the file
+                            const updatedContent = {
+                                ...data, 
+                                ...newData, 
+                                content: btoa(JSON.stringify(newData)),  // Base64 encode the content
+                                sha: sha
+                            };
+
+                            // Update the file on GitHub
+                            fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`, {
+                                method: 'PUT',
+                                headers: { 'Authorization': `token ${token}` },
+                                body: JSON.stringify(updatedContent)
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log('File updated successfully:', data);
+                            })
+                            .catch(error => console.error('Error updating file:', error));
+                        })
+                        .catch(error => console.error('Error fetching file data:', error));
+                    }
+
+                    function setupLoginForm() {
+                        const form = document.getElementById('login-form');
+                        form.addEventListener('submit', (e) => {
+                            e.preventDefault();
+                            const name = document.getElementById('name').value.trim();
+
+                            if (name === 'Zodwa') {
+                                document.body.innerHTML = ` 
+                                    <h1>How Amazing Girlfriend Is</h1>
+                                    <div id="options">
+                                        <button id="paragraph-btn">Cute Paragraph</button>
+                                        <button id="video-btn">Cute Video</button>
+                                    </div>
+                                    <div id="content"></div>
+                                    <button id="logout-btn">Log Out</button>
+                                `;
+                                setupZodwaPage(cuteMessage, cuteVideo);
+                            } else if (name === 'Admin') {
+                                document.body.innerHTML = ` 
+                                    <h1>Admin Page</h1>
+                                    <button id="update-paragraph-btn">Update Cute Message</button>
+                                    <button id="change-background-btn">Change Background</button>
+                                    <button id="change-video-btn">Change Cute Video</button>
+                                    <button id="logout-btn">Log Out</button>
+                                `;
+                                setupAdminPage();
+                            } else {
+                                alert('Incorrect name. Try again!');
+                            }
+                        });
+                    }
+                })
+                .catch(error => console.error('Error fetching settings:', error));
         };
-
-        // Admin page button event listeners
-        document.getElementById('update-paragraph-btn').addEventListener('click', () => {
-            const newCuteMessage = prompt('Enter new cute message:');
-            newData.cuteMessage = newCuteMessage;
-            updateDataJson(newData); // Call to update the data.json
-        });
-
-        document.getElementById('change-background-btn').addEventListener('click', () => {
-            const newBackgroundUrl = prompt('Enter new background URL:');
-            newData.backgroundUrl = newBackgroundUrl;
-            updateDataJson(newData); // Call to update the data.json
-        });
-
-        document.getElementById('change-video-btn').addEventListener('click', () => {
-            const newCuteVideo = prompt('Enter new cute video URL:');
-            newData.cuteVideo = newCuteVideo;
-            updateDataJson(newData); // Call to update the data.json
-        });
-
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            window.location.reload(); // Log out by refreshing the page
-        });
     </script>
 </body>
 </html>
