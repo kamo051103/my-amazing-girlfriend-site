@@ -3,171 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>How Amazing Girlfriend Is</title>
+    <title>Admin Page</title>
     <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
-            background-size: cover;
-            background-position: center;
             font-family: Arial, sans-serif;
             text-align: center;
         }
 
-        #login-form {
-            display: inline-block;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 10px;
-        }
-
-        input[type="text"], input[type="submit"] {
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
+        #options button {
+            margin: 10px;
+            padding: 10px 20px;
             font-size: 16px;
         }
 
-        #options button {
-            margin: 10px;
-        }
-
-        #content img {
-            margin: 10px;
-            max-width: 300px;
+        #content {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <!-- Login Form -->
-    <div id="login-form">
-        <h1>Login</h1>
-        <form id="login-form">
-            <label for="name">Enter your name:</label>
-            <input type="text" id="name" name="name" required>
-            <input type="submit" value="Login">
-        </form>
-    </div>
+    <h1>Admin Page</h1>
+    <button id="update-paragraph-btn">Update Cute Message</button>
+    <button id="change-background-btn">Change Background</button>
+    <button id="change-video-btn">Change Cute Video</button>
+    <button id="logout-btn">Log Out</button>
+
+    <div id="content"></div>
 
     <script>
-        window.onload = function() {
-            // Fetch the latest data from your GitHub JSON
-            fetch('https://raw.githubusercontent.com/kamo051103/my-amazing-girlfriend-site/main/data.json?time=' + new Date().getTime())
-                .then(response => response.json())
-                .then(data => {
-                    let cuteMessage = data.cuteMessage || "Hello Baby";  
-                    let backgroundUrl = data.backgroundUrl || "https://your-website-link/photo.jpg";  
-                    let cuteVideo = data.cuteVideo || "https://your-website-link/video.mp4";
-                    let additionalImages = data.additionalImages || [];
-                    let additionalVideos = data.additionalVideos || [];
+        // GitHub API Setup
+        const repoOwner = 'your-github-username';  // Replace with your GitHub username
+        const repoName = 'your-repo-name';  // Replace with your repository name
+        const filePath = 'data.json';  // The path to your data.json file in the repo
+        const branch = 'main';  // The branch name (usually 'main')
+        const token = 'your-personal-access-token';  // Replace with your GitHub personal access token
 
-                    // Set the background image from JSON data
-                    document.body.style.backgroundImage = `url('${backgroundUrl}')`;
+        // Function to fetch current content of data.json from GitHub
+        async function getFileContent() {
+            const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}?ref=${branch}`;
 
-                    const form = document.getElementById('login-form');
-                    form.addEventListener('submit', (e) => {
-                        e.preventDefault();
-                        const name = document.getElementById('name').value.trim(); 
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `token ${token}`, // Authorization header with your token
+                },
+            });
 
-                        if (name === 'Zodwa') {
-                            document.body.innerHTML = `
-                                <h1>How Amazing Girlfriend Is</h1>
-                                <div id="options">
-                                    <button id="paragraph-btn">Cute Paragraph</button>
-                                    <button id="video-btn">Cute Video</button>
-                                    <button id="image-btn">Cute Images</button>
-                                </div>
-                                <div id="content"></div>
-                                <button id="logout-btn">Log Out</button>
-                            `;
-                            setupZodwaPage(cuteMessage, cuteVideo, additionalImages, additionalVideos);
-                        } else {
-                            alert('Incorrect name. Try again!');
-                        }
-                    });
+            if (!response.ok) {
+                throw new Error('Failed to fetch file content');
+            }
 
-                    function setupZodwaPage(cuteMessage, cuteVideo, additionalImages, additionalVideos) {
-                        const paragraphBtn = document.getElementById('paragraph-btn');
-                        const videoBtn = document.getElementById('video-btn');
-                        const imageBtn = document.getElementById('image-btn');
-                        const contentDiv = document.getElementById('content');
-                        const logoutBtn = document.getElementById('logout-btn');
+            const data = await response.json();
+            return data; // Returns the file data including sha
+        }
 
-                        // Show cute paragraph
-                        paragraphBtn.addEventListener('click', () => {
-                            contentDiv.innerHTML = `<p>${cuteMessage}</p>`;
-                        });
+        // Function to update data.json file on GitHub
+        async function updateDataJson(newContent) {
+            try {
+                // Fetch the current file details (including SHA)
+                const currentFile = await getFileContent();
+                const sha = currentFile.sha; // Get the SHA of the current file version
 
-                        // Show cute video
-                        videoBtn.addEventListener('click', () => {
-                            contentDiv.innerHTML = `
-                                <video width="100%" height="600" controls>
-                                    <source src="${cuteVideo}" type="video/mp4">
-                                    Your browser does not support the video tag.
-                                </video>
-                            `;
-                        });
+                // Prepare the API URL for updating the file
+                const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
 
-                        // Show additional images
-                        imageBtn.addEventListener('click', () => {
-                            let imagesHTML = '';
-                            additionalImages.forEach(image => {
-                                imagesHTML += `<img src="${image}" alt="Cute Image">`;
-                            });
-                            contentDiv.innerHTML = imagesHTML;
-                        });
-
-                        // Handle logout
-                        logoutBtn.addEventListener('click', () => {
-                            document.body.innerHTML = `
-                                <h1>Login</h1>
-                                <div id="login-form">
-                                    <label for="name">Enter your name:</label>
-                                    <input type="text" id="name" name="name" required>
-                                    <input type="submit" value="Login">
-                                </div>
-                            `;
-                            setupLoginForm();
-                        });
-                    }
-
-                    function setupLoginForm() {
-                        const form = document.getElementById('login-form');
-                        form.addEventListener('submit', (e) => {
-                            e.preventDefault();
-                            const name = document.getElementById('name').value.trim();
-                            if (name === 'Zodwa') {
-                                document.body.innerHTML = `
-                                    <h1>How Amazing Girlfriend Is</h1>
-                                    <div id="options">
-                                        <button id="paragraph-btn">Cute Paragraph</button>
-                                        <button id="video-btn">Cute Video</button>
-                                        <button id="image-btn">Cute Images</button>
-                                    </div>
-                                    <div id="content"></div>
-                                    <button id="logout-btn">Log Out</button>
-                                `;
-                                setupZodwaPage(cuteMessage, cuteVideo, additionalImages, additionalVideos);
-                            } else {
-                                alert('Incorrect name. Try again!');
-                            }
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching settings:', error);
-                    // Fallback to default
-                    document.body.style.backgroundImage = "url('https://your-website-link/photo.jpg')";
-                    let contentDiv = document.getElementById('content');
-                    if (contentDiv) {
-                        contentDiv.innerHTML = `<p>Hello Baby</p>`;
-                    }
+                // Prepare the body for the PUT request
+                const body = JSON.stringify({
+                    message: 'Update data.json from Admin Page',  // Commit message for update
+                    content: btoa(JSON.stringify(newContent)),  // Base64 encoded content to update (new data)
+                    sha: sha,  // SHA of the file to update
+                    branch: branch,  // GitHub branch
                 });
+
+                // Send the PUT request to update the file on GitHub
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: body,
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update file');
+                }
+
+                const result = await response.json();
+                console.log('File updated successfully:', result);
+                alert('data.json updated successfully!');
+            } catch (error) {
+                console.error('Error updating file:', error);
+                alert('Failed to update data.json');
+            }
+        }
+
+        // Example: Update data.json with new content
+        const newData = {
+            "cuteMessage": "Hello Baby, I love you more!",  // New cute message
+            "backgroundUrl": "https://new-image-link.com/photo.jpg",  // New image URL
+            "cuteVideo": "https://new-video-link.com/video.mp4",  // New video URL
+            "photoLinks": [
+                "https://new-image-link.com/photo1.jpg",
+                "https://new-image-link.com/photo2.jpg"
+            ],
+            "videoLinks": [
+                "https://new-video-link.com/video1.mp4",
+                "https://new-video-link.com/video2.mp4"
+            ]
         };
+
+        // Admin page button event listeners
+        document.getElementById('update-paragraph-btn').addEventListener('click', () => {
+            const newCuteMessage = prompt('Enter new cute message:');
+            newData.cuteMessage = newCuteMessage;
+            updateDataJson(newData); // Call to update the data.json
+        });
+
+        document.getElementById('change-background-btn').addEventListener('click', () => {
+            const newBackgroundUrl = prompt('Enter new background URL:');
+            newData.backgroundUrl = newBackgroundUrl;
+            updateDataJson(newData); // Call to update the data.json
+        });
+
+        document.getElementById('change-video-btn').addEventListener('click', () => {
+            const newCuteVideo = prompt('Enter new cute video URL:');
+            newData.cuteVideo = newCuteVideo;
+            updateDataJson(newData); // Call to update the data.json
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            window.location.reload(); // Log out by refreshing the page
+        });
     </script>
 </body>
 </html>
