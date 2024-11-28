@@ -50,11 +50,12 @@
 
     <script>
         window.onload = function() {
-            let cuteMessage = localStorage.getItem('cuteMessage') || "Hello Baby";  // Default if not available
+            // Get values from localStorage or set defaults
+            let cuteMessage = localStorage.getItem('cuteMessage') || "Hello Baby";  // Default message
             let backgroundUrl = localStorage.getItem('backgroundUrl') || "https://your-website-link/photo.jpg";  // Default background
             let cuteVideo = localStorage.getItem('cuteVideo') || "https://your-website-link/video.mp4";  // Default video
 
-            // Set the background image from localStorage or the default one
+            // Set the background image from localStorage or default one
             document.body.style.backgroundImage = `url('${backgroundUrl}')`;
 
             const form = document.getElementById('login-form');
@@ -134,9 +135,9 @@
                 updateParagraphBtn.addEventListener('click', () => {
                     const newCuteMessage = prompt("Enter new cute message:");
                     localStorage.setItem('cuteMessage', newCuteMessage);  // Save to localStorage
+                    cuteMessage = newCuteMessage;  // Update in-memory variable as well
 
-                    // Update on Zodwa page if logged in
-                    cuteMessage = newCuteMessage;
+                    // Update the message immediately
                     const contentDiv = document.getElementById('content');
                     if (contentDiv) {
                         contentDiv.innerHTML = `<p>${cuteMessage}</p>`;
@@ -176,6 +177,39 @@
                         </div>
                     `;
                     setupLoginForm();
+                });
+            }
+
+            function setupLoginForm() {
+                // Set up login form event listener
+                const form = document.getElementById('login-form');
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const name = document.getElementById('name').value.trim();
+
+                    if (name === 'Zodwa') {
+                        document.body.innerHTML = ` 
+                            <h1>How Amazing Girlfriend Is</h1>
+                            <div id="options">
+                                <button id="paragraph-btn">Cute Paragraph</button>
+                                <button id="video-btn">Cute Video</button>
+                            </div>
+                            <div id="content"></div>
+                            <button id="logout-btn">Log Out</button>
+                        `;
+                        setupZodwaPage(cuteMessage, cuteVideo);
+                    } else if (name === 'Admin') {
+                        document.body.innerHTML = ` 
+                            <h1>Admin Page</h1>
+                            <button id="update-paragraph-btn">Update Cute Message</button>
+                            <button id="change-background-btn">Change Background</button>
+                            <button id="change-video-btn">Change Cute Video</button>
+                            <button id="logout-btn">Log Out</button>
+                        `;
+                        setupAdminPage();
+                    } else {
+                        alert('Incorrect name. Try again!');
+                    }
                 });
             }
         };
