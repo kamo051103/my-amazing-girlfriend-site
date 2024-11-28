@@ -31,6 +31,10 @@
             border-radius: 5px;
             font-size: 16px;
         }
+
+        #options button {
+            margin: 10px;
+        }
     </style>
 </head>
 <body>
@@ -46,15 +50,26 @@
 
     <script>
         window.onload = function() {
-            // Fetch the data from your data.json file on GitHub
+            // Fetch the data from your GitHub JSON
             fetch('https://raw.githubusercontent.com/kamo051103/my-amazing-girlfriend-site/main/data.json')
                 .then(response => response.json())
                 .then(data => {
                     let cuteMessage = data.cuteMessage || "Hello Baby";  // Default cute message
-                    let backgroundUrl = localStorage.getItem('backgroundUrl') || data.backgroundUrl;  // Use localStorage if available
-                    let cuteVideo = localStorage.getItem('cuteVideo') || data.cuteVideo;  // Use localStorage if available
+                    let backgroundUrl = data.backgroundUrl || "https://your-website-link/photo.jpg";  // Default background image
+                    let cuteVideo = data.cuteVideo || "https://your-website-link/video.mp4";  // Default video
 
-                    // Set background image from localStorage or data.json
+                    // Use localStorage if available
+                    if (localStorage.getItem("cuteMessage")) {
+                        cuteMessage = localStorage.getItem("cuteMessage");
+                    }
+                    if (localStorage.getItem("backgroundUrl")) {
+                        backgroundUrl = localStorage.getItem("backgroundUrl");
+                    }
+                    if (localStorage.getItem("cuteVideo")) {
+                        cuteVideo = localStorage.getItem("cuteVideo");
+                    }
+
+                    // Set the background image from localStorage or fallback to JSON
                     document.body.style.backgroundImage = `url('${backgroundUrl}')`;
 
                     const form = document.getElementById('login-form');
@@ -133,10 +148,10 @@
                         // Update the cute message
                         updateParagraphBtn.addEventListener('click', () => {
                             const newCuteMessage = prompt("Enter new cute message:");
-                            cuteMessage = newCuteMessage;
-                            localStorage.setItem('cuteMessage', cuteMessage);  // Save to localStorage
+                            localStorage.setItem('cuteMessage', newCuteMessage);  // Save to localStorage
 
-                            // Immediately update for Zodwa (if logged in)
+                            // Update on Zodwa page if logged in
+                            cuteMessage = newCuteMessage;
                             const contentDiv = document.getElementById('content');
                             if (contentDiv) {
                                 contentDiv.innerHTML = `<p>${cuteMessage}</p>`;
@@ -146,22 +161,20 @@
                         // Change background image
                         changeBackgroundBtn.addEventListener('click', () => {
                             const newBackgroundUrl = prompt("Enter new background URL:");
-                            backgroundUrl = newBackgroundUrl;
-                            document.body.style.backgroundImage = `url('${backgroundUrl}')`;
-                            localStorage.setItem('backgroundUrl', backgroundUrl); // Save to localStorage
+                            localStorage.setItem('backgroundUrl', newBackgroundUrl);  // Save to localStorage
+                            document.body.style.backgroundImage = `url('${newBackgroundUrl}')`;
                         });
 
                         // Change cute video
                         changeVideoBtn.addEventListener('click', () => {
                             const newCuteVideo = prompt("Enter new cute video URL:");
-                            cuteVideo = newCuteVideo;
-                            localStorage.setItem('cuteVideo', cuteVideo);  // Save to localStorage
+                            localStorage.setItem('cuteVideo', newCuteVideo);  // Save to localStorage
 
                             // Immediately display the new video
                             const contentDiv = document.getElementById('content');
                             contentDiv.innerHTML = `
                                 <video width="100%" height="600" controls>
-                                    <source src="${cuteVideo}" type="video/mp4">
+                                    <source src="${newCuteVideo}" type="video/mp4">
                                     Your browser does not support the video tag.
                                 </video>
                             `;
@@ -182,7 +195,6 @@
                     }
 
                     function setupLoginForm() {
-                        // Reinitialize the login form
                         const form = document.getElementById('login-form');
                         form.addEventListener('submit', (e) => {
                             e.preventDefault();
