@@ -49,8 +49,64 @@
     </div>
 
     <script>
+        const repoOwner = 'your-username';
+        const repoName = 'your-repo-name';
+        const filePath = 'data.json';
+        const branch = 'main';  // or 'master' depending on your GitHub branch
+        const token = 'your-personal-access-token'; // GitHub personal access token
+
+        // Function to fetch current content of data.json from GitHub
+        async function getFileContent() {
+            const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}?ref=${branch}`;
+
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `token ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch file content');
+            }
+
+            const data = await response.json();
+            return data; // Returns file details including sha
+        }
+
+        // Function to update data.json file on GitHub
+        async function updateDataJson(newContent) {
+            const currentFile = await getFileContent();
+            const sha = currentFile.sha;  // SHA of the current file version
+
+            const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+            const body = JSON.stringify({
+                message: 'Update data.json from Admin Page',
+                content: btoa(JSON.stringify(newContent)),  // Base64 encoded content to update (new data)
+                sha: sha,  // SHA of the file to update
+                branch: branch,  // GitHub branch
+            });
+
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: body,
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update file');
+            }
+
+            const result = await response.json();
+            console.log('File updated successfully:', result);
+            alert('data.json updated successfully!');
+        }
+
         window.onload = function() {
-            // Fetch the data from your GitHub JSON with cache busting to ensure the latest version is fetched
+            // Fetch the data from GitHub JSON with cache busting to ensure the latest version is fetched
             fetch('https://raw.githubusercontent.com/kamo051103/my-amazing-girlfriend-site/main/data.json?time=' + new Date().getTime())
                 .then(response => response.json())
                 .then(data => {
@@ -117,7 +173,7 @@
 
                         // Display cute video when "Cute Video" is clicked
                         videoBtn.addEventListener('click', () => {
-                            contentDiv.innerHTML = `
+                            contentDiv.innerHTML = ` 
                                 <video width="100%" height="600" controls>
                                     <source src="${cuteVideo}" type="video/mp4">
                                     Your browser does not support the video tag.
@@ -152,11 +208,18 @@
 
                             // Update on Zodwa page if logged in
                             cuteMessage = newCuteMessage;
-                            updateGitHubData({ cuteMessage }); // Update the data on GitHub
                             const contentDiv = document.getElementById('content');
                             if (contentDiv) {
                                 contentDiv.innerHTML = `<p>${cuteMessage}</p>`;
                             }
+
+                            // Update data.json on GitHub
+                            const newData = {
+                                cuteMessage: newCuteMessage,
+                                backgroundUrl: localStorage.getItem('backgroundUrl') || "default-image-url",
+                                cuteVideo: localStorage.getItem('cuteVideo') || "default-video-url"
+                            };
+                            updateDataJson(newData);
                         });
 
                         // Change background image
@@ -164,7 +227,14 @@
                             const newBackgroundUrl = prompt("Enter new background URL:");
                             localStorage.setItem('backgroundUrl', newBackgroundUrl);  // Save to localStorage
                             document.body.style.backgroundImage = `url('${newBackgroundUrl}')`;
-                            updateGitHubData({ backgroundUrl: newBackgroundUrl }); // Update the data on GitHub
+
+                            // Update data.json on GitHub
+                            const newData = {
+                                cuteMessage: localStorage.getItem('cuteMessage') || "Hello Baby",
+                                backgroundUrl: newBackgroundUrl,
+                                cuteVideo: localStorage.getItem('cuteVideo') || "default-video-url"
+                            };
+                            updateDataJson(newData);
                         });
 
                         // Change cute video
@@ -172,15 +242,13 @@
                             const newCuteVideo = prompt("Enter new cute video URL:");
                             localStorage.setItem('cuteVideo', newCuteVideo);  // Save to localStorage
 
-                            // Immediately display the new video
-                            const contentDiv = document.getElementById('content');
-                            contentDiv.innerHTML = `
-                                <video width="100%" height="600" controls>
-                                    <source src="${newCuteVideo}" type="video/mp4">
-                                    Your browser does not support the video tag.
-                                </video>
-                            `;
-                            updateGitHubData({ cuteVideo: newCuteVideo }); // Update the data on GitHub
+                            // Update data.json on GitHub
+                            const newData = {
+                                cuteMessage: localStorage.getItem('cuteMessage') || "Hello Baby",
+                                backgroundUrl: localStorage.getItem('backgroundUrl') || "default-image-url",
+                                cuteVideo: newCuteVideo
+                            };
+                            updateDataJson(newData);
                         });
 
                         // Handle logout
@@ -195,42 +263,6 @@
                             `;
                             setupLoginForm();
                         });
-                    }
-
-                    function updateGitHubData(newData) {
-                        const repoOwner = 'your-username';  // Replace with your GitHub username
-                        const repoName = 'your-repo-name';  // Replace with your GitHub repository name
-                        const filePath = 'data.json';       // Replace with your GitHub file path
-                        const token = 'your-personal-access-token';  // Replace with your GitHub personal access token
-                        const branch = 'main';  // Replace with your branch name (main or master)
-
-                        // Fetch the current file data from GitHub
-                        fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}?ref=${branch}`, {
-                            headers: { 'Authorization': `token ${token}` },
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            const sha = data.sha;  // Get the sha of the file
-                            const updatedContent = {
-                                ...data, 
-                                ...newData, 
-                                content: btoa(JSON.stringify(newData)),  // Base64 encode the content
-                                sha: sha
-                            };
-
-                            // Update the file on GitHub
-                            fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`, {
-                                method: 'PUT',
-                                headers: { 'Authorization': `token ${token}` },
-                                body: JSON.stringify(updatedContent)
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                console.log('File updated successfully:', data);
-                            })
-                            .catch(error => console.error('Error updating file:', error));
-                        })
-                        .catch(error => console.error('Error fetching file data:', error));
                     }
 
                     function setupLoginForm() {
