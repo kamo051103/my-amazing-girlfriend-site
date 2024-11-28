@@ -1,5 +1,13 @@
 {
   "cuteMessage": "Hello Baby",
-  "backgroundUrl": "https://your-website-link/photo.jpg", 
-  "cuteVideo": "https://your-website-link/video.mp4"
+  "backgroundUrl": "https://raw.githubusercontent.com/kamo051103/my-amazing-girlfriend-site/main/photo.jpg",
+  "cuteVideo": "https://raw.githubusercontent.com/kamo051103/my-amazing-girlfriend-site/main/video.mp4",
+  "additionalImages": [
+    "https://raw.githubusercontent.com/kamo051103/my-amazing-girlfriend-site/main/photo2.jpg",
+    "https://raw.githubusercontent.com/kamo051103/my-amazing-girlfriend-site/main/photo3.jpg"
+  ],
+  "additionalVideos": [
+    "https://raw.githubusercontent.com/kamo051103/my-amazing-girlfriend-site/main/video2.mp4",
+    "https://raw.githubusercontent.com/kamo051103/my-amazing-girlfriend-site/main/video3.mp4"
+  ]
 }
