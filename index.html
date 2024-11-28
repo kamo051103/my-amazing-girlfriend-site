@@ -57,12 +57,15 @@
                     // Set background image from data.json
                     document.body.style.backgroundImage = `url('${backgroundUrl}')`;
 
+                    // Initialize the login form
                     setupLoginForm();
 
-                    // Reinitialize the login form after page load
+                    // Login form logic
                     function setupLoginForm() {
                         const form = document.getElementById('login-form');
-                        form.addEventListener('submit', (e) => {
+                        
+                        // Ensure the submit event listener is only set once
+                        form.addEventListener('submit', function (e) {
                             e.preventDefault();  // Prevent form submission from reloading the page
                             const name = document.getElementById('name').value.trim();  // Get the input name
 
@@ -94,6 +97,7 @@
                         });
                     }
 
+                    // Zodwa Page Setup
                     function setupZodwaPage(cuteMessage, cuteVideo) {
                         const paragraphBtn = document.getElementById('paragraph-btn');
                         const videoBtn = document.getElementById('video-btn');
@@ -125,10 +129,11 @@
                                     <input type="submit" value="Login">
                                 </div>
                             `;
-                            setupLoginForm();
+                            setupLoginForm(); // Reinitialize the login form after logout
                         });
                     }
 
+                    // Admin Page Setup
                     function setupAdminPage() {
                         const updateParagraphBtn = document.getElementById('update-paragraph-btn');
                         const changeBackgroundBtn = document.getElementById('change-background-btn');
@@ -181,7 +186,7 @@
                                     <input type="submit" value="Login">
                                 </div>
                             `;
-                            setupLoginForm();
+                            setupLoginForm(); // Reinitialize the login form after logout
                         });
                     }
                 })
