@@ -50,7 +50,7 @@
 
     <script>
         window.onload = function() {
-            // Fetch the data from your GitHub JSON with cache busting to ensure the latest version is fetched
+            // Fetch the latest data from your GitHub JSON (with cache busting)
             fetch('https://raw.githubusercontent.com/kamo051103/my-amazing-girlfriend-site/main/data.json?time=' + new Date().getTime())
                 .then(response => response.json())
                 .then(data => {
@@ -58,18 +58,7 @@
                     let backgroundUrl = data.backgroundUrl || "https://your-website-link/photo.jpg";  // Default background image
                     let cuteVideo = data.cuteVideo || "https://your-website-link/video.mp4";  // Default video
 
-                    // Use localStorage if available
-                    if (localStorage.getItem("cuteMessage")) {
-                        cuteMessage = localStorage.getItem("cuteMessage");
-                    }
-                    if (localStorage.getItem("backgroundUrl")) {
-                        backgroundUrl = localStorage.getItem("backgroundUrl");
-                    }
-                    if (localStorage.getItem("cuteVideo")) {
-                        cuteVideo = localStorage.getItem("cuteVideo");
-                    }
-
-                    // Set the background image from localStorage or fallback to JSON
+                    // Set the background image from the JSON data
                     document.body.style.backgroundImage = `url('${backgroundUrl}')`;
 
                     const form = document.getElementById('login-form');
@@ -79,7 +68,7 @@
 
                         if (name === 'Zodwa') {
                             // Content for Zodwa
-                            document.body.innerHTML = ` 
+                            document.body.innerHTML = `
                                 <h1>How Amazing Girlfriend Is</h1>
                                 <div id="options">
                                     <button id="paragraph-btn">Cute Paragraph</button>
@@ -91,7 +80,7 @@
                             setupZodwaPage(cuteMessage, cuteVideo);
                         } else if (name === 'Admin') {
                             // Content for Admin
-                            document.body.innerHTML = ` 
+                            document.body.innerHTML = `
                                 <h1>Admin Page</h1>
                                 <button id="update-paragraph-btn">Update Cute Message</button>
                                 <button id="change-background-btn">Change Background</button>
@@ -127,7 +116,7 @@
 
                         // Handle logout
                         logoutBtn.addEventListener('click', () => {
-                            document.body.innerHTML = ` 
+                            document.body.innerHTML = `
                                 <h1>Login</h1>
                                 <div id="login-form">
                                     <label for="name">Enter your name:</label>
@@ -145,44 +134,25 @@
                         const changeVideoBtn = document.getElementById('change-video-btn');
                         const logoutBtn = document.getElementById('logout-btn');
 
-                        // Update the cute message
+                        // Admin changes are made directly to the JSON file in GitHub
                         updateParagraphBtn.addEventListener('click', () => {
                             const newCuteMessage = prompt("Enter new cute message:");
-                            localStorage.setItem('cuteMessage', newCuteMessage);  // Save to localStorage
-
-                            // Update on Zodwa page if logged in
-                            cuteMessage = newCuteMessage;
-                            const contentDiv = document.getElementById('content');
-                            if (contentDiv) {
-                                contentDiv.innerHTML = `<p>${cuteMessage}</p>`;
-                            }
+                            alert("Please update the 'data.json' file in GitHub to reflect this change for all users.");
                         });
 
-                        // Change background image
                         changeBackgroundBtn.addEventListener('click', () => {
                             const newBackgroundUrl = prompt("Enter new background URL:");
-                            localStorage.setItem('backgroundUrl', newBackgroundUrl);  // Save to localStorage
-                            document.body.style.backgroundImage = `url('${newBackgroundUrl}')`;
+                            alert("Please update the 'data.json' file in GitHub to reflect this change for all users.");
                         });
 
-                        // Change cute video
                         changeVideoBtn.addEventListener('click', () => {
                             const newCuteVideo = prompt("Enter new cute video URL:");
-                            localStorage.setItem('cuteVideo', newCuteVideo);  // Save to localStorage
-
-                            // Immediately display the new video
-                            const contentDiv = document.getElementById('content');
-                            contentDiv.innerHTML = `
-                                <video width="100%" height="600" controls>
-                                    <source src="${newCuteVideo}" type="video/mp4">
-                                    Your browser does not support the video tag.
-                                </video>
-                            `;
+                            alert("Please update the 'data.json' file in GitHub to reflect this change for all users.");
                         });
 
                         // Handle logout
                         logoutBtn.addEventListener('click', () => {
-                            document.body.innerHTML = ` 
+                            document.body.innerHTML = `
                                 <h1>Login</h1>
                                 <div id="login-form">
                                     <label for="name">Enter your name:</label>
@@ -201,7 +171,7 @@
                             const name = document.getElementById('name').value.trim();
 
                             if (name === 'Zodwa') {
-                                document.body.innerHTML = ` 
+                                document.body.innerHTML = `
                                     <h1>How Amazing Girlfriend Is</h1>
                                     <div id="options">
                                         <button id="paragraph-btn">Cute Paragraph</button>
@@ -212,7 +182,7 @@
                                 `;
                                 setupZodwaPage(cuteMessage, cuteVideo);
                             } else if (name === 'Admin') {
-                                document.body.innerHTML = ` 
+                                document.body.innerHTML = `
                                     <h1>Admin Page</h1>
                                     <button id="update-paragraph-btn">Update Cute Message</button>
                                     <button id="change-background-btn">Change Background</button>
