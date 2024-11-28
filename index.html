@@ -46,25 +46,24 @@
 
     <script>
         window.onload = function() {
-            // Fetch data from your data.json file on GitHub
+            // Fetch data from data.json on GitHub
             fetch('https://raw.githubusercontent.com/kamo051103/my-amazing-girlfriend-site/main/data.json')
                 .then(response => response.json())
                 .then(data => {
-                    let cuteMessage = data.cuteMessage || "Hello Baby";  // Default cute message
-                    let backgroundUrl = data.backgroundUrl || "photo.JPG";  // Default background image
-                    let cuteVideo = data.cuteVideo || "video.MP4";  // Default video
+                    // Try to load saved values from localStorage
+                    let cuteMessage = localStorage.getItem('cuteMessage') || data.cuteMessage;
+                    let backgroundUrl = localStorage.getItem('backgroundUrl') || data.backgroundUrl;
+                    let cuteVideo = localStorage.getItem('cuteVideo') || data.cuteVideo;
 
-                    // Set background image from data.json
+                    // Set background image from localStorage or fallback to default
                     document.body.style.backgroundImage = `url('${backgroundUrl}')`;
 
                     const form = document.getElementById('login-form');
                     form.addEventListener('submit', (e) => {
-                        e.preventDefault();  // Prevent form submission from reloading the page
-                        const name = document.getElementById('name').value.trim();  // Get the input name
-                        console.log("Entered name: ", name); // Debugging line
+                        e.preventDefault();
+                        const name = document.getElementById('name').value.trim();
 
                         if (name === 'Zodwa') {
-                            // Content for Zodwa
                             document.body.innerHTML = `
                                 <h1>How Amazing Girlfriend Is</h1>
                                 <div id="options">
@@ -76,7 +75,6 @@
                             `;
                             setupZodwaPage(cuteMessage, cuteVideo);
                         } else if (name === 'Admin') {
-                            // Content for Admin
                             document.body.innerHTML = `
                                 <h1>Admin Page</h1>
                                 <button id="update-paragraph-btn">Update Cute Message</button>
@@ -90,21 +88,16 @@
                         }
                     });
 
-                    // Zodwa Page Setup
                     function setupZodwaPage(cuteMessage, cuteVideo) {
-                        console.log("Cute message: ", cuteMessage); // Debugging line
-
                         const paragraphBtn = document.getElementById('paragraph-btn');
                         const videoBtn = document.getElementById('video-btn');
                         const contentDiv = document.getElementById('content');
                         const logoutBtn = document.getElementById('logout-btn');
 
-                        // Display cute message when "Cute Paragraph" is clicked
                         paragraphBtn.addEventListener('click', () => {
                             contentDiv.innerHTML = `<p>${cuteMessage}</p>`;
                         });
 
-                        // Display cute video when "Cute Video" is clicked
                         videoBtn.addEventListener('click', () => {
                             contentDiv.innerHTML = `
                                 <video width="100%" height="600" controls>
@@ -114,7 +107,6 @@
                             `;
                         });
 
-                        // Handle logout
                         logoutBtn.addEventListener('click', () => {
                             document.body.innerHTML = `
                                 <h1>Login</h1>
@@ -124,44 +116,39 @@
                                     <input type="submit" value="Login">
                                 </div>
                             `;
-                            setupLoginForm(); // Reinitialize the login form after logout
+                            setupLoginForm();
                         });
                     }
 
-                    // Admin Page Setup
                     function setupAdminPage() {
                         const updateParagraphBtn = document.getElementById('update-paragraph-btn');
                         const changeBackgroundBtn = document.getElementById('change-background-btn');
                         const changeVideoBtn = document.getElementById('change-video-btn');
                         const logoutBtn = document.getElementById('logout-btn');
 
-                        // Update the cute message
                         updateParagraphBtn.addEventListener('click', () => {
                             const newCuteMessage = prompt("Enter new cute message:");
                             cuteMessage = newCuteMessage;
                             localStorage.setItem('cuteMessage', cuteMessage);  // Save to localStorage
 
-                            // Immediately update for Zodwa (if logged in)
                             const contentDiv = document.getElementById('content');
                             if (contentDiv) {
                                 contentDiv.innerHTML = `<p>${cuteMessage}</p>`;
                             }
                         });
 
-                        // Change background image
                         changeBackgroundBtn.addEventListener('click', () => {
                             const newBackgroundUrl = prompt("Enter new background URL:");
                             backgroundUrl = newBackgroundUrl;
+                            localStorage.setItem('backgroundUrl', backgroundUrl);  // Save to localStorage
                             document.body.style.backgroundImage = `url('${backgroundUrl}')`;
                         });
 
-                        // Change cute video
                         changeVideoBtn.addEventListener('click', () => {
                             const newCuteVideo = prompt("Enter new cute video URL:");
                             cuteVideo = newCuteVideo;
                             localStorage.setItem('cuteVideo', cuteVideo);  // Save to localStorage
 
-                            // Immediately display the new video
                             const contentDiv = document.getElementById('content');
                             contentDiv.innerHTML = `
                                 <video width="100%" height="600" controls>
@@ -171,7 +158,6 @@
                             `;
                         });
 
-                        // Handle logout
                         logoutBtn.addEventListener('click', () => {
                             document.body.innerHTML = `
                                 <h1>Login</h1>
@@ -181,19 +167,15 @@
                                     <input type="submit" value="Login">
                                 </div>
                             `;
-                            setupLoginForm(); // Reinitialize the login form after logout
+                            setupLoginForm();
                         });
                     }
 
-                    // Login Form Setup
                     function setupLoginForm() {
-                        // Reinitialize the login form
                         const form = document.getElementById('login-form');
                         form.addEventListener('submit', (e) => {
                             e.preventDefault();
                             const name = document.getElementById('name').value.trim();
-
-                            console.log("Entered name: ", name); // Debugging line
 
                             if (name === 'Zodwa') {
                                 document.body.innerHTML = `
