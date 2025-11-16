@@ -55,10 +55,6 @@ body { font-family:'Arial', sans-serif; overflow:hidden; }
     display:flex;
     justify-content:center;
     align-items:center;
-    color:white;
-    font-weight:bold;
-    font-size:14px;
-    text-align:center;
 }
 .heart::before,
 .heart::after {
@@ -71,6 +67,17 @@ body { font-family:'Arial', sans-serif; overflow:hidden; }
 }
 .heart::before { top:-40px; left:0; }
 .heart::after { left:40px; top:0; }
+
+/* Heart text inside */
+.heart span {
+    position:relative;
+    z-index:2;
+    color:white;
+    font-weight:bold;
+    text-align:center;
+    font-size:14px;
+    line-height:1.1;
+}
 
 /* Logout button */
 #logout-btn {
@@ -134,18 +141,13 @@ loginBtn.addEventListener('click', ()=>{
 logoutBtn.addEventListener('click', ()=>{
     main.style.display='none';
     loginForm.style.display='flex';
-    // Remove hearts
     document.querySelectorAll('.heart').forEach(h => h.remove());
 });
 
 // Toggle Apology Message
 messageBtn.addEventListener('click', ()=>{
-    if(messageContent.style.display === 'block'){
-        messageContent.style.display='none';
-    } else {
-        messageContent.style.display='block';
-        messageContent.innerText = `I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again in which we just reestablished and rebuilt and that you gave me I want you to know that my actions are a reflection of my flaws I should’ve handled the situation differently I handled everything terribly you are an incredible strong caring intelligent I should have been as amazing as you have been to me and I’m sorry for failing you I just want you to know that I truly value you and I’m committed to understanding you better you deserve the world I’m sorry for hurting you you mean a lot to me and I hope that I can show you that I only handled the situation wrong not that I don’t love you\n\nI love you ❤️`;
-    }
+    messageContent.style.display = messageContent.style.display === 'block' ? 'none' : 'block';
+    messageContent.innerText = `I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again in which we just reestablished and rebuilt and that you gave me I want you to know that my actions are a reflection of my flaws I should’ve handled the situation differently I handled everything terribly you are an incredible strong caring intelligent I should have been as amazing as you have been to me and I’m sorry for failing you I just want you to know that I truly value you and I’m committed to understanding you better you deserve the world I’m sorry for hurting you you mean a lot to me and I hope that I can show you that I only handled the situation wrong not that I don’t love you\n\nI love you ❤️`;
 });
 
 // Create floating hearts
@@ -153,8 +155,10 @@ function createHearts(){
     const heartTexts = ['Zodwa','I','am','sorry','I love you'];
     heartTexts.forEach(text => {
         const heart = document.createElement('div');
-        heart.className = 'heart';
-        heart.innerText = text;
+        heart.className='heart';
+        const span = document.createElement('span');
+        span.innerText = text;
+        heart.appendChild(span);
         heart.style.left = Math.random() * (window.innerWidth - 100) + 'px';
         heart.style.top = Math.random() * (window.innerHeight - 100) + 'px';
         main.appendChild(heart);
@@ -175,11 +179,11 @@ function animateHeart(heart){
         heart.style.left = x + 'px';
         heart.style.top = y + 'px';
 
-        // Wrap around horizontally
+        // Wrap horizontally
         if(x < 0) x = window.innerWidth - 80;
         if(x > window.innerWidth - 80) x = 0;
 
-        // Reset at top
+        // Reset top
         if(y < -100){
             y = window.innerHeight + 50;
             x = Math.random() * (window.innerWidth - 100);
