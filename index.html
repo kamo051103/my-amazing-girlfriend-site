@@ -9,7 +9,7 @@
     body { font-family:'Arial', sans-serif; background: #ffe6ec; overflow:hidden; }
 
     /* Login Form */
-    #login-form { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; background-image: url('photo3.jpg'); background-size:cover; background-position:center; }
+    #login-form { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; background-size:cover; background-position:center; }
     #login-form input[type='text'], #login-form input[type='submit'] { padding:10px; margin:10px 0; border-radius:5px; width:200px; font-size:16px; }
 
     /* Main Page */
@@ -17,7 +17,7 @@
 
     /* Photos on right */
     #photos { display:flex; flex-direction:column; margin-left:20px; }
-    #photos img { width:200px; border-radius:12px; margin-bottom:15px; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
+    #photos img { width:300px; border-radius:12px; margin-bottom:15px; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
 
     /* Tabs */
     .tabs { position:absolute; left:20px; top:50%; transform:translateY(-50%); }
@@ -25,9 +25,8 @@
     #message-content { margin-top:15px; background:rgba(255,255,255,0.9); padding:20px; border-radius:12px; max-width:400px; line-height:1.6; white-space:pre-line; }
 
     /* Hearts */
-    .heart { position:absolute; font-size:24px; color:red; animation:float 4s linear infinite; }
-    @keyframes float { 0%{transform:translateY(0);} 50%{transform:translateY(-50px);} 100%{transform:translateY(0);} }
-
+    .heart { position:absolute; font-size:28px; color:red; animation:float linear infinite; }
+    @keyframes float { 0%{transform:translateY(0);} 50%{transform:translateY(-100px);} 100%{transform:translateY(0);} }
 </style>
 </head>
 <body>
@@ -61,7 +60,7 @@
             document.getElementById('main').style.display='flex';
         } else if(name==='Admin'){
             document.getElementById('login-form').style.backgroundImage='url(photo3.jpg)';
-            alert('Admin Page Background Activated');
+            document.getElementById('login-form').innerHTML = '<h1>Admin Page</h1><p>Background photo3.jpg applied</p>';
         } else{
             alert('Incorrect name');
         }
@@ -75,18 +74,18 @@
         messageContent.innerText = `I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again in which we just reestablished and rebuilt and that you gave me I want you to know that my actions are a reflection of my flaws I should’ve handled the situation differently I handled everything terribly you are an incredible strong caring intelligent I should have been as amazing as you have been to me and I’m sorry for failing you I just want you to know that I truly value you and I’m committed to understanding you better you deserve the world I’m sorry for hurting you you mean a lot to me and I hope that I can show you that I only handled the situation wrong not that I don’t love you\n\nI love you ❤️`;
     });
 
-    // Hearts
+    // Hearts floating
     const main = document.getElementById('main');
     const heartTexts = ['Zodwa','I','am','sorry','I love you'];
-    for(let i=0;i<heartTexts.length;i++){
+    heartTexts.forEach((text,i)=>{
         let heart = document.createElement('div');
         heart.className='heart';
-        heart.innerText=heartTexts[i];
-        heart.style.left = Math.random()*window.innerWidth*0.7+'px';
-        heart.style.top = Math.random()*window.innerHeight*0.7+'px';
-        heart.style.animationDuration = (3+Math.random()*3)+'s';
+        heart.innerText=text;
+        heart.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+        heart.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+        heart.style.animationDuration = (3 + Math.random() * 2) + 's';
         main.appendChild(heart);
-    }
+    });
 </script>
 
 </body>
