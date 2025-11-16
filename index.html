@@ -15,6 +15,7 @@ body { font-family:'Arial', sans-serif; overflow:hidden; }
     align-items:center;
     justify-content:center;
     height:100vh;
+    background-image: url('photo3.jpeg');
     background-size:cover;
     background-position:center;
     color:white;
@@ -47,31 +48,43 @@ body { font-family:'Arial', sans-serif; overflow:hidden; }
 /* Heart Shape */
 .heart {
     position:absolute;
-    width:80px;
-    height:70px;
+    width:60px;
+    height:60px;
     background:red;
-    clip-path: polygon(50% 0%, 61% 10%, 68% 22%, 70% 35%, 62% 50%, 50% 60%, 38% 50%, 30% 35%, 32% 22%, 39% 10%);
+    transform: rotate(-45deg);
     display:flex;
     justify-content:center;
     align-items:center;
     color:white;
     font-weight:bold;
-    text-align:center;
-    font-size:14px;
+    font-size:12px;
     animation: float linear infinite;
 }
+.heart::before,
+.heart::after {
+    content:'';
+    position:absolute;
+    width:60px;
+    height:60px;
+    background:red;
+    border-radius:50%;
+}
+.heart::before { top:-30px; left:0; }
+.heart::after { left:30px; top:0; }
+
+/* Heart floating animation */
 @keyframes float {
-    0% { transform: translate(0,0) rotate(0deg); }
-    25% { transform: translate(50px, -50px) rotate(15deg); }
-    50% { transform: translate(-50px, -100px) rotate(-15deg); }
-    75% { transform: translate(50px, -150px) rotate(10deg); }
-    100% { transform: translate(0, -200px) rotate(-10deg); }
+    0% { transform: translate(0,0) rotate(-45deg); }
+    25% { transform: translate(50px, -50px) rotate(-30deg); }
+    50% { transform: translate(-50px, -100px) rotate(-60deg); }
+    75% { transform: translate(50px, -150px) rotate(-20deg); }
+    100% { transform: translate(0, -200px) rotate(-45deg); }
 }
 
 /* Logout button */
 #logout-btn {
     position:absolute;
-    top:20px;
+    bottom:20px;
     left:20px;
     padding:10px 20px;
     background:#ff4d6d;
@@ -85,7 +98,7 @@ body { font-family:'Arial', sans-serif; overflow:hidden; }
 </head>
 <body>
 
-<div id="login-form" style="background-image:url('photo3.jpeg');">
+<div id="login-form">
     <h1>Login</h1>
     <input type="text" id="name" placeholder="Enter your name" />
     <input type="submit" value="Login" id="login-btn" />
