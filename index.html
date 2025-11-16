@@ -43,13 +43,13 @@ body { font-family:'Arial', sans-serif; overflow:hidden; }
 /* Tabs */
 .tabs { position:absolute; left:20px; top:50%; transform:translateY(-50%); }
 .tab-btn { padding:10px 20px; margin-bottom:10px; border:none; border-radius:8px; background:#ff4d6d; color:white; cursor:pointer; font-size:16px; width:180px; }
-#message-content { margin-top:15px; background:rgba(255,255,255,0.9); padding:20px; border-radius:12px; max-width:400px; line-height:1.6; white-space:pre-line; }
+#message-content { margin-top:15px; background:rgba(255,255,255,0.9); padding:20px; border-radius:12px; max-width:400px; line-height:1.6; white-space:pre-line; display:none; }
 
 /* Heart Shape */
 .heart {
     position:absolute;
-    width:60px;
-    height:60px;
+    width:80px;
+    height:80px;
     background:red;
     transform: rotate(-45deg);
     display:flex;
@@ -57,29 +57,20 @@ body { font-family:'Arial', sans-serif; overflow:hidden; }
     align-items:center;
     color:white;
     font-weight:bold;
-    font-size:12px;
-    animation: float linear infinite;
+    font-size:14px;
+    text-align:center;
 }
 .heart::before,
 .heart::after {
     content:'';
     position:absolute;
-    width:60px;
-    height:60px;
+    width:80px;
+    height:80px;
     background:red;
     border-radius:50%;
 }
-.heart::before { top:-30px; left:0; }
-.heart::after { left:30px; top:0; }
-
-/* Heart floating animation */
-@keyframes float {
-    0% { transform: translate(0,0) rotate(-45deg); }
-    25% { transform: translate(50px, -50px) rotate(-30deg); }
-    50% { transform: translate(-50px, -100px) rotate(-60deg); }
-    75% { transform: translate(50px, -150px) rotate(-20deg); }
-    100% { transform: translate(0, -200px) rotate(-45deg); }
-}
+.heart::before { top:-40px; left:0; }
+.heart::after { left:40px; top:0; }
 
 /* Logout button */
 #logout-btn {
@@ -107,7 +98,7 @@ body { font-family:'Arial', sans-serif; overflow:hidden; }
 <div id="main">
     <div class="tabs">
         <button class="tab-btn" id="show-message">Apology Message</button>
-        <div id="message-content" style="display:none;"></div>
+        <div id="message-content"></div>
     </div>
 
     <div id="photos">
@@ -124,46 +115,79 @@ const nameInput = document.getElementById('name');
 const loginForm = document.getElementById('login-form');
 const main = document.getElementById('main');
 const logoutBtn = document.getElementById('logout-btn');
+const messageBtn = document.getElementById('show-message');
+const messageContent = document.getElementById('message-content');
 
-loginBtn.addEventListener('click',()=>{
+// Login
+loginBtn.addEventListener('click', ()=>{
     const name = nameInput.value.trim();
     if(name === 'Zodwa'){
         loginForm.style.display='none';
         main.style.display='flex';
         createHearts();
-    } else {
+    } else{
         alert('Incorrect name');
     }
 });
 
-logoutBtn.addEventListener('click',()=>{
+// Logout
+logoutBtn.addEventListener('click', ()=>{
     main.style.display='none';
     loginForm.style.display='flex';
+    // Remove hearts
+    document.querySelectorAll('.heart').forEach(h => h.remove());
 });
 
-const messageBtn = document.getElementById('show-message');
-const messageContent = document.getElementById('message-content');
-
-messageBtn.addEventListener('click',()=>{
-    messageContent.style.display='block';
-    messageContent.innerText = `I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again in which we just reestablished and rebuilt and that you gave me I want you to know that my actions are a reflection of my flaws I should’ve handled the situation differently I handled everything terribly you are an incredible strong caring intelligent I should have been as amazing as you have been to me and I’m sorry for failing you I just want you to know that I truly value you and I’m committed to understanding you better you deserve the world I’m sorry for hurting you you mean a lot to me and I hope that I can show you that I only handled the situation wrong not that I don’t love you\n\nI love you ❤️`;
+// Toggle Apology Message
+messageBtn.addEventListener('click', ()=>{
+    if(messageContent.style.display === 'block'){
+        messageContent.style.display='none';
+    } else {
+        messageContent.style.display='block';
+        messageContent.innerText = `I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again in which we just reestablished and rebuilt and that you gave me I want you to know that my actions are a reflection of my flaws I should’ve handled the situation differently I handled everything terribly you are an incredible strong caring intelligent I should have been as amazing as you have been to me and I’m sorry for failing you I just want you to know that I truly value you and I’m committed to understanding you better you deserve the world I’m sorry for hurting you you mean a lot to me and I hope that I can show you that I only handled the situation wrong not that I don’t love you\n\nI love you ❤️`;
+    }
 });
 
-// Function to create floating hearts
+// Create floating hearts
 function createHearts(){
     const heartTexts = ['Zodwa','I','am','sorry','I love you'];
-    heartTexts.forEach((text)=>{
-        let heart = document.createElement('div');
-        heart.className='heart';
-        heart.innerText=text;
-        // Random start position
+    heartTexts.forEach(text => {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.innerText = text;
         heart.style.left = Math.random() * (window.innerWidth - 100) + 'px';
         heart.style.top = Math.random() * (window.innerHeight - 100) + 'px';
-        // Random animation duration and delay
-        heart.style.animationDuration = (5 + Math.random()*3) + 's';
-        heart.style.animationDelay = (Math.random()*2) + 's';
         main.appendChild(heart);
+        animateHeart(heart);
     });
+}
+
+// Animate each heart smoothly
+function animateHeart(heart){
+    let x = parseFloat(heart.style.left);
+    let y = parseFloat(heart.style.top);
+    let dx = (Math.random()*2 + 0.5) * (Math.random()<0.5?-1:1);
+    let dy = -(Math.random()*1.5 + 0.5);
+
+    function move(){
+        x += dx;
+        y += dy;
+        heart.style.left = x + 'px';
+        heart.style.top = y + 'px';
+
+        // Wrap around horizontally
+        if(x < 0) x = window.innerWidth - 80;
+        if(x > window.innerWidth - 80) x = 0;
+
+        // Reset at top
+        if(y < -100){
+            y = window.innerHeight + 50;
+            x = Math.random() * (window.innerWidth - 100);
+        }
+
+        requestAnimationFrame(move);
+    }
+    move();
 }
 </script>
 
