@@ -5,35 +5,39 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Apology Website</title>
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Arial', sans-serif; overflow:hidden; }
+* { margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
 
-/* Login Form */
+/* Login Page */
 #login-form {
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
     height:100vh;
-    background-image: url('photo3.jpeg');
+    background-image:url('photo3.jpeg');
     background-size:cover;
     background-position:center;
     color:white;
 }
 #login-form input[type='text'], #login-form input[type='submit'] {
-    padding:10px; margin:10px 0; border-radius:5px; width:200px; font-size:16px; border:none;
+    padding:10px;
+    margin:10px 0;
+    border-radius:5px;
+    width:220px;
+    font-size:16px;
+    border:none;
 }
 
 /* Main Page */
 #main {
     display:none;
     height:100vh;
-    background:#ffe6ec;
     position:relative;
     padding:20px;
     display:flex;
     justify-content:flex-end;
     align-items:center;
+    background:#ffe6ec;
 }
 
 /* Photos on right */
@@ -48,27 +52,27 @@ body { font-family:'Arial', sans-serif; overflow:hidden; }
 /* Heart Shape */
 .heart {
     position:absolute;
-    width:80px;
-    height:80px;
+    width:100px;
+    height:90px;
     background:red;
     transform: rotate(-45deg);
     display:flex;
     justify-content:center;
     align-items:center;
+    border-radius:10px 10px 0 0;
+    overflow:hidden;
 }
 .heart::before,
 .heart::after {
     content:'';
     position:absolute;
-    width:80px;
-    height:80px;
+    width:100px;
+    height:90px;
     background:red;
     border-radius:50%;
 }
-.heart::before { top:-40px; left:0; }
-.heart::after { left:40px; top:0; }
-
-/* Heart text inside */
+.heart::before { top:-50px; left:0; }
+.heart::after { left:50px; top:0; }
 .heart span {
     position:relative;
     z-index:2;
@@ -77,6 +81,7 @@ body { font-family:'Arial', sans-serif; overflow:hidden; }
     text-align:center;
     font-size:14px;
     line-height:1.1;
+    padding:5px;
 }
 
 /* Logout button */
@@ -96,12 +101,14 @@ body { font-family:'Arial', sans-serif; overflow:hidden; }
 </head>
 <body>
 
+<!-- Login Form -->
 <div id="login-form">
     <h1>Login</h1>
     <input type="text" id="name" placeholder="Enter your name" />
     <input type="submit" value="Login" id="login-btn" />
 </div>
 
+<!-- Main Page -->
 <div id="main">
     <div class="tabs">
         <button class="tab-btn" id="show-message">Apology Message</button>
@@ -166,7 +173,7 @@ function createHearts(){
     });
 }
 
-// Animate each heart smoothly
+// Animate each heart freely
 function animateHeart(heart){
     let x = parseFloat(heart.style.left);
     let y = parseFloat(heart.style.top);
@@ -174,14 +181,13 @@ function animateHeart(heart){
     let dy = -(Math.random()*1.5 + 0.5);
 
     function move(){
-        x += dx;
-        y += dy;
-        heart.style.left = x + 'px';
-        heart.style.top = y + 'px';
+        x += dx; y += dy;
+        heart.style.left = x+'px';
+        heart.style.top = y+'px';
 
         // Wrap horizontally
-        if(x < 0) x = window.innerWidth - 80;
-        if(x > window.innerWidth - 80) x = 0;
+        if(x < 0) x = window.innerWidth - 100;
+        if(x > window.innerWidth - 100) x = 0;
 
         // Reset top
         if(y < -100){
