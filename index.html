@@ -58,7 +58,7 @@
         border:none;
         border-radius:8px;
         cursor:pointer;
-        z-index:50;
+        z-index:999;
     }
 
     /* Photos on right */
@@ -69,14 +69,13 @@
         transform:translateY(-50%);
         display:flex;
         flex-direction:column;
-        z-index:10;
     }
     #photos img {
-        width:350px;
+        width:300px;
         border-radius:15px;
         margin-bottom:20px;
         box-shadow:0 4px 12px rgba(0,0,0,0.2);
-        max-width:90vw;
+        z-index:1;
     }
 
     /* Tabs Left */
@@ -85,7 +84,7 @@
         left:40px;
         top:50%;
         transform:translateY(-50%);
-        z-index:20;
+        z-index:1;
     }
     .tab-btn {
         padding:12px 20px;
@@ -108,21 +107,17 @@
         max-width:400px;
         white-space:pre-line;
         line-height:1.6;
-        z-index:25;
-        position:relative;
     }
 
-    /* HEART SHAPE */
+    /* HEARTS */
     .heart {
         position:absolute;
         width:90px;
         height:90px;
         background:red;
         transform:rotate(-45deg);
-        opacity:0.85;
-        z-index:100; /* HEARTS IN FRONT */
+        animation:float 6s linear infinite;
     }
-
     .heart:before,
     .heart:after {
         content:"";
@@ -135,7 +130,6 @@
     }
     .heart:before { top:-45px; left:0; }
     .heart:after { left:45px; top:0; }
-
     .heart span {
         position:absolute;
         top:55%;
@@ -150,15 +144,67 @@
         text-shadow:0 0 6px black;
         pointer-events:none;
     }
+    @keyframes float {
+        0%   { transform:translate(0,0) rotate(-45deg); }
+        50%  { transform:translate(0,-180px) rotate(-45deg); }
+        100% { transform:translate(0,0) rotate(-45deg); }
+    }
 
-    /* MOBILE FIXES */
-    @media(max-width:800px) {
-        #photos img { width:240px; }
-        .tab-btn { width:150px; font-size:15px; }
-        #message-content { max-width:300px; }
-        .heart { width:70px; height:70px; }
-        .heart:before, .heart:after { width:70px; height:70px; }
-        .heart span { font-size:12px; width:60px; }
+    /* PUZZLE */
+    #puzzle-container {
+        display:none;
+        position:absolute;
+        left:50%;
+        top:50%;
+        transform:translate(-50%, -50%);
+        background:white;
+        padding:20px;
+        border-radius:12px;
+        box-shadow:0 4px 12px rgba(0,0,0,0.25);
+        width:360px;
+        text-align:center;
+        z-index:10000;
+    }
+    #puzzle-buttons { margin-bottom:15px; }
+    #puzzle-buttons button {
+        margin:2px;
+        padding:6px 10px;
+        border:none;
+        border-radius:6px;
+        background:#ff4d6d;
+        color:white;
+        cursor:pointer;
+    }
+    #puzzle-grid {
+        margin:auto;
+        display:grid;
+        gap:3px;
+    }
+    .piece {
+        position:relative;
+        transform-style:preserve-3d;
+        transition:transform 0.6s;
+        cursor:pointer;
+    }
+    .piece.flipped { transform:rotateY(180deg); }
+    .piece-front, .piece-back {
+        position:absolute;
+        width:100%;
+        height:100%;
+        backface-visibility:hidden;
+        border-radius:4px;
+    }
+    .piece-front { background-size:cover; }
+    .piece-back {
+        background:#ff4d6d;
+        color:white;
+        font-weight:bold;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        text-align:center;
+        padding:5px;
+        transform:rotateY(180deg);
     }
 </style>
 </head>
@@ -178,6 +224,7 @@
 
     <div class="tabs">
         <button class="tab-btn" id="show-message">Apology Message</button>
+        <button class="tab-btn" id="show-puzzle">Puzzle</button>
         <div id="message-content"></div>
     </div>
 
@@ -185,82 +232,120 @@
         <img src="photo.jpg" />
         <img src="photo2.jpg" />
     </div>
+
+    <!-- Puzzle -->
+    <div id="puzzle-container">
+        <div id="puzzle-buttons">
+            <button data-puzzle="1">3×3</button>
+            <button data-puzzle="2">4×4</button>
+            <button data-puzzle="3">5×5</button>
+        </div>
+        <h2 id="puzzle-title"></h2>
+        <div id="puzzle-grid"></div>
+        <p id="puzzle-status" style="margin-top:15px; font-weight:bold;"></p>
+    </div>
+
 </div>
 
 <script>
-    const loginBtn = document.getElementById("login-btn");
-    const nameInput = document.getElementById("name");
-    const loginForm = document.getElementById("login-form");
-    const main = document.getElementById("main");
+const loginBtn = document.getElementById("login-btn");
+const nameInput = document.getElementById("name");
+const loginForm = document.getElementById("login-form");
+const main = document.getElementById("main");
 
-    loginBtn.addEventListener("click", () => {
-        const name = nameInput.value.trim();
-        if (name === "Zodwa" || name === "Admin") {
-            loginForm.style.display = "none";
-            main.style.display = "block";
-        } else {
-            alert("Incorrect name.");
-        }
+loginBtn.addEventListener("click", () => {
+    const name = nameInput.value.trim();
+    if(name === "Zodwa" || name==="Admin"){
+        loginForm.style.display = "none";
+        main.style.display = "block";
+    } else { alert("Incorrect name."); }
+});
+
+document.getElementById("logout").onclick = () => location.reload();
+
+/* APOLOGY MESSAGE */
+const APOLOGY = `I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again in which we just reestablished and rebuilt and that you gave me I want you to know that my actions are a reflection of my flaws I should’ve handled the situation differently I handled everything terribly you are an incredible strong caring intelligent I should have been as amazing as you have been to me and I’m sorry for failing you I just want you to know that I truly value you and I’m committed to understanding you better you deserve the world I’m sorry for hurting you you mean a lot to me and I hope that I can show you that I only handled the situation wrong not that I don’t love you\n\nI love you ❤️`;
+
+const messageBtn = document.getElementById("show-message");
+const messageBox = document.getElementById("message-content");
+messageBtn.addEventListener("click", ()=>{
+    if(messageBox.style.display==="none"||messageBox.style.display==="") {
+        messageBox.style.display="block";
+        messageBox.innerText = APOLOGY;
+    } else { messageBox.style.display="none"; }
+});
+
+/* HEARTS */
+const heartWords = ["Zodwa","I","am","sorry","I love you"];
+heartWords.forEach(word=>{
+    const h = document.createElement("div");
+    h.className="heart";
+    const text = document.createElement("span");
+    text.innerText = word;
+    h.appendChild(text);
+    h.style.left = Math.random()*(window.innerWidth-120)+"px";
+    h.style.top = Math.random()*(window.innerHeight-120)+"px";
+    h.style.animationDuration = (5 + Math.random()*3) + "s";
+    main.appendChild(h);
+});
+
+/* PUZZLES */
+const puzzles = {
+    1: {img:"Puzzel1.JPG", size:3, message:"You are the best girlfriend"},
+    2: {img:"Puzzel2.JPG", size:4, message:"You make me so happy and I love you so much"},
+    3: {img:"Puzzel3.jpeg", size:5, message:"I am sorry"}
+};
+
+const showPuzzleBtn = document.getElementById("show-puzzle");
+const puzzleContainer = document.getElementById("puzzle-container");
+const puzzleGrid = document.getElementById("puzzle-grid");
+const puzzleTitle = document.getElementById("puzzle-title");
+const puzzleStatus = document.getElementById("puzzle-status");
+const puzzleButtons = document.querySelectorAll("#puzzle-buttons button");
+
+showPuzzleBtn.onclick = () => {
+    puzzleContainer.style.display = puzzleContainer.style.display==="none"?"block":"none";
+};
+
+/* Load puzzle on button click */
+puzzleButtons.forEach(btn=>{
+    btn.onclick=()=>loadPuzzle(btn.dataset.puzzle);
+});
+
+function loadPuzzle(num){
+    const p = puzzles[num];
+    puzzleGrid.innerHTML="";
+    puzzleStatus.innerText="";
+    puzzleTitle.innerText = "Puzzle " + num;
+    puzzleGrid.style.gridTemplateColumns = `repeat(${p.size},1fr)`;
+    puzzleGrid.style.gridTemplateRows = `repeat(${p.size},1fr)`;
+    const positions = [...Array(p.size*p.size).keys()];
+    positions.sort(()=>Math.random()-0.5);
+
+    positions.forEach((pos,i)=>{
+        const piece = document.createElement("div");
+        piece.className="piece";
+        piece.style.width = `${300/p.size}px`;
+        piece.style.height = `${300/p.size}px`;
+
+        const row = Math.floor(pos/p.size);
+        const col = pos%p.size;
+
+        piece.innerHTML = `
+        <div class="piece-front" style="background-image:url('${p.img}'); background-position:-${col*(300/p.size)}px -${row*(300/p.size)}px;"></div>
+        <div class="piece-back">${p.message}</div>
+        `;
+        piece.onclick = ()=>{ piece.classList.toggle("flipped"); checkPuzzleSolved(p.size*p.size); };
+        puzzleGrid.appendChild(piece);
     });
+}
 
-    document.getElementById("logout").onclick = () => location.reload();
-
-    const messageBtn = document.getElementById("show-message");
-    const messageBox = document.getElementById("message-content");
-
-    const APOLOGY = 
-`I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again in which we just reestablished and rebuilt and that you gave me I want you to know that my actions are a reflection of my flaws I should’ve handled the situation differently I handled everything terribly you are an incredible strong caring intelligent I should have been as amazing as you have been to me and I’m sorry for failing you I just want you to know that I truly value you and I’m committed to understanding you better you deserve the world I’m sorry for hurting you you mean a lot to me and I hope that I can show you that I only handled the situation wrong not that I don’t love you
-
-I love you ❤️`;
-
-    messageBtn.addEventListener("click", () => {
-        if (messageBox.style.display === "none" || messageBox.style.display === "") {
-            messageBox.style.display = "block";
-            messageBox.innerText = APOLOGY;
-        } else {
-            messageBox.style.display = "none";
-        }
-    });
-
-    /* FLOATING HEARTS */
-    const heartWords = ["Zodwa", "I", "am", "sorry", "I love you"];
-
-    heartWords.forEach(word => {
-        const h = document.createElement("div");
-        h.className = "heart";
-
-        const text = document.createElement("span");
-        text.innerText = word;
-
-        h.appendChild(text);
-
-        h.style.left = Math.random() * (window.innerWidth - 120) + "px";
-        h.style.top = Math.random() * (window.innerHeight - 120) + "px";
-
-        // NEW SMOOTH RANDOM MOVEMENT
-        let dx = (Math.random() - 0.5) * 2; // horizontal speed
-        let dy = (Math.random() - 0.5) * 2; // vertical speed
-
-        function moveHeart() {
-            let x = parseFloat(h.style.left);
-            let y = parseFloat(h.style.top);
-
-            x += dx * 2; // speed multiplier
-            y += dy * 2;
-
-            // Bounce off edges
-            if(x < 0 || x > window.innerWidth - 90) dx *= -1;
-            if(y < 0 || y > window.innerHeight - 90) dy *= -1;
-
-            h.style.left = x + "px";
-            h.style.top = y + "px";
-
-            requestAnimationFrame(moveHeart);
-        }
-
-        moveHeart();
-        main.appendChild(h);
-    });
+function checkPuzzleSolved(total){
+    const pieces = document.querySelectorAll(".piece");
+    let count=0;
+    pieces.forEach(p=>{if(p.classList.contains("flipped")) count++;});
+    if(count===total) puzzleStatus.innerText="You solved it ❤️ I love you!";
+}
 </script>
 
 </body>
