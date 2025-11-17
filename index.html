@@ -1,264 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Apology Website</title>
+
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:Arial,Helvetica,sans-serif;background:#ffe6ec;overflow:hidden;height:100vh}
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 
-  /* LOGIN (shown first) */
-  #login {
-    position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    background-image:url('photo3.jpeg');background-size:cover;background-position:center;color:#fff;
-  }
-  #login .card{background:rgba(0,0,0,0.45);padding:20px;border-radius:12px;text-align:center}
-  #login input[type="text"]{width:220px;padding:10px;border-radius:6px;border:none;margin-top:10px}
-  #login button{margin-top:10px;padding:10px 18px;border-radius:8px;border:none;background:#ff4d6d;color:#fff;cursor:pointer}
+    /* LOGIN PAGE */
+    #login-form {
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        height:100vh;
+        background:url('photo3.jpeg') center/cover no-repeat;
+    }
+    #login-form h1 {
+        font-size:32px;
+        margin-bottom:20px;
+        color:white;
+        text-shadow:0 0 10px black;
+    }
+    #login-form input {
+        padding:10px;
+        border-radius:6px;
+        border:none;
+        margin:5px 0;
+        width:220px;
+        font-size:16px;
+    }
+    #login-btn {
+        background:#ff4d6d;
+        color:white;
+        cursor:pointer;
+    }
 
-  /* ADMIN (hidden initially) */
-  #admin { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); color:#fff;
-    align-items:center;justify-content:center;flex-direction:column; display:flex; gap:12px;
-  }
+    /* MAIN PAGE */
+    #main {
+        display:none;
+        height:100vh;
+        background:#ffe6ec;
+        position:relative;
+        padding:20px;
+    }
 
-  /* MAIN (hidden initially) */
-  #main { display:none; position:fixed; inset:0; background:#ffe6ec; overflow:hidden; }
+    /* Logout bottom-left */
+    #logout {
+        position:absolute;
+        bottom:20px;
+        left:20px;
+        padding:8px 16px;
+        background:#ff4d6d;
+        color:white;
+        border:none;
+        border-radius:8px;
+        cursor:pointer;
+    }
 
-  /* Right-side photos (fixed so hearts won't push them) */
-  #photos {
-    position:absolute; right:24px; top:50%; transform:translateY(-50%);
-    display:flex; flex-direction:column; gap:18px; align-items:flex-end;
-    z-index:5;
-  }
-  #photos img{ width:420px; max-width:38vw; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,0.18); }
+    /* Photos on right */
+    #photos {
+        position:absolute;
+        right:40px;
+        top:50%;
+        transform:translateY(-50%);
+        display:flex;
+        flex-direction:column;
+    }
+    #photos img {
+        width:350px;
+        border-radius:15px;
+        margin-bottom:20px;
+        box-shadow:0 4px 12px rgba(0,0,0,0.2);
+    }
 
-  /* Tabs and message */
-  .left-panel { position:absolute; left:24px; top:50%; transform:translateY(-50%); z-index:5; }
-  .apology-btn { display:block;padding:12px 18px;background:#ff4d6d;color:#fff;border:none;border-radius:10px; cursor:pointer;font-size:16px }
-  #msg { margin-top:14px; width:360px; max-width:52vw; background:rgba(255,255,255,0.95); padding:16px;border-radius:12px; line-height:1.5; display:none; color:#111; }
+    /* Tabs Left */
+    .tabs {
+        position:absolute;
+        left:40px;
+        top:50%;
+        transform:translateY(-50%);
+    }
+    .tab-btn {
+        padding:12px 20px;
+        margin-bottom:10px;
+        border:none;
+        border-radius:8px;
+        background:#ff4d6d;
+        color:white;
+        cursor:pointer;
+        font-size:17px;
+        width:180px;
+    }
+    #message-content {
+        display:none;
+        margin-top:15px;
+        background:white;
+        padding:20px;
+        border-radius:12px;
+        box-shadow:0 0 10px rgba(0,0,0,0.15);
+        max-width:400px;
+        white-space:pre-line;
+        line-height:1.6;
+    }
 
-  /* Logout buttons */
-  #logout-main, #logout-admin {
-    position:fixed; left:18px; bottom:18px; padding:10px 16px; border:none;border-radius:10px;background:#ff4d6d;color:#fff; cursor:pointer; z-index:6;
-  }
-  #logout-admin { left:18px; bottom:18px; } /* admin uses same position when visible */
+    /* HEART SHAPE + TEXT */
+    .heart {
+        position:absolute;
+        width:90px;
+        height:90px;
+        background:red;
+        transform:rotate(-45deg);
+        animation:float 6s linear infinite;
+    }
+    .heart:before, .heart:after {
+        content:"";
+        position:absolute;
+        width:90px;
+        height:90px;
+        background:red;
+        border-radius:50%;
+    }
+    .heart:before { top:-45px; left:0; }
+    .heart:after { left:45px; top:0; }
 
-  /* hearts container */
-  #hearts { position:absolute; inset:0; pointer-events:none; z-index:2; }
+    /* WORDS INSIDE HEART */
+    .heart span {
+        position:absolute;
+        top:55%;
+        left:50%;
+        transform:translate(-50%,-50%) rotate(45deg);
+        color:white;
+        font-weight:bold;
+        font-size:15px;
+        text-shadow:0 0 8px black;
+        width:80px;
+        text-align:center;
+    }
 
-  /* accessible fallback for small screens */
-  @media (max-width:700px){
-    #photos img{ width:260px; }
-    #msg{ width:88vw; }
-  }
+    /* Floating movement */
+    @keyframes float {
+        0%   { transform:translate(0,0) rotate(-45deg); }
+        50%  { transform:translate(0,-180px) rotate(-45deg); }
+        100% { transform:translate(0,0) rotate(-45deg); }
+    }
 </style>
 </head>
 <body>
 
-  <!-- LOGIN -->
-  <div id="login" aria-hidden="false">
-    <div class="card">
-      <h1>Login</h1>
-      <div style="opacity:0.95;margin-top:10px">Enter your name</div>
-      <input id="name-input" type="text" autocomplete="off" placeholder="e.g. Zodwa or Admin" />
-      <div>
-        <button id="login-btn">Login</button>
-      </div>
-    </div>
-  </div>
+<!-- LOGIN -->
+<div id="login-form">
+    <h1>Login</h1>
+    <input type="text" id="name" placeholder="Enter your name" />
+    <input type="submit" value="Login" id="login-btn" />
+</div>
 
-  <!-- ADMIN (only visible when Admin logs in) -->
-  <div id="admin" aria-hidden="true">
-    <h1>Admin Panel</h1>
-    <p>Background (photo3.jpeg) is visible on Login screen already.</p>
-    <button id="logout-admin">Log Out</button>
-  </div>
+<!-- MAIN PAGE -->
+<div id="main">
 
-  <!-- MAIN (only visible when Zodwa logs in) -->
-  <div id="main" aria-hidden="true">
-    <div id="hearts"></div>
+    <button id="logout">Logout</button>
 
-    <div id="photos" aria-hidden="false">
-      <img src="photo.jpg" alt="photo1" />
-      <img src="photo2.jpg" alt="photo2" />
+    <div class="tabs">
+        <button class="tab-btn" id="show-message">Apology Message</button>
+        <div id="message-content"></div>
     </div>
 
-    <div class="left-panel" aria-hidden="false">
-      <button id="apology-toggle" class="apology-btn">Apology Message</button>
-      <div id="msg"></div>
+    <div id="photos">
+        <img src="photo.jpg" />
+        <img src="photo2.jpg" />
     </div>
-
-    <button id="logout-main">Log Out</button>
-  </div>
+</div>
 
 <script>
-/* --- constants --- */
-const apologyText = `I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again in which we just reestablished and rebuilt and that you gave me I want you to know that my actions are a reflection of my flaws I should’ve handled the situation differently I handled everything terribly you are an incredible strong caring intelligent I should have been as amazing as you have been to me and I’m sorry for failing you I just want you to know that I truly value you and I’m committed to understanding you better you deserve the world I’m sorry for hurting you you mean a lot to me and I hope that I can show you that I only handled the situation wrong not that I don’t love you
+    const loginBtn = document.getElementById("login-btn");
+    const nameInput = document.getElementById("name");
+    const loginForm = document.getElementById("login-form");
+    const main = document.getElementById("main");
 
-I love you ❤️`;
+    loginBtn.addEventListener("click", () => {
+        const name = nameInput.value.trim();
 
-/* --- elements --- */
-const loginEl = document.getElementById('login');
-const mainEl = document.getElementById('main');
-const adminEl = document.getElementById('admin');
-const loginBtn = document.getElementById('login-btn');
-const nameInput = document.getElementById('name-input');
-const logoutMain = document.getElementById('logout-main');
-const logoutAdmin = document.getElementById('logout-admin');
-const apologyToggle = document.getElementById('apology-toggle');
-const msgEl = document.getElementById('msg');
-const heartsContainer = document.getElementById('hearts');
+        if (name === "Zodwa") {
+            loginForm.style.display = "none";
+            main.style.display = "block";
+        } 
+        else if (name === "Admin") {
+            loginForm.style.display = "none";
+            main.style.display = "block";
+            document.body.style.background = "#fff2f5";
+        }
+        else {
+            alert("Incorrect name.");
+        }
+    });
 
-/* --- login logic --- */
-loginBtn.addEventListener('click', () => {
-  const name = (nameInput.value || '').trim();
-  if (!name) { alert('Please enter a name'); return; }
+    /* LOGOUT */
+    document.getElementById("logout").onclick = () => {
+        location.reload();
+    };
 
-  if (name === 'Admin') {
-    // show admin-only UI
-    loginEl.style.display = 'none';
-    adminEl.style.display = 'flex';
-    adminEl.setAttribute('aria-hidden','false');
-    mainEl.style.display = 'none';
-    return;
-  }
+    /* APOLOGY MESSAGE TOGGLE */
+    const messageBtn = document.getElementById("show-message");
+    const messageBox = document.getElementById("message-content");
 
-  if (name === 'Zodwa') {
-    loginEl.style.display = 'none';
-    mainEl.style.display = 'block';
-    mainEl.setAttribute('aria-hidden','false');
-    createHearts(['Zodwa','I','am','sorry','I love you']); // create hearts once
-    return;
-  }
+    messageBtn.addEventListener("click", () => {
+        if (messageBox.style.display === "none" || messageBox.style.display === "") {
+            messageBox.style.display = "block";
+            messageBox.innerText =
+`I’m really sorry for what I’ve done. I hurt you and there’s no excuse for it.
+You’ve always shown me love, loyalty and patience — and I broke that trust again.
 
-  alert('Incorrect name — try "Zodwa" or "Admin"');
-});
+My actions were my own flaws, not a reflection of you.
+You are strong, caring, beautiful, intelligent and everything I’m grateful for.
 
-/* --- logout handlers --- */
-logoutMain.addEventListener('click', ()=> {
-  // remove hearts
-  heartsContainer.innerHTML = '';
-  mainEl.style.display = 'none';
-  loginEl.style.display = 'flex';
-  nameInput.value = '';
-});
+You deserve better from me, and I want to do better for you.
+I love you, and I’m sorry. ❤️`;
+        } else {
+            messageBox.style.display = "none";
+        }
+    });
 
-logoutAdmin.addEventListener('click', ()=> {
-  adminEl.style.display = 'none';
-  loginEl.style.display = 'flex';
-  nameInput.value = '';
-});
+    /* FLOATING HEARTS */
+    const heartWords = ["Zodwa", "I", "am", "sorry", "I love you"];
 
-/* --- apology toggle --- */
-apologyToggle.addEventListener('click', ()=> {
-  if (msgEl.style.display === 'block') {
-    msgEl.style.display = 'none';
-  } else {
-    msgEl.style.display = 'block';
-    msgEl.textContent = apologyText;
-  }
-});
+    heartWords.forEach((word, i) => {
+        const h = document.createElement("div");
+        h.className = "heart";
 
-/* -----------------------
-   HEARTS: SVG + JS animation
-   ----------------------- */
+        const textSpan = document.createElement("span");
+        textSpan.innerText = word;
 
-/* create a single SVG-heart element with centered text */
-function makeSvgHeart(text) {
-  // wrapper to position absolutely
-  const wrapper = document.createElement('div');
-  wrapper.style.position = 'absolute';
-  wrapper.style.width = '110px';
-  wrapper.style.height = '100px';
-  wrapper.style.pointerEvents = 'none';
+        h.appendChild(textSpan);
 
-  // create svg
-  const xmlns = "http://www.w3.org/2000/svg";
-  const svg = document.createElementNS(xmlns, 'svg');
-  svg.setAttribute('viewBox', '0 0 100 90');
-  svg.setAttribute('width', '100%');
-  svg.setAttribute('height', '100%');
-  svg.style.display = 'block';
+        h.style.left = Math.random() * (window.innerWidth - 120) + "px";
+        h.style.top = Math.random() * (window.innerHeight - 120) + "px";
+        h.style.animationDuration = (5 + Math.random() * 4) + "s";
 
-  // heart path (nice rounded heart)
-  const path = document.createElementNS(xmlns,'path');
-  path.setAttribute('d', 'M50 78 L20 48 C5 33 20 12 40 22 C50 27 60 27 70 22 C90 12 105 33 90 48 Z');
-  path.setAttribute('fill','red');
-  svg.appendChild(path);
-
-  // text on top
-  const svgText = document.createElementNS(xmlns,'text');
-  svgText.setAttribute('x','50');
-  svgText.setAttribute('y','50');
-  svgText.setAttribute('text-anchor','middle');
-  svgText.setAttribute('dominant-baseline','middle');
-  svgText.setAttribute('fill','white');
-  svgText.setAttribute('font-size','12');
-  svgText.setAttribute('font-weight','700');
-  svgText.textContent = text;
-
-  svg.appendChild(svgText);
-  wrapper.appendChild(svg);
-  return wrapper;
-}
-
-/* animate a heart element: vertical rise + horizontal sway, continuous */
-function animateHeartEl(el, speedFactor=1) {
-  // starting pos
-  let x = Math.random() * (window.innerWidth - 120);
-  let y = window.innerHeight + (50 + Math.random() * 200);
-  // sway params
-  const swayAmplitude = 60 + Math.random() * 50;
-  const swaySpeed = 0.005 + Math.random() * 0.007;
-  const riseSpeed = 0.4 + Math.random() * 0.8; // px per frame, tuned to feel smooth
-  let t = Math.random() * 1000;
-
-  el.style.left = x + 'px';
-  el.style.top = y + 'px';
-
-  function frame() {
-    t += 1;
-    // rise
-    y -= riseSpeed * speedFactor;
-    // sway horizontally using sine
-    const sway = Math.sin(t * swaySpeed) * swayAmplitude;
-    el.style.left = (x + sway) + 'px';
-    el.style.top = y + 'px';
-    // tiny rotation for life
-    el.style.transform = `rotate(${Math.sin(t * 0.02) * 8}deg)`;
-
-    // if moved off top, recycle to bottom with new horizontal base
-    if (y < -200) {
-      x = Math.random() * (window.innerWidth - 120);
-      y = window.innerHeight + (50 + Math.random() * 200);
-      // randomize speeds slightly
-    }
-    el._raf = requestAnimationFrame(frame);
-  }
-  el._raf = requestAnimationFrame(frame);
-}
-
-/* create N hearts with given texts */
-function createHearts(texts) {
-  // clear any existing hearts and cancel rAFs
-  heartsContainer.querySelectorAll('div').forEach(d=>{
-    if (d._raf) cancelAnimationFrame(d._raf);
-    d.remove();
-  });
-
-  texts.forEach((t, i) => {
-    const heart = makeSvgHeart(t);
-    heartsContainer.appendChild(heart);
-    // stagger speed so they don't all match
-    animateHeartEl(heart, 0.8 + Math.random()*1.4);
-  });
-}
-
-/* ensure resize doesn't break positions too badly */
-window.addEventListener('resize', ()=>{
-  // no heavy work — hearts are recycled when logging out / in
-});
+        main.appendChild(h);
+    });
 </script>
 
 </body>
