@@ -1,196 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Apology Website</title>
-
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 
-/* LOGIN PAGE */
-#login-form {
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    height:100vh;
-    background:url('photo3.jpeg') center/cover no-repeat;
-}
-#login-form h1 {
-    font-size:32px;
-    margin-bottom:20px;
-    color:white;
-    text-shadow:0 0 10px black;
-}
-#login-form input {
-    padding:10px;
-    border-radius:6px;
-    border:none;
-    margin:5px 0;
-    width:220px;
-    font-size:16px;
-}
-#login-btn {
-    background:#ff4d6d;
-    color:white;
-    cursor:pointer;
-}
+    /* LOGIN PAGE */
+    #login-form {
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        height:100vh;
+        background:url('photo3.jpeg') center/cover no-repeat;
+    }
+    #login-form h1 {
+        font-size:32px;
+        margin-bottom:20px;
+        color:white;
+        text-shadow:0 0 10px black;
+    }
+    #login-form input {
+        padding:10px;
+        border-radius:6px;
+        border:none;
+        margin:5px 0;
+        width:220px;
+        font-size:16px;
+    }
+    #login-btn { background:#ff4d6d; color:white; cursor:pointer; }
 
-/* MAIN PAGE */
-#main {
-    display:none;
-    height:100vh;
-    background:#ffe6ec;
-    position:relative;
-    padding:20px;
-}
+    /* MAIN PAGE */
+    #main { display:none; height:100vh; background:#ffe6ec; position:relative; padding:20px; }
 
-/* Logout bottom-left */
-#logout {
-    position:absolute;
-    bottom:20px;
-    left:20px;
-    padding:8px 16px;
-    background:#ff4d6d;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-}
+    /* Logout bottom-left */
+    #logout {
+        position:absolute;
+        bottom:20px;
+        left:20px;
+        padding:8px 16px;
+        background:#ff4d6d;
+        color:white;
+        border:none;
+        border-radius:8px;
+        cursor:pointer;
+        z-index:1000;
+    }
 
-/* Photos on right */
-#photos {
-    position:absolute;
-    right:40px;
-    top:50%;
-    transform:translateY(-50%);
-    display:flex;
-    flex-direction:column;
-}
-#photos img {
-    width:300px;
-    border-radius:15px;
-    margin-bottom:20px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.2);
-}
+    /* Photos on right */
+    #photos {
+        position:absolute;
+        right:40px;
+        top:50%;
+        transform:translateY(-50%);
+        display:flex;
+        flex-direction:column;
+        z-index:1;
+    }
+    #photos img {
+        width:300px;
+        border-radius:15px;
+        margin-bottom:20px;
+        box-shadow:0 4px 12px rgba(0,0,0,0.2);
+    }
 
-/* Tabs Left */
-.tabs {
-    position:absolute;
-    left:40px;
-    top:50%;
-    transform:translateY(-50%);
-}
-.tab-btn {
-    padding:12px 20px;
-    margin-bottom:10px;
-    border:none;
-    border-radius:8px;
-    background:#ff4d6d;
-    color:white;
-    cursor:pointer;
-    font-size:17px;
-    width:180px;
-}
-#message-content {
-    display:none;
-    margin-top:15px;
-    background:white;
-    padding:20px;
-    border-radius:12px;
-    box-shadow:0 0 10px rgba(0,0,0,0.15);
-    max-width:400px;
-    white-space:pre-line;
-    line-height:1.6;
-}
+    /* Tabs Left */
+    .tabs { position:absolute; left:40px; top:50%; transform:translateY(-50%); z-index:100; }
+    .tab-btn {
+        padding:12px 20px;
+        margin-bottom:10px;
+        border:none;
+        border-radius:8px;
+        background:#ff4d6d;
+        color:white;
+        cursor:pointer;
+        font-size:17px;
+        width:220px;
+    }
 
-/* Puzzle container */
-#puzzle-container {
-    position:absolute;
-    top:20%;
-    left:50%;
-    transform:translateX(-50%);
-}
+    #message-content, #puzzle-content {
+        display:none;
+        margin-top:15px;
+        background:white;
+        padding:20px;
+        border-radius:12px;
+        box-shadow:0 0 10px rgba(0,0,0,0.15);
+        max-width:400px;
+        max-height:400px;
+        overflow:auto;
+        white-space:pre-line;
+        line-height:1.6;
+    }
 
-/* Puzzle tiles */
-.tile {
-    position: absolute;
-    box-sizing: border-box;
-    border: 1px solid #fff;
-    cursor: pointer;
-    transition: top 0.3s, left 0.3s;
-}
+    /* HEARTS */
+    .heart {
+        position:absolute;
+        width:90px;
+        height:90px;
+        background:red;
+        transform:rotate(-45deg);
+        z-index:50;
+    }
+    .heart:before, .heart:after {
+        content:"";
+        position:absolute;
+        width:90px;
+        height:90px;
+        background:red;
+        border-radius:50%;
+    }
+    .heart:before { top:-45px; left:0; }
+    .heart:after { left:45px; top:0; }
+    .heart span {
+        position:absolute;
+        top:55%;
+        left:50%;
+        transform:translate(-50%,-50%) rotate(45deg);
+        color:white;
+        font-weight:bold;
+        font-size:15px;
+        width:80px;
+        text-align:center;
+        z-index:999;
+        text-shadow:0 0 6px black;
+        pointer-events:none;
+    }
 
-/* Puzzle message */
-#puzzle-message {
-    margin-top:20px;
-    display:none;
-    background:white;
-    padding:20px;
-    border-radius:12px;
-    max-width:400px;
-    text-align:center;
-    box-shadow:0 4px 12px rgba(0,0,0,0.2);
-}
+    /* FLOAT ANIMATION */
+    @keyframes float {
+        0% { transform:translate(0,0) rotate(-45deg); }
+        50% { transform:translate(0,-200px) rotate(-45deg); }
+        100% { transform:translate(0,0) rotate(-45deg); }
+    }
 
-/* Back button for puzzle */
-#back-btn {
-    display:none;
-    margin-top:20px;
-    padding:10px 20px;
-    background:#ff4d6d;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-}
-
-/* FIXED HEART SHAPE + TEXT */
-.heart {
-    position:absolute;
-    width:90px;
-    height:90px;
-    background:red;
-    transform:rotate(-45deg);
-    animation:float 6s linear infinite;
-}
-.heart:before,
-.heart:after {
-    content:"";
-    position:absolute;
-    width:90px;
-    height:90px;
-    background:red;
-    border-radius:50%;
-    z-index:1;
-}
-.heart:before { top:-45px; left:0; }
-.heart:after { left:45px; top:0; }
-
-/* TEXT ALWAYS ON TOP */
-.heart span {
-    position:absolute;
-    top:55%;
-    left:50%;
-    transform:translate(-50%,-50%) rotate(45deg);
-    color:white;
-    font-weight:bold;
-    font-size:15px;
-    width:80px;
-    text-align:center;
-    z-index:9999;
-    text-shadow:0 0 6px black;
-    pointer-events:none;
-}
-
-/* Floating hearts animation */
-@keyframes float {
-    0%   { transform:translate(0,0) rotate(-45deg); }
-    50%  { transform:translate(0,-180px) rotate(-45deg); }
-    100% { transform:translate(0,0) rotate(-45deg); }
-}
+    /* PUZZLE TILES */
+    .puzzle-tile {
+        position:absolute;
+        background-size:cover;
+        cursor:pointer;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
 </style>
 </head>
 <body>
@@ -198,8 +150,8 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 <!-- LOGIN -->
 <div id="login-form">
     <h1>Login</h1>
-    <input type="text" id="name" placeholder="Enter your name" />
-    <input type="submit" value="Login" id="login-btn" />
+    <input type="text" id="name" placeholder="Enter your name">
+    <input type="submit" value="Login" id="login-btn">
 </div>
 
 <!-- MAIN PAGE -->
@@ -210,179 +162,103 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
         <button class="tab-btn" id="show-message">Apology Message</button>
         <button class="tab-btn" id="show-puzzle">Puzzle</button>
         <div id="message-content"></div>
+        <div id="puzzle-content"></div>
     </div>
 
     <div id="photos">
-        <img src="photo.jpg" />
-        <img src="photo2.jpg" />
+        <img src="photo.jpg">
+        <img src="photo2.jpg">
     </div>
-
-    <div id="puzzle-container"></div>
-    <div id="puzzle-message"></div>
-    <button id="back-btn">Back</button>
 </div>
 
 <script>
-/* LOGIN */
 const loginBtn = document.getElementById("login-btn");
 const nameInput = document.getElementById("name");
 const loginForm = document.getElementById("login-form");
 const main = document.getElementById("main");
-
-loginBtn.addEventListener("click", () => {
-    loginForm.style.display = "none";
-    main.style.display = "block";
-});
-
-/* LOGOUT */
-document.getElementById("logout").onclick = () => { location.reload(); };
-
-/* APOLOGY MESSAGE TOGGLE */
-const messageBtn = document.getElementById("show-message");
 const messageBox = document.getElementById("message-content");
+const puzzleBox = document.getElementById("puzzle-content");
 
-const APOLOGY = 
-`I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again in which we just reestablished and rebuilt and that you gave me I want you to know that my actions are a reflection of my flaws I should’ve handled the situation differently I handled everything terribly you are an incredible strong caring intelligent I should have been as amazing as you have been to me and I’m sorry for failing you I just want you to know that I truly value you and I’m committed to understanding you better you deserve the world I’m sorry for hurting you you mean a lot to me and I hope that I can show you that I only handled the situation wrong not that I don’t love you
+// APOLOGY MESSAGE
+const APOLOGY = `I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again in which we just reestablished and rebuilt and that you gave me I want you to know that my actions are a reflection of my flaws I should’ve handled the situation differently I handled everything terribly you are an incredible strong caring intelligent I should have been as amazing as you have been to me and I’m sorry for failing you I just want you to know that I truly value you and I’m committed to understanding you better you deserve the world I’m sorry for hurting you you mean a lot to me and I hope that I can show you that I only handled the situation wrong not that I don’t love you
 
 I love you ❤️`;
 
-messageBtn.addEventListener("click", () => {
-    if(messageBox.style.display==="block"){
-        messageBox.style.display="none";
-    } else{
-        messageBox.style.display="block";
-        messageBox.innerText=APOLOGY;
+// LOGIN
+loginBtn.addEventListener("click", () => {
+    const name = nameInput.value.trim();
+    if(name !== "") { // no special names
+        loginForm.style.display="none";
+        main.style.display="block";
     }
 });
 
-/* FLOATING HEARTS */
-const heartWords = ["Zodwa","I","am","sorry","I love you"];
+// LOGOUT
+document.getElementById("logout").onclick = () => location.reload();
+
+// MESSAGE TAB
+document.getElementById("show-message").addEventListener("click", ()=>{
+    if(messageBox.style.display==="block"){
+        messageBox.style.display="none";
+    } else {
+        messageBox.style.display="block";
+        puzzleBox.style.display="none";
+        messageBox.innerText=APLOGY;
+    }
+});
+
+// PUZZLE TAB
+document.getElementById("show-puzzle").addEventListener("click", ()=>{
+    if(puzzleBox.style.display==="block"){
+        puzzleBox.style.display="none";
+    } else {
+        puzzleBox.style.display="block";
+        messageBox.style.display="none";
+        createPuzzle(3); // default 3x3
+    }
+});
+
+// HEARTS
+const heartWords=["Zodwa","I","am","sorry","I love you"];
 heartWords.forEach(word=>{
     const h=document.createElement("div");
     h.className="heart";
-    const text=document.createElement("span");
-    text.innerText=word;
-    h.appendChild(text);
-    h.style.left=Math.random()*(window.innerWidth-120)+"px";
-    h.style.top=Math.random()*(window.innerHeight-120)+"px";
+    const t=document.createElement("span");
+    t.innerText=word;
+    h.appendChild(t);
+    h.style.left=Math.random()*(window.innerWidth-100)+"px";
+    h.style.top=Math.random()*(window.innerHeight-100)+"px";
     h.style.animationDuration=(4+Math.random()*3)+"s";
+    h.style.zIndex=50;
     main.appendChild(h);
+    h.style.animationIterationCount="infinite";
+    h.style.animationTimingFunction="linear";
+    h.style.animationName="float";
 });
 
-/* PUZZLE */
+// PUZZLE FUNCTIONS
 const puzzleImages = ["Puzzel1.JPG","Puzzel2.JPG","Puzzel3.jpeg"];
-const puzzleMessages = [
-    "You are the best girlfriend!",
-    "You make me so happy and I love you so much!",
-    "I am sorry"
-];
-
-let gridSize, tiles=[], emptyPos={}, container, imgWidth, imgHeight;
-
-document.getElementById("show-puzzle").addEventListener("click", ()=>{
-    messageBox.style.display="none";
-    document.getElementById("puzzle-container").innerHTML="";
-    document.getElementById("puzzle-message").style.display="none";
-    document.getElementById("back-btn").style.display="inline-block";
-
-    const size=2; // default size
-    startPuzzle(size);
-});
-
-function startPuzzle(size){
-    gridSize=size;
-    container=document.getElementById("puzzle-container");
-    container.innerHTML='';
-    const imgSrc=puzzleImages[size-2];
-    const img=new Image();
-    img.src=imgSrc;
-    img.onload=function(){
-        imgWidth=img.width;
-        imgHeight=img.height;
-        container.style.width=imgWidth+'px';
-        container.style.height=imgHeight+'px';
-        createTiles();
-        shuffleTiles();
-    }
-}
-
-function createTiles(){
-    tiles=[];
-    for(let r=0;r<gridSize;r++){
-        for(let c=0;c<gridSize;c++){
-            if(r===gridSize-1 && c===gridSize-1){ emptyPos={row:r,col:c}; continue; }
-            const tile=document.createElement("img");
-            tile.src=puzzleImages[gridSize-2];
-            tile.className="tile";
-            tile.dataset.row=r;
-            tile.dataset.col=c;
-            tile.dataset.rowOrig=r;
-            tile.dataset.colOrig=c;
-            tile.style.width=(imgWidth/gridSize)+'px';
-            tile.style.height=(imgHeight/gridSize)+'px';
-            tile.style.top=(r*(imgHeight/gridSize))+'px';
-            tile.style.left=(c*(imgWidth/gridSize))+'px';
-            tile.style.objectFit='none';
-            tile.style.objectPosition=`-${c*(imgWidth/gridSize)}px -${r*(imgHeight/gridSize)}px`;
-            tile.addEventListener('click',()=>moveTile(tile));
-            container.appendChild(tile);
-            tiles.push(tile);
+function createPuzzle(size){
+    puzzleBox.innerHTML="";
+    const imgSrc = puzzleImages[size-2]; // 2x2->0,3x3->1,4x4->2
+    const containerWidth=puzzleBox.clientWidth;
+    const containerHeight=puzzleBox.clientHeight;
+    const tileSize = containerWidth/size;
+    for(let r=0;r<size;r++){
+        for(let c=0;c<size;c++){
+            const tile=document.createElement("div");
+            tile.className="puzzle-tile";
+            tile.style.width=tileSize+"px";
+            tile.style.height=tileSize+"px";
+            tile.style.top=(r*tileSize)+"px";
+            tile.style.left=(c*tileSize)+"px";
+            tile.style.backgroundImage=`url(${imgSrc})`;
+            tile.style.backgroundSize=`${containerWidth}px ${containerHeight}px`;
+            tile.style.backgroundPosition=`-${c*tileSize}px -${r*tileSize}px`;
+            puzzleBox.appendChild(tile);
         }
     }
 }
-
-function shuffleTiles(){
-    for(let i=0;i<1000;i++){
-        const neighbors=tiles.filter(t=>isNeighbor(t,emptyPos));
-        const tile=neighbors[Math.floor(Math.random()*neighbors.length)];
-        swapWithEmpty(tile);
-    }
-}
-
-function isNeighbor(tile,pos){
-    const r=parseInt(tile.dataset.row);
-    const c=parseInt(tile.dataset.col);
-    return ( (r===pos.row && Math.abs(c-pos.col)===1) || (c===pos.col && Math.abs(r-pos.row)===1) );
-}
-
-function moveTile(tile){
-    if(isNeighbor(tile,emptyPos)){
-        swapWithEmpty(tile);
-        checkSolved();
-    }
-}
-
-function swapWithEmpty(tile){
-    const tempTop=tile.style.top;
-    const tempLeft=tile.style.left;
-    tile.style.top=emptyPos.row*(imgHeight/gridSize)+'px';
-    tile.style.left=emptyPos.col*(imgWidth/gridSize)+'px';
-    const tileRow=parseInt(tile.dataset.row);
-    const tileCol=parseInt(tile.dataset.col);
-    tile.dataset.row=emptyPos.row;
-    tile.dataset.col=emptyPos.col;
-    emptyPos.row=tileRow;
-    emptyPos.col=tileCol;
-}
-
-function checkSolved(){
-    const solved=tiles.every(tile=>{
-        return parseInt(tile.dataset.row)==tile.dataset.rowOrig && parseInt(tile.dataset.col)==tile.dataset.colOrig;
-    });
-    if(solved){
-        const msg=document.getElementById("puzzle-message");
-        msg.innerText=puzzleMessages[gridSize-2];
-        msg.style.display="block";
-    }
-}
-
-function closePuzzle(){
-    document.getElementById("puzzle-container").innerHTML='';
-    document.getElementById("puzzle-message").style.display='none';
-    document.getElementById("back-btn").style.display='none';
-}
-document.getElementById("back-btn").addEventListener("click", closePuzzle);
-
 </script>
 </body>
 </html>
