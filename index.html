@@ -84,6 +84,29 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     line-height:1.6;
 }
 
+/* PHOTOS - positioned like earlier */
+#photos {
+    position:absolute;
+    right:50px;
+    top:50%;
+    transform:translateY(-50%);
+    z-index:1;
+}
+#photos img {
+    width:180px;
+    position:absolute;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.2);
+}
+#photos img:nth-child(1) {
+    top:-60px;
+    left:0;
+}
+#photos img:nth-child(2) {
+    top:60px;
+    left:30px;
+}
+
 /* HEARTS */
 .heart {
     width:90px;
@@ -153,10 +176,15 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 #puzzle-back {
     margin-top:20px;
 }
-#photos img {
-    width:150px;
-    margin:10px;
-    border-radius:12px;
+/* Puzzle control buttons with color */
+#controls button {
+    padding:10px 20px;
+    margin:5px;
+    background:#ff4d6d;
+    color:white;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
 }
 </style>
 </head>
@@ -179,7 +207,6 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
         <button class="tab-btn" onclick="document.getElementById('puzzle-box').style.display='block'">Puzzle</button>
     </div>
 
-    <!-- Photos -->
     <div id="photos">
         <img src="photo.jpg"/>
         <img src="photo2.jpg"/>
@@ -189,12 +216,12 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     <div id="puzzle-box">
         <div id="puzzle-container"></div>
         <div id="puzzle-message"></div>
-        <button id="puzzle-back" onclick="closePuzzle()" style="background:#ff4d6d; color:white; border:none; border-radius:6px; padding:10px 20px; cursor:pointer;">Back</button>
+        <button id="puzzle-back" onclick="closePuzzle()">Back</button>
         <div id="puzzle-card"></div>
-        <div id="controls" style="margin-top:10px;">
-            <button onclick="startPuzzle(2)" style="background:#ff4d6d; color:white; border:none; border-radius:6px; padding:10px 20px; cursor:pointer;">2×2</button>
-            <button onclick="startPuzzle(3)" style="background:#ff4d6d; color:white; border:none; border-radius:6px; padding:10px 20px; cursor:pointer;">3×3</button>
-            <button onclick="startPuzzle(4)" style="background:#ff4d6d; color:white; border:none; border-radius:6px; padding:10px 20px; cursor:pointer;">4×4</button>
+        <div id="controls">
+            <button onclick="startPuzzle(2)">2×2</button>
+            <button onclick="startPuzzle(3)">3×3</button>
+            <button onclick="startPuzzle(4)">4×4</button>
         </div>
     </div>
 </div>
