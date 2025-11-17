@@ -2,183 +2,219 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Puzzle Apology</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puzzle Surprise</title>
+
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #f5f5f5;
-        text-align: center;
-        padding: 20px;
-    }
+body {
+    font-family: Arial, sans-serif;
+    background: #ffe6ec;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-    .card {
-        background: white;
-        width: 360px;
-        margin: 20px auto;
-        padding: 20px;
-        border-radius: 15px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
+/* White box around the puzzle */
+#puzzle-box {
+    width: 340px;
+    padding: 20px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    margin-top: 20px;
+    display: none;
+    text-align: center;
+}
 
-    #puzzleContainer {
-        width: 300px;
-        height: 300px;
-        margin: 0 auto;
-        position: relative;
-        border: 3px solid #222;
-        background: #ddd;
-        border-radius: 10px;
-    }
+#puzzle-container {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    margin: auto;
+}
 
-    .tile {
-        position: absolute;
-        border: 1px solid #333;
-        cursor: pointer;
-        background-size: 300px 300px;
-    }
+.tile {
+    position: absolute;
+    box-sizing: border-box;
+    border: 1px solid white;
+    cursor: pointer;
+    transition: top 0.25s, left 0.25s;
+}
 
-    #messageCard {
-        display: none;
-    }
+#controls { margin-top: 20px; }
 
-    button {
-        margin-top: 10px;
-        padding: 10px 15px;
-        border: none;
-        background: #333;
-        color: white;
-        border-radius: 8px;
-        cursor: pointer;
-    }
+button {
+    padding: 10px 20px;
+    margin: 5px;
+    background: #ff4d6d;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
 
-    button:hover {
-        background: #555;
-    }
+#puzzle-message {
+    margin-top: 20px;
+    display: none;
+    background: #fff0f5;
+    padding: 15px;
+    border-radius: 12px;
+    font-weight: bold;
+}
+
+#puzzle-back {
+    margin-top: 20px;
+}
 </style>
 </head>
 
 <body>
 
-<!-- Puzzle Selector Box -->
-<div class="card">
-    <h2>Choose Puzzle Size</h2>
-    <button onclick="startPuzzle(2)">2 × 2</button>
-    <button onclick="startPuzzle(3)">3 × 3</button>
-    <button onclick="startPuzzle(4)">4 × 4</button>
+<h2>Puzzle Surprise</h2>
+
+<!-- Size Buttons -->
+<div id="controls">
+    <button onclick="startPuzzle(2)">2×2</button>
+    <button onclick="startPuzzle(3)">3×3</button>
+    <button onclick="startPuzzle(4)">4×4</button>
 </div>
 
-<!-- Puzzle Box -->
-<div class="card">
-    <h2>Your Puzzle</h2>
-    <div id="puzzleContainer"></div>
-</div>
-
-<!-- Message Box -->
-<div id="messageCard" class="card">
-    <h2>I'm Really Sorry ❤️</h2>
-    <p>I hope this little puzzle made you smile…  
-    You mean so much to me, and I truly want us to be okay.</p>
+<!-- Wrapped Puzzle Box -->
+<div id="puzzle-box">
+    <div id="puzzle-container"></div>
+    <div id="puzzle-message"></div>
+    <button id="puzzle-back" onclick="closePuzzle()">Back</button>
 </div>
 
 <script>
-let emptyX, emptyY, gridSize;
-const imageURL = "your-image.jpg"; // PLACE YOUR IMAGE HERE
+/* Messages for each puzzle */
+const messages = [
+    "You are the best girlfriend!",
+    "You make me so happy and I love you so much!",
+    "I am sorry"
+];
 
+/* Images for 2×2, 3×3, 4×4 */
+const puzzleImages = [
+    "Puzzel1.JPG",
+    "Puzzel2.JPG",
+    "Puzzel3.jpeg"
+];
+
+let gridSize, tiles = [], emptyPos = {}, imgSize = 300;
+
+/* Start puzzle */
 function startPuzzle(size) {
-    const container = document.getElementById("puzzleContainer");
-    container.innerHTML = "";
     gridSize = size;
+    document.getElementById("puzzle-box").style.display = "inline-block";
+    document.getElementById("puzzle-message").style.display = "none";
 
-    const tileSize = 300 / size;
-    let tiles = [];
+    const container = document.getElementById("puzzle-container");
+    container.innerHTML = "";
+    tiles = [];
 
-    // create tiles
-    for (let y = 0; y < size; y++) {
-        for (let x = 0; x < size; x++) {
-            if (x === size - 1 && y === size - 1) {
-                emptyX = x;
-                emptyY = y;
+    const imgSrc = puzzleImages[size - 2];
+    const tileSize = imgSize / size;
+
+    /* Create tiles */
+    for (let r = 0; r < size; r++) {
+        for (let c = 0; c < size; c++) {
+
+            if (r === size - 1 && c === size - 1) {
+                emptyPos = { row: r, col: c };
                 continue;
             }
 
-            let tile = document.createElement("div");
+            const tile = document.createElement("img");
+            tile.src = imgSrc;
             tile.className = "tile";
+
+            tile.dataset.row = r;
+            tile.dataset.col = c;
+            tile.dataset.rowOrig = r;
+            tile.dataset.colOrig = c;
+
             tile.style.width = tileSize + "px";
             tile.style.height = tileSize + "px";
+            tile.style.top = (r * tileSize) + "px";
+            tile.style.left = (c * tileSize) + "px";
 
-            tile.style.left = (x * tileSize) + "px";
-            tile.style.top = (y * tileSize) + "px";
+            tile.style.objectFit = "none";
+            tile.style.objectPosition = `-${c * tileSize}px -${r * tileSize}px`;
 
-            tile.dataset.correctX = x;
-            tile.dataset.correctY = y;
+            tile.addEventListener("click", () => moveTile(tile));
 
-            tile.style.backgroundImage = `url('${imageURL}')`;
-            tile.style.backgroundPosition =
-                `-${x * tileSize}px -${y * tileSize}px`;
-
-            tile.addEventListener("click", () => moveTile(tile, x, y));
+            container.appendChild(tile);
             tiles.push(tile);
         }
     }
 
-    // Shuffle tiles
-    tiles = shuffleTiles(tiles);
+    shuffleTiles();
+}
 
-    let i = 0;
-    for (let y = 0; y < size; y++) {
-        for (let x = 0; x < size; x++) {
-            if (x === emptyX && y === emptyY) continue;
-
-            let tile = tiles[i];
-            tile.style.left = (x * tileSize) + "px";
-            tile.style.top = (y * tileSize) + "px";
-            tile.dataset.x = x;
-            tile.dataset.y = y;
-            container.appendChild(tile);
-            i++;
-        }
+/* Shuffle by making valid moves */
+function shuffleTiles() {
+    for (let i = 0; i < 200; i++) {
+        const possible = tiles.filter(t => isNeighbor(t, emptyPos));
+        const tile = possible[Math.floor(Math.random() * possible.length)];
+        swapTile(tile);
     }
 }
 
-function shuffleTiles(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
+/* Check if tile touches empty space */
+function isNeighbor(tile, pos) {
+    const r = parseInt(tile.dataset.row);
+    const c = parseInt(tile.dataset.col);
+    return (r === pos.row && Math.abs(c - pos.col) === 1) ||
+           (c === pos.col && Math.abs(r - pos.row) === 1);
 }
 
+/* Move tile */
 function moveTile(tile) {
-    let x = parseInt(tile.dataset.x);
-    let y = parseInt(tile.dataset.y);
-
-    if ((Math.abs(x - emptyX) === 1 && y === emptyY) ||
-        (Math.abs(y - emptyY) === 1 && x === emptyX)) {
-
-        let tileSize = 300 / gridSize;
-
-        tile.style.left = (emptyX * tileSize) + "px";
-        tile.style.top = (emptyY * tileSize) + "px";
-
-        tile.dataset.x = emptyX;
-        tile.dataset.y = emptyY;
-
-        emptyX = x;
-        emptyY = y;
-
-        checkWin();
+    if (isNeighbor(tile, emptyPos)) {
+        swapTile(tile);
+        checkSolved();
     }
 }
 
-function checkWin() {
-    const tiles = document.querySelectorAll(".tile");
-    for (let tile of tiles) {
-        if (tile.dataset.x != tile.dataset.correctX ||
-            tile.dataset.y != tile.dataset.correctY) {
-            return;
-        }
+/* Swap tile with empty space */
+function swapTile(tile) {
+    const tileSize = imgSize / gridSize;
+
+    const oldRow = parseInt(tile.dataset.row);
+    const oldCol = parseInt(tile.dataset.col);
+
+    tile.dataset.row = emptyPos.row;
+    tile.dataset.col = emptyPos.col;
+
+    tile.style.top = (emptyPos.row * tileSize) + "px";
+    tile.style.left = (emptyPos.col * tileSize) + "px";
+
+    emptyPos.row = oldRow;
+    emptyPos.col = oldCol;
+}
+
+/* Check solved */
+function checkSolved() {
+    const solved = tiles.every(tile =>
+        tile.dataset.row == tile.dataset.rowOrig &&
+        tile.dataset.col == tile.dataset.colOrig
+    );
+
+    if (solved) {
+        const msgBox = document.getElementById("puzzle-message");
+        msgBox.innerText = messages[gridSize - 2];
+        msgBox.style.display = "block";
     }
-    document.getElementById("messageCard").style.display = "block";
+}
+
+/* Close puzzle */
+function closePuzzle() {
+    document.getElementById("puzzle-box").style.display = "none";
+    document.getElementById("puzzle-container").innerHTML = "";
+    document.getElementById("puzzle-message").style.display = "none";
 }
 </script>
 
