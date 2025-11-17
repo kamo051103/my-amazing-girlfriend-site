@@ -1,263 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Apology Website</title>
-
 <style>
-* { margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,Helvetica,sans-serif;background:#ffe6ec;overflow:hidden;height:100vh}
 
-/* LOGIN PAGE */
-#login-form {
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    height:100vh;
-    background-image:url('photo3.jpeg');
-    background-size:cover;
-    background-position:center;
-    color:white;
-}
+  /* LOGIN (shown first) */
+  #login {
+    position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background-image:url('photo3.jpeg');background-size:cover;background-position:center;color:#fff;
+  }
+  #login .card{background:rgba(0,0,0,0.45);padding:20px;border-radius:12px;text-align:center}
+  #login input[type="text"]{width:220px;padding:10px;border-radius:6px;border:none;margin-top:10px}
+  #login button{margin-top:10px;padding:10px 18px;border-radius:8px;border:none;background:#ff4d6d;color:#fff;cursor:pointer}
 
-#login-form input[type='text'], #login-form input[type='submit'] {
-    padding:10px;
-    margin:10px 0;
-    width:220px;
-    font-size:16px;
-    border-radius:5px;
-    border:none;
-}
+  /* ADMIN (hidden initially) */
+  #admin { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); color:#fff;
+    align-items:center;justify-content:center;flex-direction:column; display:flex; gap:12px;
+  }
 
-/* MAIN PAGE */
-#main {
-    display:none;
-    height:100vh;
-    background:#ffe6ec;
-    position:relative;
-    padding:20px;
-    display:flex;
-    justify-content:flex-end;
-    align-items:center;
-}
+  /* MAIN (hidden initially) */
+  #main { display:none; position:fixed; inset:0; background:#ffe6ec; overflow:hidden; }
 
-/* ADMIN PAGE */
-#admin {
-    display:none;
-    height:100vh;
-    background:#000000cc;
-    color:white;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    flex-direction:column;
-}
+  /* Right-side photos (fixed so hearts won't push them) */
+  #photos {
+    position:absolute; right:24px; top:50%; transform:translateY(-50%);
+    display:flex; flex-direction:column; gap:18px; align-items:flex-end;
+    z-index:5;
+  }
+  #photos img{ width:420px; max-width:38vw; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,0.18); }
 
-/* PHOTOS RIGHT */
-#photos img {
-    width:400px;
-    border-radius:12px;
-    margin-bottom:15px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.2);
-}
+  /* Tabs and message */
+  .left-panel { position:absolute; left:24px; top:50%; transform:translateY(-50%); z-index:5; }
+  .apology-btn { display:block;padding:12px 18px;background:#ff4d6d;color:#fff;border:none;border-radius:10px; cursor:pointer;font-size:16px }
+  #msg { margin-top:14px; width:360px; max-width:52vw; background:rgba(255,255,255,0.95); padding:16px;border-radius:12px; line-height:1.5; display:none; color:#111; }
 
-/* TABS */
-.tabs { position:absolute; left:20px; top:50%; transform:translateY(-50%); }
-.tab-btn {
-    padding:10px 20px;
-    margin-bottom:10px;
-    background:#ff4d6d;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    font-size:16px;
-    width:180px;
-}
-#message-content {
-    background:white;
-    padding:20px;
-    border-radius:12px;
-    width:350px;
-    display:none;
-}
+  /* Logout buttons */
+  #logout-main, #logout-admin {
+    position:fixed; left:18px; bottom:18px; padding:10px 16px; border:none;border-radius:10px;background:#ff4d6d;color:#fff; cursor:pointer; z-index:6;
+  }
+  #logout-admin { left:18px; bottom:18px; } /* admin uses same position when visible */
 
-/* PERFECT HEART SHAPE */
-.heart {
-    position:absolute;
-    width:80px;
-    height:80px;
-    background:red;
-    transform: rotate(-45deg);
-}
+  /* hearts container */
+  #hearts { position:absolute; inset:0; pointer-events:none; z-index:2; }
 
-.heart::before,
-.heart::after {
-    content:"";
-    position:absolute;
-    width:80px;
-    height:80px;
-    background:red;
-    border-radius:50%;
-}
-
-.heart::before { top:-40px; left:0; }
-.heart::after  { left:40px; top:0; }
-
-/* TEXT INSIDE HEART */
-.heart span {
-    position:absolute;
-    transform:rotate(45deg);
-    width:100%;
-    text-align:center;
-    top:25px;
-    font-size:14px;
-    font-weight:bold;
-    color:white;
-}
-
-/* LOGOUT BUTTON */
-#logout-btn {
-    position:absolute;
-    bottom:20px;
-    left:20px;
-    padding:10px 20px;
-    background:#ff4d6d;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    font-size:16px;
-}
+  /* accessible fallback for small screens */
+  @media (max-width:700px){
+    #photos img{ width:260px; }
+    #msg{ width:88vw; }
+  }
 </style>
 </head>
-
 <body>
 
-<!-- LOGIN PAGE -->
-<div id="login-form">
-    <h1>Login</h1>
-    <input type="text" id="name" placeholder="Enter your name">
-    <input type="submit" value="Login" id="login-btn">
-</div>
-
-<!-- MAIN PAGE -->
-<div id="main">
-
-    <div class="tabs">
-        <button class="tab-btn" id="toggle-msg">Apology Message</button>
-        <div id="message-content"></div>
+  <!-- LOGIN -->
+  <div id="login" aria-hidden="false">
+    <div class="card">
+      <h1>Login</h1>
+      <div style="opacity:0.95;margin-top:10px">Enter your name</div>
+      <input id="name-input" type="text" autocomplete="off" placeholder="e.g. Zodwa or Admin" />
+      <div>
+        <button id="login-btn">Login</button>
+      </div>
     </div>
+  </div>
 
-    <div id="photos">
-        <img src="photo.jpg">
-        <img src="photo2.jpg">
-    </div>
-
-    <button id="logout-btn">Logout</button>
-</div>
-
-<!-- ADMIN PAGE -->
-<div id="admin">
+  <!-- ADMIN (only visible when Admin logs in) -->
+  <div id="admin" aria-hidden="true">
     <h1>Admin Panel</h1>
-    <p>Welcome Admin</p>
-    <button id="logout-btn-admin" style="padding:10px 20px; margin-top:20px;">Logout</button>
-</div>
+    <p>Background (photo3.jpeg) is visible on Login screen already.</p>
+    <button id="logout-admin">Log Out</button>
+  </div>
+
+  <!-- MAIN (only visible when Zodwa logs in) -->
+  <div id="main" aria-hidden="true">
+    <div id="hearts"></div>
+
+    <div id="photos" aria-hidden="false">
+      <img src="photo.jpg" alt="photo1" />
+      <img src="photo2.jpg" alt="photo2" />
+    </div>
+
+    <div class="left-panel" aria-hidden="false">
+      <button id="apology-toggle" class="apology-btn">Apology Message</button>
+      <div id="msg"></div>
+    </div>
+
+    <button id="logout-main">Log Out</button>
+  </div>
 
 <script>
-const loginForm = document.getElementById("login-form");
-const main = document.getElementById("main");
-const admin = document.getElementById("admin");
+/* --- constants --- */
+const apologyText = `I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again in which we just reestablished and rebuilt and that you gave me I want you to know that my actions are a reflection of my flaws I should’ve handled the situation differently I handled everything terribly you are an incredible strong caring intelligent I should have been as amazing as you have been to me and I’m sorry for failing you I just want you to know that I truly value you and I’m committed to understanding you better you deserve the world I’m sorry for hurting you you mean a lot to me and I hope that I can show you that I only handled the situation wrong not that I don’t love you
 
-/* LOGIN */
-document.getElementById("login-btn").addEventListener("click", () => {
-    const name = document.getElementById("name").value.trim();
-
-    if (name === "Admin") {
-        loginForm.style.display = "none";
-        admin.style.display = "flex";
-        return;
-    }
-
-    if (name === "Zodwa") {
-        loginForm.style.display = "none";
-        main.style.display = "flex";
-        createHearts();
-        return;
-    }
-
-    alert("Incorrect name");
-});
-
-/* LOGOUT */
-document.getElementById("logout-btn").addEventListener("click", () => {
-    main.style.display = "none";
-    loginForm.style.display = "flex";
-    document.querySelectorAll(".heart").forEach(h => h.remove());
-});
-
-document.getElementById("logout-btn-admin").addEventListener("click", () => {
-    admin.style.display = "none";
-    loginForm.style.display = "flex";
-});
-
-/* TOGGLE MESSAGE */
-const msgBtn = document.getElementById("toggle-msg");
-const msgContent = document.getElementById("message-content");
-
-msgBtn.addEventListener("click", () => {
-    msgContent.style.display = msgContent.style.display === "block" ? "none" : "block";
-
-    msgContent.innerText =
-`I’m really sorry for what I’ve done...
 I love you ❤️`;
+
+/* --- elements --- */
+const loginEl = document.getElementById('login');
+const mainEl = document.getElementById('main');
+const adminEl = document.getElementById('admin');
+const loginBtn = document.getElementById('login-btn');
+const nameInput = document.getElementById('name-input');
+const logoutMain = document.getElementById('logout-main');
+const logoutAdmin = document.getElementById('logout-admin');
+const apologyToggle = document.getElementById('apology-toggle');
+const msgEl = document.getElementById('msg');
+const heartsContainer = document.getElementById('hearts');
+
+/* --- login logic --- */
+loginBtn.addEventListener('click', () => {
+  const name = (nameInput.value || '').trim();
+  if (!name) { alert('Please enter a name'); return; }
+
+  if (name === 'Admin') {
+    // show admin-only UI
+    loginEl.style.display = 'none';
+    adminEl.style.display = 'flex';
+    adminEl.setAttribute('aria-hidden','false');
+    mainEl.style.display = 'none';
+    return;
+  }
+
+  if (name === 'Zodwa') {
+    loginEl.style.display = 'none';
+    mainEl.style.display = 'block';
+    mainEl.setAttribute('aria-hidden','false');
+    createHearts(['Zodwa','I','am','sorry','I love you']); // create hearts once
+    return;
+  }
+
+  alert('Incorrect name — try "Zodwa" or "Admin"');
 });
 
-/* FLOATING HEARTS */
-function createHearts() {
-    const texts = ["Zodwa","I","am","sorry","I love you"];
+/* --- logout handlers --- */
+logoutMain.addEventListener('click', ()=> {
+  // remove hearts
+  heartsContainer.innerHTML = '';
+  mainEl.style.display = 'none';
+  loginEl.style.display = 'flex';
+  nameInput.value = '';
+});
 
-    texts.forEach(text => {
-        const heart = document.createElement("div");
-        heart.className = "heart";
+logoutAdmin.addEventListener('click', ()=> {
+  adminEl.style.display = 'none';
+  loginEl.style.display = 'flex';
+  nameInput.value = '';
+});
 
-        const span = document.createElement("span");
-        span.innerText = text;
+/* --- apology toggle --- */
+apologyToggle.addEventListener('click', ()=> {
+  if (msgEl.style.display === 'block') {
+    msgEl.style.display = 'none';
+  } else {
+    msgEl.style.display = 'block';
+    msgEl.textContent = apologyText;
+  }
+});
 
-        heart.appendChild(span);
+/* -----------------------
+   HEARTS: SVG + JS animation
+   ----------------------- */
 
-        heart.style.left = Math.random() * window.innerWidth + "px";
-        heart.style.top  = Math.random() * window.innerHeight + "px";
+/* create a single SVG-heart element with centered text */
+function makeSvgHeart(text) {
+  // wrapper to position absolutely
+  const wrapper = document.createElement('div');
+  wrapper.style.position = 'absolute';
+  wrapper.style.width = '110px';
+  wrapper.style.height = '100px';
+  wrapper.style.pointerEvents = 'none';
 
-        main.appendChild(heart);
-        moveHeart(heart);
-    });
+  // create svg
+  const xmlns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(xmlns, 'svg');
+  svg.setAttribute('viewBox', '0 0 100 90');
+  svg.setAttribute('width', '100%');
+  svg.setAttribute('height', '100%');
+  svg.style.display = 'block';
+
+  // heart path (nice rounded heart)
+  const path = document.createElementNS(xmlns,'path');
+  path.setAttribute('d', 'M50 78 L20 48 C5 33 20 12 40 22 C50 27 60 27 70 22 C90 12 105 33 90 48 Z');
+  path.setAttribute('fill','red');
+  svg.appendChild(path);
+
+  // text on top
+  const svgText = document.createElementNS(xmlns,'text');
+  svgText.setAttribute('x','50');
+  svgText.setAttribute('y','50');
+  svgText.setAttribute('text-anchor','middle');
+  svgText.setAttribute('dominant-baseline','middle');
+  svgText.setAttribute('fill','white');
+  svgText.setAttribute('font-size','12');
+  svgText.setAttribute('font-weight','700');
+  svgText.textContent = text;
+
+  svg.appendChild(svgText);
+  wrapper.appendChild(svg);
+  return wrapper;
 }
 
-function moveHeart(heart) {
-    let x = parseFloat(heart.style.left);
-    let y = parseFloat(heart.style.top);
+/* animate a heart element: vertical rise + horizontal sway, continuous */
+function animateHeartEl(el, speedFactor=1) {
+  // starting pos
+  let x = Math.random() * (window.innerWidth - 120);
+  let y = window.innerHeight + (50 + Math.random() * 200);
+  // sway params
+  const swayAmplitude = 60 + Math.random() * 50;
+  const swaySpeed = 0.005 + Math.random() * 0.007;
+  const riseSpeed = 0.4 + Math.random() * 0.8; // px per frame, tuned to feel smooth
+  let t = Math.random() * 1000;
 
-    let dx = (Math.random() * 2 + 0.5) * (Math.random() < 0.5 ? -1 : 1);
-    let dy = -1;
+  el.style.left = x + 'px';
+  el.style.top = y + 'px';
 
-    function animate() {
-        x += dx;
-        y += dy;
+  function frame() {
+    t += 1;
+    // rise
+    y -= riseSpeed * speedFactor;
+    // sway horizontally using sine
+    const sway = Math.sin(t * swaySpeed) * swayAmplitude;
+    el.style.left = (x + sway) + 'px';
+    el.style.top = y + 'px';
+    // tiny rotation for life
+    el.style.transform = `rotate(${Math.sin(t * 0.02) * 8}deg)`;
 
-        if (x < -100) x = window.innerWidth;
-        if (x > window.innerWidth) x = -50;
-        if (y < -100) y = window.innerHeight + 50;
-
-        heart.style.left = x + "px";
-        heart.style.top = y + "px";
-
-        requestAnimationFrame(animate);
+    // if moved off top, recycle to bottom with new horizontal base
+    if (y < -200) {
+      x = Math.random() * (window.innerWidth - 120);
+      y = window.innerHeight + (50 + Math.random() * 200);
+      // randomize speeds slightly
     }
-
-    animate();
+    el._raf = requestAnimationFrame(frame);
+  }
+  el._raf = requestAnimationFrame(frame);
 }
+
+/* create N hearts with given texts */
+function createHearts(texts) {
+  // clear any existing hearts and cancel rAFs
+  heartsContainer.querySelectorAll('div').forEach(d=>{
+    if (d._raf) cancelAnimationFrame(d._raf);
+    d.remove();
+  });
+
+  texts.forEach((t, i) => {
+    const heart = makeSvgHeart(t);
+    heartsContainer.appendChild(heart);
+    // stagger speed so they don't all match
+    animateHeartEl(heart, 0.8 + Math.random()*1.4);
+  });
+}
+
+/* ensure resize doesn't break positions too badly */
+window.addEventListener('resize', ()=>{
+  // no heavy work — hearts are recycled when logging out / in
+});
 </script>
 
 </body>
