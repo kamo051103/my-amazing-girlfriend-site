@@ -35,7 +35,12 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 .tabs { position:absolute; left:40px; top:50%; transform:translateY(-50%); z-index:100; }
 .tab-btn { padding:12px 20px; margin-bottom:10px; border:none; border-radius:8px; background:#ff4d6d; color:white; cursor:pointer; font-size:17px; width:220px; }
 
-#message-content, #puzzle-content { display:none; margin-top:15px; background:white; padding:20px; border-radius:12px; box-shadow:0 0 10px rgba(0,0,0,0.15); max-width:400px; max-height:400px; overflow:auto; white-space:pre-line; line-height:1.6; position:relative; }
+/* MESSAGE & PUZZLE CONTENT */
+#message-content, #puzzle-content { display:none; margin-top:15px; background:white; padding:20px; border-radius:12px; box-shadow:0 0 10px rgba(0,0,0,0.15); max-width:400px; max-height:450px; overflow:auto; white-space:pre-line; line-height:1.6; position:relative; }
+
+/* PUZZLE OPTIONS */
+#puzzle-options { margin-bottom:10px; }
+#puzzle-options button { margin-right:5px; padding:6px 12px; border:none; border-radius:6px; background:#ff4d6d; color:white; cursor:pointer; }
 
 /* HEARTS */
 .heart { position:absolute; width:90px; height:90px; background:red; transform:rotate(-45deg); z-index:50; }
@@ -63,12 +68,20 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 <!-- MAIN PAGE -->
 <div id="main">
     <button id="logout">Logout</button>
+
     <div class="tabs">
         <button class="tab-btn" id="show-message">Apology Message</button>
         <button class="tab-btn" id="show-puzzle">Puzzle</button>
         <div id="message-content"></div>
-        <div id="puzzle-content"></div>
+        <div id="puzzle-content">
+            <div id="puzzle-options">
+                <button onclick="startPuzzle(2)">2x2</button>
+                <button onclick="startPuzzle(3)">3x3</button>
+                <button onclick="startPuzzle(4)">4x4</button>
+            </div>
+        </div>
     </div>
+
     <div id="photos">
         <img src="photo.jpg">
         <img src="photo2.jpg">
@@ -88,8 +101,7 @@ const APOLOGY=`I’m really sorry for what I’ve done I hurt you and there’s 
 
 // LOGIN
 loginBtn.addEventListener("click", ()=>{
-    const name=nameInput.value.trim();
-    if(name!==""){
+    if(nameInput.value.trim()!==""){
         loginForm.style.display="none";
         main.style.display="block";
     }
@@ -101,13 +113,13 @@ document.getElementById("logout").onclick=()=>location.reload();
 // MESSAGE TAB
 document.getElementById("show-message").addEventListener("click",()=>{
     if(messageBox.style.display==="block"){ messageBox.style.display="none"; }
-    else{ messageBox.style.display="block"; puzzleBox.style.display="none"; messageBox.innerText=APLOGY; }
+    else{ messageBox.style.display="block"; puzzleBox.style.display="none"; messageBox.innerText=APOLOGY; }
 });
 
 // PUZZLE TAB
 document.getElementById("show-puzzle").addEventListener("click",()=>{
     if(puzzleBox.style.display==="block"){ puzzleBox.style.display="none"; }
-    else{ puzzleBox.style.display="block"; messageBox.style.display="none"; createPuzzle(3); }
+    else{ puzzleBox.style.display="block"; messageBox.style.display="none"; }
 });
 
 // HEARTS
@@ -126,12 +138,28 @@ heartWords.forEach(word=>{
 
 // PUZZLE FUNCTION
 const puzzleImages=["Puzzel1.JPG","Puzzel2.JPG","Puzzel3.jpeg"];
-function createPuzzle(size){
-    puzzleBox.innerHTML="";
-    const imgSrc=puzzleImages[size-2]; // 2x2->0, 3x3->1, 4x4->2
-    const containerWidth=puzzleBox.clientWidth;
-    const containerHeight=puzzleBox.clientHeight;
+function startPuzzle(size){
+    const containerWidth=350; // bigger but same as message box
+    const containerHeight=350;
     const tileSize=Math.floor(containerWidth/size);
+    const imgSrc=puzzleImages[size-2]; //2x2->0,3x3->1,4x4->2
+
+    // Clear previous tiles
+    puzzleBox.innerHTML=`<div id="puzzle-options">
+                <button onclick="startPuzzle(2)">2x2</button>
+                <button onclick="startPuzzle(3)">3x3</button>
+                <button onclick="startPuzzle(4)">4x4</button>
+                <button onclick="closePuzzle()">Back</button>
+            </div>`;
+
+    // Create puzzle container
+    const puzzleArea=document.createElement("div");
+    puzzleArea.style.position="relative";
+    puzzleArea.style.width=containerWidth+"px";
+    puzzleArea.style.height=containerHeight+"px";
+    puzzleArea.style.margin="0 auto";
+    puzzleBox.appendChild(puzzleArea);
+
     for(let r=0;r<size;r++){
         for(let c=0;c<size;c++){
             const tile=document.createElement("div");
@@ -143,10 +171,16 @@ function createPuzzle(size){
             tile.style.backgroundImage=`url(${imgSrc})`;
             tile.style.backgroundSize=`${tileSize*size}px ${tileSize*size}px`;
             tile.style.backgroundPosition=`-${c*tileSize}px -${r*tileSize}px`;
-            puzzleBox.appendChild(tile);
+            puzzleArea.appendChild(tile);
         }
     }
 }
+
+// CLOSE PUZZLE
+function closePuzzle(){
+    puzzleBox.style.display="none";
+}
 </script>
+
 </body>
 </html>
