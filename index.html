@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Apology Website</title>
+
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
@@ -37,6 +38,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 #main {
     display:none;
     height:100vh;
+    background:#ffe6ec;
     position:relative;
     padding:20px;
 }
@@ -52,6 +54,25 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     border:none;
     border-radius:8px;
     cursor:pointer;
+    z-index:50;
+}
+
+/* Photos on right */
+#photos {
+    position:absolute;
+    right:40px;
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    flex-direction:column;
+    z-index:10;
+}
+#photos img {
+    width:350px;
+    border-radius:15px;
+    margin-bottom:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.2);
+    max-width:90vw;
 }
 
 /* Tabs Left */
@@ -60,6 +81,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     left:40px;
     top:50%;
     transform:translateY(-50%);
+    z-index:20;
 }
 .tab-btn {
     padding:12px 20px;
@@ -82,41 +104,19 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     max-width:400px;
     white-space:pre-line;
     line-height:1.6;
+    z-index:25;
+    position:relative;
 }
 
-/* PHOTOS - positioned diagonally on right like early version */
-#photos {
-    position:absolute;
-    right:60px;
-    top:50%;
-    transform:translateY(-50%);
-    width:220px;
-    height:300px;
-}
-#photos img {
-    width:200px;
-    border-radius:12px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.2);
-    position:absolute;
-}
-#photos img:nth-child(1) {
-    top:0;
-    left:0;
-    z-index:2;
-}
-#photos img:nth-child(2) {
-    top:100px;
-    left:20px;
-    z-index:1;
-}
-
-/* HEARTS */
+/* HEART SHAPE */
 .heart {
+    position:absolute;
     width:90px;
     height:90px;
     background:red;
     transform:rotate(-45deg);
-    position:absolute;
+    opacity:0.85;
+    z-index:100; /* HEARTS IN FRONT */
 }
 .heart:before,
 .heart:after {
@@ -178,6 +178,12 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 }
 #puzzle-back {
     margin-top:20px;
+    background:#ff4d6d;
+    color:white;
+    border:none;
+    border-radius:8px;
+    padding:8px 16px;
+    cursor:pointer;
 }
 /* Puzzle control buttons with color */
 #controls button {
@@ -188,6 +194,16 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     border:none;
     border-radius:6px;
     cursor:pointer;
+}
+
+/* MOBILE FIXES */
+@media(max-width:800px) {
+    #photos img { width:240px; }
+    .tab-btn { width:150px; font-size:15px; }
+    #message-content { max-width:300px; }
+    .heart { width:70px; height:70px; }
+    .heart:before, .heart:after { width:70px; height:70px; }
+    .heart span { font-size:12px; width:60px; }
 }
 </style>
 </head>
@@ -200,8 +216,9 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     <input type="submit" value="Login" id="login-btn" />
 </div>
 
-<!-- MAIN -->
+<!-- MAIN PAGE -->
 <div id="main">
+
     <button id="logout">Logout</button>
 
     <div class="tabs">
@@ -210,10 +227,9 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
         <button class="tab-btn" onclick="document.getElementById('puzzle-box').style.display='block'">Puzzle</button>
     </div>
 
-    <!-- Photos -->
     <div id="photos">
-        <img src="photo.jpg"/>
-        <img src="photo2.jpg"/>
+        <img src="photo.jpg" />
+        <img src="photo2.jpg" />
     </div>
 
     <!-- Puzzle Box -->
@@ -248,15 +264,16 @@ loginBtn.addEventListener("click", () => {
     }
 });
 
-// LOGOUT
-document.getElementById("logout").onclick = () => { location.reload(); };
+document.getElementById("logout").onclick = () => location.reload();
 
 // APOLOGY MESSAGE
 const messageBtn = document.getElementById("show-message");
 const messageBox = document.getElementById("message-content");
+
 const APOLOGY = `I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again in which we just reestablished and rebuilt and that you gave me I want you to know that my actions are a reflection of my flaws I should’ve handled the situation differently I handled everything terribly you are an incredible strong caring intelligent I should have been as amazing as you have been to me and I’m sorry for failing you I just want you to know that I truly value you and I’m committed to understanding you better you deserve the world I’m sorry for hurting you you mean a lot to me and I hope that I can show you that I only handled the situation wrong not that I don’t love you
 
 I love you ❤️`;
+
 messageBtn.addEventListener("click", () => {
     if(messageBox.style.display==="none" || messageBox.style.display===""){
         messageBox.style.display="block";
@@ -391,5 +408,6 @@ function closePuzzle(){
     document.getElementById("puzzle-box").style.display="none";
 }
 </script>
+
 </body>
 </html>
