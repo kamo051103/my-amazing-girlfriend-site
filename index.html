@@ -84,27 +84,30 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     line-height:1.6;
 }
 
-/* PHOTOS - positioned like earlier */
+/* PHOTOS - positioned diagonally on right like early version */
 #photos {
     position:absolute;
-    right:50px;
+    right:60px;
     top:50%;
     transform:translateY(-50%);
-    z-index:1;
+    width:220px;
+    height:300px;
 }
 #photos img {
-    width:180px;
-    position:absolute;
+    width:200px;
     border-radius:12px;
     box-shadow:0 4px 12px rgba(0,0,0,0.2);
+    position:absolute;
 }
 #photos img:nth-child(1) {
-    top:-60px;
+    top:0;
     left:0;
+    z-index:2;
 }
 #photos img:nth-child(2) {
-    top:60px;
-    left:30px;
+    top:100px;
+    left:20px;
+    z-index:1;
 }
 
 /* HEARTS */
@@ -207,6 +210,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
         <button class="tab-btn" onclick="document.getElementById('puzzle-box').style.display='block'">Puzzle</button>
     </div>
 
+    <!-- Photos -->
     <div id="photos">
         <img src="photo.jpg"/>
         <img src="photo2.jpg"/>
