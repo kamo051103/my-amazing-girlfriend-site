@@ -53,7 +53,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 @keyframes float { 0% { transform:translate(0,0) rotate(-45deg); } 50% { transform:translate(0,-200px) rotate(-45deg); } 100% { transform:translate(0,0) rotate(-45deg); } }
 
 /* PUZZLE TILES */
-.puzzle-tile { position:absolute; background-size:cover; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.3); border:1px solid #fff; }
+.puzzle-tile { position:absolute; background-size:cover; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.3); border:1px solid #fff; transition:top 0.2s, left 0.2s; }
 </style>
 </head>
 <body>
@@ -136,32 +136,37 @@ heartWords.forEach(word=>{
     main.appendChild(h);
 });
 
-// PUZZLE FUNCTION
+// PUZZLE
 const puzzleImages=["Puzzel1.JPG","Puzzel2.JPG","Puzzel3.jpeg"];
+let tiles=[], emptyPos={}, puzzleSize=2;
+
 function startPuzzle(size){
-    const containerWidth=350; // bigger but same as message box
-    const containerHeight=350;
-    const tileSize=Math.floor(containerWidth/size);
-    const imgSrc=puzzleImages[size-2]; //2x2->0,3x3->1,4x4->2
-
-    // Clear previous tiles
+    puzzleSize=size;
+    tiles=[];
     puzzleBox.innerHTML=`<div id="puzzle-options">
-                <button onclick="startPuzzle(2)">2x2</button>
-                <button onclick="startPuzzle(3)">3x3</button>
-                <button onclick="startPuzzle(4)">4x4</button>
-                <button onclick="closePuzzle()">Back</button>
-            </div>`;
+        <button onclick="startPuzzle(2)">2x2</button>
+        <button onclick="startPuzzle(3)">3x3</button>
+        <button onclick="startPuzzle(4)">4x4</button>
+        <button onclick="closePuzzle()">Back</button>
+    </div>`;
 
-    // Create puzzle container
     const puzzleArea=document.createElement("div");
     puzzleArea.style.position="relative";
-    puzzleArea.style.width=containerWidth+"px";
-    puzzleArea.style.height=containerHeight+"px";
-    puzzleArea.style.margin="0 auto";
+    puzzleArea.style.width="350px";
+    puzzleArea.style.height="350px";
+    puzzleArea.style.margin="10px auto";
     puzzleBox.appendChild(puzzleArea);
 
+    const imgSrc=puzzleImages[size-2];
+    const tileSize=350/size;
+
+    // Create tiles
     for(let r=0;r<size;r++){
         for(let c=0;c<size;c++){
+            if(r===size-1 && c===size-1){
+                emptyPos={r,c};
+                continue;
+            }
             const tile=document.createElement("div");
             tile.className="puzzle-tile";
             tile.style.width=tileSize+"px";
@@ -171,15 +176,35 @@ function startPuzzle(size){
             tile.style.backgroundImage=`url(${imgSrc})`;
             tile.style.backgroundSize=`${tileSize*size}px ${tileSize*size}px`;
             tile.style.backgroundPosition=`-${c*tileSize}px -${r*tileSize}px`;
+            tile.dataset.r=r;
+            tile.dataset.c=c;
+            tile.addEventListener("click",()=>moveTile(tile,puzzleArea,tileSize));
             puzzleArea.appendChild(tile);
+            tiles.push(tile);
         }
     }
 }
 
-// CLOSE PUZZLE
-function closePuzzle(){
-    puzzleBox.style.display="none";
+// Move tile function
+function moveTile(tile, container, size){
+    const r=parseInt(tile.dataset.r);
+    const c=parseInt(tile.dataset.c);
+    const dr=Math.abs(r-emptyPos.r);
+    const dc=Math.abs(c-emptyPos.c);
+    if((dr===1 && dc===0) || (dr===0 && dc===1)){
+        // swap positions
+        tile.style.top=emptyPos.r*size+"px";
+        tile.style.left=emptyPos.c*size+"px";
+        const tempR=tile.dataset.r;
+        const tempC=tile.dataset.c;
+        tile.dataset.r=emptyPos.r;
+        tile.dataset.c=emptyPos.c;
+        emptyPos={r:parseInt(tempR), c:parseInt(tempC)};
+    }
 }
+
+// Close puzzle
+function closePuzzle(){ puzzleBox.style.display="none"; }
 </script>
 
 </body>
