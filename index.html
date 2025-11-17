@@ -109,7 +109,6 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     height:90px;
     background:red;
     transform:rotate(-45deg);
-    animation:float 4s ease-in-out infinite;
 }
 .heart:before,
 .heart:after {
@@ -138,14 +137,16 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     pointer-events:none;
 }
 
-/* Heart animation */
+/* Heart animation natural */
 @keyframes float {
     0% { transform:translate(0,0) rotate(-45deg); }
-    50% { transform:translate(0,-180px) rotate(-45deg); }
+    25% { transform:translate(10px,-20px) rotate(-45deg); }
+    50% { transform:translate(-10px,-40px) rotate(-45deg); }
+    75% { transform:translate(10px,-60px) rotate(-45deg); }
     100% { transform:translate(0,0) rotate(-45deg); }
 }
 
-/* Puzzle Box like apology message */
+/* PUZZLE BOX */
 #puzzle-box {
     width: 340px;
     padding: 20px;
@@ -169,6 +170,8 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     cursor: pointer;
     transition: top 0.25s, left 0.25s;
 }
+#controls { margin-bottom:15px; }
+#controls button { background:#ff4d6d; color:white; border:none; border-radius:6px; padding:8px 15px; margin:3px; cursor:pointer; }
 #puzzle-message {
     margin-top: 20px;
     display: none;
@@ -177,10 +180,10 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     border-radius: 12px;
     font-weight: bold;
 }
-#puzzle-back { margin-top: 20px; }
+#puzzle-back { margin-top: 15px; padding:8px 16px; border:none; border-radius:8px; background:#ff4d6d; color:white; cursor:pointer; }
+
 </style>
 </head>
-
 <body>
 
 <!-- LOGIN -->
@@ -205,7 +208,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
         <img src="photo2.jpg" />
     </div>
 
-    <!-- Puzzle Box -->
+    <!-- PUZZLE BOX -->
     <div id="puzzle-box">
         <div id="controls">
             <button onclick="startPuzzle(2)">2×2</button>
@@ -216,46 +219,37 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
         <div id="puzzle-message"></div>
         <button id="puzzle-back" onclick="closePuzzle()">Back</button>
     </div>
+
 </div>
 
 <script>
-const loginBtn = document.getElementById("login-btn");
-const nameInput = document.getElementById("name");
-const loginForm = document.getElementById("login-form");
-const main = document.getElementById("main");
-
-loginBtn.addEventListener("click", () => {
-    const name = nameInput.value.trim();
-    if(name === "Zodwa"){
-        loginForm.style.display = "none";
-        main.style.display = "block";
-    } else {
-        alert("Incorrect name.");
-    }
+/* LOGIN */
+const loginBtn=document.getElementById("login-btn");
+const nameInput=document.getElementById("name");
+const loginForm=document.getElementById("login-form");
+const main=document.getElementById("main");
+loginBtn.addEventListener("click",()=>{
+    const name=nameInput.value.trim();
+    if(name==="Zodwa"){
+        loginForm.style.display="none";
+        main.style.display="block";
+    }else{ alert("Incorrect name."); }
 });
-
-/* LOGOUT */
-document.getElementById("logout").onclick = () => location.reload();
+document.getElementById("logout").onclick=()=>location.reload();
 
 /* APOLOGY MESSAGE */
-const messageBtn = document.getElementById("show-message");
-const messageBox = document.getElementById("message-content");
-const APOLOGY = 
-`I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again in which we just reestablished and rebuilt and that you gave me I want you to know that my actions are a reflection of my flaws I should’ve handled the situation differently I handled everything terribly you are an incredible strong caring intelligent I should have been as amazing as you have been to me and I’m sorry for failing you I just want you to know that I truly value you and I’m committed to understanding you better you deserve the world I’m sorry for hurting you you mean a lot to me and I hope that I can show you that I only handled the situation wrong not that I don’t love you
-
-I love you ❤️`;
-
-messageBtn.addEventListener("click", () => {
-    if(messageBox.style.display==="none" || messageBox.style.display==="") {
-        messageBox.style.display="block";
+const messageBtn=document.getElementById("show-message");
+const messageBox=document.getElementById("message-content");
+const APOLOGY = `I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again in which we just reestablished and rebuilt and that you gave me I want you to know that my actions are a reflection of my flaws I should’ve handled the situation differently I handled everything terribly you are an incredible strong caring intelligent I should have been as amazing as you have been to me and I’m sorry for failing you I just want you to know that I truly value you and I’m committed to understanding you better you deserve the world I’m sorry for hurting you you mean a lot to me and I hope that I can show you that I only handled the situation wrong not that I don’t love you\n\nI love you ❤️`;
+messageBtn.addEventListener("click",()=>{
+    if(messageBox.style.display==="none"||messageBox.style.display===""){ 
+        messageBox.style.display="block"; 
         messageBox.innerText=APOLOGY;
-    } else {
-        messageBox.style.display="none";
-    }
+    } else { messageBox.style.display="none"; }
 });
 
 /* FLOATING HEARTS */
-const heartWords = ["Zodwa","I","am","sorry","I love you"];
+const heartWords=["Zodwa","I","am","sorry","I love you"];
 heartWords.forEach(word=>{
     const h=document.createElement("div");
     h.className="heart";
@@ -265,39 +259,26 @@ heartWords.forEach(word=>{
     h.style.left=Math.random()*(window.innerWidth-120)+"px";
     h.style.top=Math.random()*(window.innerHeight-120)+"px";
     h.style.animationDuration=(3+Math.random()*2)+"s";
+    h.style.animationName="float";
     main.appendChild(h);
 });
 
-/* PUZZLE CODE */
-const messages = [
-    "You are the best girlfriend!",
-    "You make me so happy and I love you so much!",
-    "I am sorry ❤️"
-];
-const puzzleImages = [
-    "Puzzel1.JPG",
-    "Puzzel2.JPG",
-    "Puzzel3.jpeg"
-];
-
-let gridSize, tiles=[], emptyPos={}, imgSize=300;
+/* PUZZLE */
+const puzzleMessages=["You are the best girlfriend!","You make me so happy and I love you so much!","I am sorry"];
+const puzzleImages=["Puzzel1.JPG","Puzzel2.JPG","Puzzel3.jpeg"];
+let gridSize,tiles=[],emptyPos={},imgSize=300;
 
 function startPuzzle(size){
     gridSize=size;
-    document.getElementById("puzzle-box").style.display="inline-block";
     document.getElementById("puzzle-message").style.display="none";
     const container=document.getElementById("puzzle-container");
-    container.innerHTML="";
-    tiles=[];
+    container.innerHTML=""; tiles=[];
     const imgSrc=puzzleImages[size-2];
     const tileSize=imgSize/size;
 
     for(let r=0;r<size;r++){
         for(let c=0;c<size;c++){
-            if(r===size-1 && c===size-1){
-                emptyPos={row:r,col:c};
-                continue;
-            }
+            if(r===size-1 && c===size-1){ emptyPos={row:r,col:c}; continue; }
             const tile=document.createElement("img");
             tile.src=imgSrc;
             tile.className="tile";
@@ -356,7 +337,7 @@ function checkSolved(){
     const solved=tiles.every(tile=>tile.dataset.row==tile.dataset.rowOrig && tile.dataset.col==tile.dataset.colOrig);
     if(solved){
         const msgBox=document.getElementById("puzzle-message");
-        msgBox.innerText=messages[gridSize-2];
+        msgBox.innerText=puzzleMessages[gridSize-2];
         msgBox.style.display="block";
     }
 }
@@ -367,6 +348,5 @@ function closePuzzle(){
     document.getElementById("puzzle-message").style.display="none";
 }
 </script>
-
 </body>
 </html>
