@@ -36,7 +36,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 .tab-btn { padding:12px 20px; margin-bottom:10px; border:none; border-radius:8px; background:#ff4d6d; color:white; cursor:pointer; font-size:17px; width:220px; }
 
 /* MESSAGE & PUZZLE CONTENT */
-#message-content, #puzzle-content { display:none; margin-top:15px; background:white; padding:20px; border-radius:12px; box-shadow:0 0 10px rgba(0,0,0,0.15); max-width:400px; max-height:450px; overflow:auto; white-space:pre-line; line-height:1.6; position:relative; }
+#message-content, #puzzle-content { display:none; margin-top:15px; background:white; padding:20px; border-radius:12px; box-shadow:0 0 10px rgba(0,0,0,0.15); max-width:400px; max-height:500px; overflow:auto; white-space:pre-line; line-height:1.6; position:relative; }
 
 /* PUZZLE OPTIONS */
 #puzzle-options { margin-bottom:10px; }
@@ -78,7 +78,10 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
                 <button onclick="startPuzzle(2)">2x2</button>
                 <button onclick="startPuzzle(3)">3x3</button>
                 <button onclick="startPuzzle(4)">4x4</button>
+                <button onclick="closePuzzle()">Back</button>
             </div>
+            <div id="puzzle-area" style="position:relative; width:350px; height:350px; margin:10px auto;"></div>
+            <div id="puzzle-msg" style="margin-top:10px; text-align:center; font-weight:bold; color:#ff4d6d;"></div>
         </div>
     </div>
 
@@ -95,6 +98,8 @@ const loginForm=document.getElementById("login-form");
 const main=document.getElementById("main");
 const messageBox=document.getElementById("message-content");
 const puzzleBox=document.getElementById("puzzle-content");
+const puzzleArea=document.getElementById("puzzle-area");
+const puzzleMsg=document.getElementById("puzzle-msg");
 
 // APOLOGY MESSAGE
 const APOLOGY=`I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again in which we just reestablished and rebuilt and that you gave me I want you to know that my actions are a reflection of my flaws I should’ve handled the situation differently I handled everything terribly you are an incredible strong caring intelligent I should have been as amazing as you have been to me and I’m sorry for failing you I just want you to know that I truly value you and I’m committed to understanding you better you deserve the world I’m sorry for hurting you you mean a lot to me and I hope that I can show you that I only handled the situation wrong not that I don’t love you\n\nI love you ❤️`;
@@ -143,24 +148,12 @@ let tiles=[], emptyPos={}, puzzleSize=2, puzzleMessage="";
 function startPuzzle(size){
     puzzleSize=size;
     tiles=[];
-    puzzleBox.innerHTML=`<div id="puzzle-options">
-        <button onclick="startPuzzle(2)">2x2</button>
-        <button onclick="startPuzzle(3)">3x3</button>
-        <button onclick="startPuzzle(4)">4x4</button>
-        <button onclick="closePuzzle()">Back</button>
-    </div>`;
-
-    const puzzleArea=document.createElement("div");
-    puzzleArea.style.position="relative";
-    puzzleArea.style.width="350px";
-    puzzleArea.style.height="350px";
-    puzzleArea.style.margin="10px auto";
-    puzzleBox.appendChild(puzzleArea);
-
+    puzzleMsg.innerText="";
+    puzzleArea.innerHTML="";
     const imgSrc=puzzleImages[size-2];
     const tileSize=350/size;
 
-    // Create tile positions
+    // Positions
     let positions=[];
     for(let r=0;r<size;r++){
         for(let c=0;c<size;c++){
@@ -172,59 +165,72 @@ function startPuzzle(size){
         }
     }
 
-    // Shuffle positions
-    positions.sort(()=>Math.random()-0.5);
+    // Shuffle positions to create solvable puzzle
+    let shuffled=positions.slice();
+    do{
+        shuffled.sort(()=>Math.random()-0.5);
+    } while(!isSolvable(shuffled,size));
 
-    // Assign messages for each image
     const messages=["You are the best girlfriend","You make me so happy and I love you so much","I am sorry"];
     puzzleMessage=messages[size-2];
 
     // Create tiles
-    for(let i=0;i<positions.length;i++){
-        const pos=positions[i];
-        const r=pos.r, c=pos.c;
+    for(let i=0;i<shuffled.length;i++){
+        const pos=shuffled[i];
         const tile=document.createElement("div");
         tile.className="puzzle-tile";
-        tile.style.width=tileSize+"px";
-        tile.style.height=tileSize+"px";
-        tile.style.top=(r*tileSize)+"px";
-        tile.style.left=(c*tileSize)+"px";
+        tile.style.width=tile.style.height=tileSize+"px";
+        tile.style.top=(pos.r*tileSize)+"px";
+        tile.style.left=(pos.c*tileSize)+"px";
         tile.style.backgroundImage=`url(${imgSrc})`;
         tile.style.backgroundSize=`${tileSize*size}px ${tileSize*size}px`;
-        tile.style.backgroundPosition=`-${c*tileSize}px -${r*tileSize}px`;
-        tile.dataset.r=r;
-        tile.dataset.c=c;
-        tile.dataset.correctR=pos.r;
-        tile.dataset.correctC=pos.c;
-        tile.addEventListener("click",()=>moveTile(tile,puzzleArea,tileSize));
+        tile.style.backgroundPosition=`-${pos.c*tileSize}px -${pos.r*tileSize}px`;
+        tile.dataset.r=pos.r;
+        tile.dataset.c=pos.c;
+        tile.dataset.correctR=positions[i].r;
+        tile.dataset.correctC=positions[i].c;
+        tile.addEventListener("click",()=>moveTile(tile,tileSize));
         puzzleArea.appendChild(tile);
         tiles.push(tile);
     }
 }
 
-// Move tile function
-function moveTile(tile, container, size){
+// Check solvable (for sliding puzzle)
+function isSolvable(arr,size){
+    let inversions=0;
+    let flat=arr.map(p=>p.r*size+p.c);
+    for(let i=0;i<flat.length;i++){
+        for(let j=i+1;j<flat.length;j++){
+            if(flat[i]>flat[j]) inversions++;
+        }
+    }
+    if(size%2===1) return inversions%2===0;
+    return true;
+}
+
+// Move tile
+function moveTile(tile,size){
     const r=parseInt(tile.dataset.r);
     const c=parseInt(tile.dataset.c);
     const dr=Math.abs(r-emptyPos.r);
     const dc=Math.abs(c-emptyPos.c);
-    if((dr===1 && dc===0) || (dr===0 && dc===1)){
+    if((dr===1 && dc===0)||(dr===0 && dc===1)){
         tile.style.top=emptyPos.r*size+"px";
         tile.style.left=emptyPos.c*size+"px";
         const tempR=tile.dataset.r;
         const tempC=tile.dataset.c;
         tile.dataset.r=emptyPos.r;
         tile.dataset.c=emptyPos.c;
-        emptyPos={r:parseInt(tempR), c:parseInt(tempC)};
+        emptyPos={r:parseInt(tempR),c:parseInt(tempC)};
         checkPuzzleSolved();
     }
 }
 
-// Check if puzzle is solved
+// Check solved
 function checkPuzzleSolved(){
-    const solved=tiles.every(t=>t.dataset.r==t.dataset.correctR && t.dataset.c==t.dataset.correctC);
+    const solved=tiles.every(t=>parseInt(t.dataset.r)===parseInt(t.dataset.correctR) && parseInt(t.dataset.c)===parseInt(t.dataset.correctC));
     if(solved){
-        alert("Puzzle solved! Message: "+puzzleMessage);
+        puzzleMsg.innerText="Puzzle solved! "+puzzleMessage;
     }
 }
 
