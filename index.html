@@ -1,229 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Apology Website</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puzzle Surprise</title>
 <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
-
-    /* LOGIN PAGE */
-    #login-form {
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        justify-content:center;
-        height:100vh;
-        background:url('photo3.jpeg') center/cover no-repeat;
-    }
-    #login-form h1 { font-size:32px; margin-bottom:20px; color:white; text-shadow:0 0 10px black; }
-    #login-form input { padding:10px; border-radius:6px; border:none; margin:5px 0; width:220px; font-size:16px; }
-    #login-btn { background:#ff4d6d; color:white; cursor:pointer; }
-
-    /* MAIN PAGE */
-    #main { display:none; height:100vh; background:#ffe6ec; position:relative; padding:20px; }
-
-    /* Logout bottom-left */
-    #logout {
-        position:absolute; bottom:20px; left:20px;
-        padding:8px 16px; background:#ff4d6d; color:white;
-        border:none; border-radius:8px; cursor:pointer; z-index:999;
-    }
-
-    /* Photos on right */
-    #photos { position:absolute; right:40px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; }
-    #photos img { width:300px; border-radius:15px; margin-bottom:20px; box-shadow:0 4px 12px rgba(0,0,0,0.2); z-index:1; }
-
-    /* Tabs Left */
-    .tabs { position:absolute; left:40px; top:50%; transform:translateY(-50%); z-index:1; }
-    .tab-btn { padding:12px 20px; margin-bottom:10px; border:none; border-radius:8px; background:#ff4d6d; color:white; cursor:pointer; font-size:17px; width:180px; }
-    #message-content { display:none; margin-top:15px; background:white; padding:20px; border-radius:12px; box-shadow:0 0 10px rgba(0,0,0,0.15); max-width:400px; white-space:pre-line; line-height:1.6; }
-
-    /* HEARTS */
-    .heart { position:absolute; width:90px; height:90px; background:red; transform:rotate(-45deg); animation:float 6s linear infinite; }
-    .heart:before, .heart:after { content:""; position:absolute; width:90px; height:90px; background:red; border-radius:50%; z-index:1; }
-    .heart:before { top:-45px; left:0; } .heart:after { left:45px; top:0; }
-    .heart span { position:absolute; top:55%; left:50%; transform:translate(-50%,-50%) rotate(45deg); color:white; font-weight:bold; font-size:15px; width:80px; text-align:center; z-index:9999; text-shadow:0 0 6px black; pointer-events:none; }
-    @keyframes float { 0%{transform:translate(0,0) rotate(-45deg);} 50%{transform:translate(0,-180px) rotate(-45deg);} 100%{transform:translate(0,0) rotate(-45deg);} }
-
-    /* PUZZLE */
-    #puzzle-container { display:none; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); background:white; padding:20px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.25); width:360px; text-align:center; z-index:10000; }
-    #puzzle-buttons { margin-bottom:15px; }
-    #puzzle-buttons button { margin:2px; padding:6px 10px; border:none; border-radius:6px; background:#ff4d6d; color:white; cursor:pointer; }
-    #puzzle-grid { margin:auto; display:grid; gap:2px; width:300px; height:300px; }
-    .tile { background-size:cover; cursor:pointer; }
-    #back-btn { margin-top:10px; padding:8px 16px; background:#ff4d6d; color:white; border:none; border-radius:8px; cursor:pointer; }
-    #puzzle-status { margin-top:10px; font-weight:bold; }
+body { font-family: Arial, sans-serif; background: #ffe6ec; margin:0; padding:0; display:flex; flex-direction:column; align-items:center; }
+#puzzle-container { position: relative; margin-top: 20px; }
+.tile {
+    position: absolute;
+    box-sizing: border-box;
+    border: 1px solid #fff;
+    cursor: pointer;
+    transition: top 0.3s, left 0.3s;
+}
+#controls { margin-top: 20px; }
+button { padding: 10px 20px; margin: 5px; background:#ff4d6d; color:white; border:none; border-radius:6px; cursor:pointer; }
+#message { margin-top:20px; display:none; background:white; padding:20px; border-radius:12px; max-width:400px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
+#back-btn { display:none; margin-top:20px; }
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="login-form">
-    <h1>Login</h1>
-    <input type="text" id="name" placeholder="Enter your name" />
-    <input type="submit" value="Login" id="login-btn" />
+<h2>Puzzle Surprise</h2>
+<div id="controls">
+    <button onclick="startPuzzle(3)">3x3</button>
+    <button onclick="startPuzzle(4)">4x4</button>
+    <button onclick="startPuzzle(5)">5x5</button>
 </div>
 
-<!-- MAIN PAGE -->
-<div id="main">
-    <button id="logout">Logout</button>
-
-    <div class="tabs">
-        <button class="tab-btn" id="show-message">Apology Message</button>
-        <button class="tab-btn" id="show-puzzle">Puzzle</button>
-        <div id="message-content"></div>
-    </div>
-
-    <div id="photos">
-        <img src="photo.jpg" />
-        <img src="photo2.jpg" />
-    </div>
-
-    <!-- Puzzle -->
-    <div id="puzzle-container">
-        <div id="puzzle-buttons">
-            <button data-puzzle="1">3×3</button>
-            <button data-puzzle="2">4×4</button>
-            <button data-puzzle="3">5×5</button>
-        </div>
-        <h2 id="puzzle-title"></h2>
-        <div id="puzzle-grid"></div>
-        <p id="puzzle-status"></p>
-        <button id="back-btn">Back</button>
-    </div>
-</div>
+<div id="puzzle-container"></div>
+<div id="message"></div>
+<button id="back-btn" onclick="closePuzzle()">Back</button>
 
 <script>
-/* LOGIN */
-const loginBtn=document.getElementById("login-btn");
-const nameInput=document.getElementById("name");
-const loginForm=document.getElementById("login-form");
-const main=document.getElementById("main");
-loginBtn.addEventListener("click",()=>{
-    const name=nameInput.value.trim();
-    if(name==="Zodwa"||name==="Admin"){
-        loginForm.style.display="none";
-        main.style.display="block";
-    }else{alert("Incorrect name.");}
-});
-document.getElementById("logout").onclick=()=>location.reload();
+const messages = [
+    "You are the best girlfriend!",
+    "You make me so happy and I love you so much!",
+    "I am sorry"
+];
 
-/* APOLOGY MESSAGE */
-const APOLOGY = `I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again in which we just reestablished and rebuilt and that you gave me I want you to know that my actions are a reflection of my flaws I should’ve handled the situation differently I handled everything terribly you are an incredible strong caring intelligent I should have been as amazing as you have been to me and I’m sorry for failing you I just want you to know that I truly value you and I’m committed to understanding you better you deserve the world I’m sorry for hurting you you mean a lot to me and I hope that I can show you that I only handled the situation wrong not that I don’t love you\n\nI love you ❤️`;
-const messageBtn=document.getElementById("show-message");
-const messageBox=document.getElementById("message-content");
-messageBtn.addEventListener("click",()=>{
-    if(messageBox.style.display==="none"||messageBox.style.display==="") {
-        messageBox.style.display="block"; messageBox.innerText=APLOGY;
-    } else { messageBox.style.display="none"; }
-});
+const puzzleImages = [
+    "Puzzel1.JPG",
+    "Puzzel2.JPG",
+    "Puzzel3.jpeg"
+];
 
-/* HEARTS */
-const heartWords=["Zodwa","I","am","sorry","I love you"];
-heartWords.forEach(word=>{
-    const h=document.createElement("div"); h.className="heart";
-    const text=document.createElement("span"); text.innerText=word; h.appendChild(text);
-    h.style.left=Math.random()*(window.innerWidth-120)+"px";
-    h.style.top=Math.random()*(window.innerHeight-120)+"px";
-    h.style.animationDuration=(5+Math.random()*3)+"s";
-    main.appendChild(h);
-});
+let gridSize, tiles=[], emptyPos={}, container, imgWidth, imgHeight;
 
-/* PUZZLES */
-const puzzles={
-    1:{img:"Puzzel1.JPG", size:3, message:"You are the best girlfriend"},
-    2:{img:"Puzzel2.JPG", size:4, message:"You make me so happy and I love you so much"},
-    3:{img:"Puzzel3.jpeg", size:5, message:"I am sorry"}
-};
+function startPuzzle(size) {
+    gridSize = size;
+    container = document.getElementById('puzzle-container');
+    container.innerHTML = '';
+    document.getElementById('message').style.display='none';
+    document.getElementById('back-btn').style.display='inline-block';
+    
+    const imgSrc = puzzleImages[size-3]; // 3x3=>first, 4x4=>second, 5x5=>third
+    const img = new Image();
+    img.src = imgSrc;
+    img.onload = function() {
+        imgWidth = img.width;
+        imgHeight = img.height;
+        container.style.width = imgWidth+'px';
+        container.style.height = imgHeight+'px';
 
-const showPuzzleBtn=document.getElementById("show-puzzle");
-const puzzleContainer=document.getElementById("puzzle-container");
-const puzzleGrid=document.getElementById("puzzle-grid");
-const puzzleTitle=document.getElementById("puzzle-title");
-const puzzleStatus=document.getElementById("puzzle-status");
-const puzzleButtons=document.querySelectorAll("#puzzle-buttons button");
-const backBtn=document.getElementById("back-btn");
-
-showPuzzleBtn.onclick=()=>{ puzzleContainer.style.display=puzzleContainer.style.display==="none"?"block":"none"; };
-
-backBtn.onclick=()=>{ puzzleContainer.style.display="none"; puzzleGrid.innerHTML=""; puzzleStatus.innerText=""; };
-
-/* Load puzzle */
-puzzleButtons.forEach(btn=>{
-    btn.onclick=()=>loadPuzzle(btn.dataset.puzzle);
-});
-
-function loadPuzzle(num){
-    const p=puzzles[num];
-    const size=p.size;
-    puzzleTitle.innerText="Puzzle "+num;
-    puzzleGrid.innerHTML="";
-    puzzleGrid.style.gridTemplateColumns=`repeat(${size},1fr)`;
-    puzzleGrid.style.gridTemplateRows=`repeat(${size},1fr)`;
-    const positions=[...Array(size*size).keys()]; // 0..n-1
-    shuffleArray(positions);
-
-    // create tiles
-    positions.forEach((pos,i)=>{
-        const tile=document.createElement("div");
-        tile.className="tile";
-        tile.style.width=`${300/size}px`; tile.style.height=`${300/size}px`;
-        tile.style.backgroundImage=`url(${p.img})`;
-        tile.style.backgroundPosition=`-${(pos%size)*(300/size)}px -${Math.floor(pos/size)*(300/size)}px`;
-        tile.dataset.index=i;
-        puzzleGrid.appendChild(tile);
-    });
-
-    // Add click-to-swap mechanic
-    let emptyIndex=size*size-1;
-    puzzleGrid.children[emptyIndex].style.opacity="0"; // empty slot
-
-    Array.from(puzzleGrid.children).forEach(tile=>{
-        tile.addEventListener("click",()=>{
-            const tileIndex=parseInt(tile.dataset.index);
-            const tileRow=Math.floor(tileIndex/size);
-            const tileCol=tileIndex%size;
-            const emptyRow=Math.floor(emptyIndex/size);
-            const emptyCol=emptyIndex%size;
-            const dx=Math.abs(tileRow-emptyRow);
-            const dy=Math.abs(tileCol-emptyCol);
-            if((dx+dy)===1){ // adjacent
-                swapTiles(tileIndex, emptyIndex);
-                emptyIndex=tileIndex;
-                checkSolved(size, p.message);
+        // Create tiles
+        tiles=[];
+        for(let r=0;r<size;r++){
+            for(let c=0;c<size;c++){
+                if(r===size-1 && c===size-1){
+                    emptyPos={row:r,col:c};
+                    continue; // leave last tile empty
+                }
+                const tile = document.createElement('img');
+                tile.src = imgSrc;
+                tile.className='tile';
+                tile.dataset.row=r;
+                tile.dataset.col=c;
+                tile.style.width=(imgWidth/size)+'px';
+                tile.style.height=(imgHeight/size)+'px';
+                tile.style.top=(r*(imgHeight/size))+'px';
+                tile.style.left=(c*(imgWidth/size))+'px';
+                tile.style.objectFit='none';
+                tile.style.objectPosition=`-${c*(imgWidth/size)}px -${r*(imgHeight/size)}px`;
+                tile.addEventListener('click', ()=>moveTile(tile));
+                container.appendChild(tile);
+                tiles.push(tile);
             }
-        });
+        }
+        shuffleTiles();
+    }
+}
+
+function shuffleTiles(){
+    // perform a number of random valid moves
+    for(let i=0;i<1000;i++){
+        const neighbors = tiles.filter(t=>isNeighbor(t,emptyPos));
+        const tile = neighbors[Math.floor(Math.random()*neighbors.length)];
+        swapWithEmpty(tile);
+    }
+}
+
+function isNeighbor(tile,pos){
+    const r=parseInt(tile.dataset.row);
+    const c=parseInt(tile.dataset.col);
+    return ( (r===pos.row && Math.abs(c-pos.col)===1) || (c===pos.col && Math.abs(r-pos.row)===1) );
+}
+
+function moveTile(tile){
+    if(isNeighbor(tile,emptyPos)){
+        swapWithEmpty(tile);
+        checkSolved();
+    }
+}
+
+function swapWithEmpty(tile){
+    const tempTop = tile.style.top;
+    const tempLeft = tile.style.left;
+    tile.style.top = emptyPos.row*(imgHeight/gridSize)+'px';
+    tile.style.left = emptyPos.col*(imgWidth/gridSize)+'px';
+
+    const tileRow = parseInt(tile.dataset.row);
+    const tileCol = parseInt(tile.dataset.col);
+
+    tile.dataset.row = emptyPos.row;
+    tile.dataset.col = emptyPos.col;
+
+    emptyPos.row = tileRow;
+    emptyPos.col = tileCol;
+}
+
+function checkSolved(){
+    const solved = tiles.every(tile=>{
+        return parseInt(tile.dataset.row)==tile.dataset.rowOrig && parseInt(tile.dataset.col)==tile.dataset.colOrig;
     });
-
-    function swapTiles(i,j){
-        const tiles=Array.from(puzzleGrid.children);
-        const temp=tiles[i].style.backgroundPosition;
-        tiles[i].style.backgroundPosition=tiles[j].style.backgroundPosition;
-        tiles[j].style.backgroundPosition=temp;
-        const tempIndex=tiles[i].dataset.index;
-        tiles[i].dataset.index=tiles[j].dataset.index;
-        tiles[j].dataset.index=tempIndex;
+    if(solved){
+        document.getElementById('message').innerText = messages[gridSize-3];
+        document.getElementById('message').style.display='block';
     }
 }
 
-function checkSolved(size, message){
-    let solved=true;
-    const tiles=Array.from(puzzleGrid.children);
-    for(let i=0;i<tiles.length;i++){
-        if(parseInt(tiles[i].dataset.index)!==i){ solved=false; break; }
-    }
-    if(solved) puzzleStatus.innerText=message+" ❤️";
-}
-
-// shuffle helper
-function shuffleArray(arr){
-    for(let i=arr.length-1;i>0;i--){
-        const j=Math.floor(Math.random()*(i+1));
-        [arr[i],arr[j]]=[arr[j],arr[i]];
-    }
+function closePuzzle(){
+    document.getElementById('puzzle-container').innerHTML='';
+    document.getElementById('message').style.display='none';
+    document.getElementById('back-btn').style.display='none';
 }
 </script>
 </body>
