@@ -1,246 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Apology & Puzzle Surprise</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puzzle Surprise</title>
+
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow-x:hidden; }
-
-#login-form {
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    height:100vh;
-    background:url('photo3.jpeg') center/cover no-repeat;
-}
-#login-form h1 { font-size:32px; margin-bottom:20px; color:white; text-shadow:0 0 10px black; }
-#login-form input { padding:10px; border-radius:6px; border:none; margin:5px 0; width:220px; font-size:16px; }
-#login-btn { background:#ff4d6d; color:white; cursor:pointer; }
-
-#main { display:none; height:100vh; background:#ffe6ec; position:relative; padding:20px; }
-
-#logout { position:absolute; bottom:20px; left:20px; padding:8px 16px; background:#ff4d6d; color:white; border:none; border-radius:8px; cursor:pointer; z-index:1000; }
-
-#photos { position:absolute; right:40px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; z-index:1; }
-#photos img { width:250px; border-radius:15px; margin-bottom:20px; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
-
-.tabs { position:absolute; left:40px; top:50%; transform:translateY(-50%); z-index:1; }
-.tab-btn { padding:12px 20px; margin-bottom:10px; border:none; border-radius:8px; background:#ff4d6d; color:white; cursor:pointer; font-size:17px; width:180px; }
-#message-content { display:none; margin-top:15px; background:white; padding:20px; border-radius:12px; box-shadow:0 0 10px rgba(0,0,0,0.15); max-width:400px; white-space:pre-line; line-height:1.6; }
-
-.heart {
-    position:absolute;
-    width:90px;
-    height:90px;
-    background:red;
-    transform:rotate(-45deg);
-    animation:float linear infinite;
-    z-index:2;
-}
-.heart:before, .heart:after {
-    content:"";
-    position:absolute;
-    width:90px;
-    height:90px;
-    background:red;
-    border-radius:50%;
-    z-index:1;
-}
-.heart:before { top:-45px; left:0; }
-.heart:after { left:45px; top:0; }
-.heart span {
-    position:absolute;
-    top:55%;
-    left:50%;
-    transform:translate(-50%,-50%) rotate(45deg);
-    color:white;
-    font-weight:bold;
-    font-size:15px;
-    width:80px;
-    text-align:center;
-    z-index:9999;
-    text-shadow:0 0 6px black;
-    pointer-events:none;
-}
-@keyframes float {
-    0% { transform:translate(0,0) rotate(-45deg); }
-    50% { transform:translate(0,-180px) rotate(-45deg); }
-    100% { transform:translate(0,0) rotate(-45deg); }
+body {
+    font-family: Arial, sans-serif;
+    background: #ffe6ec;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-/* PUZZLE */
-#puzzle-container { position: relative; margin-top:20px; display:inline-block; }
-.tile { position:absolute; box-sizing:border-box; border:1px solid #fff; cursor:pointer; transition: top 0.3s, left 0.3s; background-size:cover; background-repeat:no-repeat; }
-#puzzle-message { margin-top:20px; display:none; background:white; padding:15px; border-radius:12px; max-width:400px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
-#puzzle-back { display:none; margin-top:10px; padding:10px 20px; background:#ff4d6d; color:white; border:none; border-radius:6px; cursor:pointer; }
+/* White box around the puzzle */
+#puzzle-box {
+    width: 340px;
+    padding: 20px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    margin-top: 20px;
+    display: none;
+    text-align: center;
+}
+
+#puzzle-container {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    margin: auto;
+}
+
+.tile {
+    position: absolute;
+    box-sizing: border-box;
+    border: 1px solid white;
+    cursor: pointer;
+    transition: top 0.25s, left 0.25s;
+}
+
+#controls { margin-top: 20px; }
+
+button {
+    padding: 10px 20px;
+    margin: 5px;
+    background: #ff4d6d;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#puzzle-message {
+    margin-top: 20px;
+    display: none;
+    background: #fff0f5;
+    padding: 15px;
+    border-radius: 12px;
+    font-weight: bold;
+}
+
+#puzzle-back {
+    margin-top: 20px;
+}
 </style>
 </head>
+
 <body>
 
-<div id="login-form">
-    <h1>Login</h1>
-    <input type="text" id="name" placeholder="Enter your name" />
-    <input type="submit" value="Login" id="login-btn" />
+<h2>Puzzle Surprise</h2>
+
+<!-- Size Buttons -->
+<div id="controls">
+    <button onclick="startPuzzle(2)">2×2</button>
+    <button onclick="startPuzzle(3)">3×3</button>
+    <button onclick="startPuzzle(4)">4×4</button>
 </div>
 
-<div id="main">
-    <button id="logout">Logout</button>
-
-    <div class="tabs">
-        <button class="tab-btn" id="show-message">Apology Message</button>
-        <button class="tab-btn" id="show-puzzle">Puzzle Surprise</button>
-        <div id="message-content"></div>
-
-        <div id="puzzle-controls" style="margin-top:10px; display:none;">
-            <button onclick="startPuzzle(2)">2x2</button>
-            <button onclick="startPuzzle(3)">3x3</button>
-            <button onclick="startPuzzle(4)">4x4</button>
-        </div>
-
-        <div id="puzzle-container"></div>
-        <div id="puzzle-message"></div>
-        <button id="puzzle-back" onclick="closePuzzle()">Back</button>
-    </div>
-
-    <div id="photos">
-        <img src="photo.jpg" />
-        <img src="photo2.jpg" />
-    </div>
+<!-- Puzzle Box -->
+<div id="puzzle-box">
+    <div id="puzzle-container"></div>
+    <div id="puzzle-message"></div>
+    <button id="puzzle-back" onclick="closePuzzle()">Back</button>
 </div>
 
 <script>
-/* LOGIN */
-const loginBtn = document.getElementById("login-btn");
-const nameInput = document.getElementById("name");
-const loginForm = document.getElementById("login-form");
-const main = document.getElementById("main");
+/* Messages for each puzzle */
+const messages = [
+    "You are the best girlfriend!",
+    "You make me so happy and I love you so much!",
+    "I am sorry ❤️"
+];
 
-loginBtn.addEventListener("click", () => {
-    if(nameInput.value.trim()){
-        loginForm.style.display="none";
-        main.style.display="block";
-    } else { alert("Please enter a name."); }
-});
-document.getElementById("logout").onclick = ()=>location.reload();
+/* Images for 2×2, 3×3, 4×4 */
+const puzzleImages = [
+    "Puzzel1.JPG",
+    "Puzzel2.JPG",
+    "Puzzel3.jpeg"
+];
 
-/* APOLOGY */
-const messageBtn = document.getElementById("show-message");
-const messageBox = document.getElementById("message-content");
-const APOLOGY = `I’m really sorry for what I’ve done... I love you ❤️`;
+let gridSize, tiles = [], emptyPos = {}, imgSize = 300;
 
-messageBtn.addEventListener("click", ()=>{
-    if(messageBox.style.display==="none" || messageBox.style.display===""){
-        messageBox.style.display="block";
-        messageBox.innerText = APOLOGY;
-    } else { messageBox.style.display="none"; }
-});
+/* Start puzzle */
+function startPuzzle(size) {
+    gridSize = size;
+    document.getElementById("puzzle-box").style.display = "inline-block";
+    document.getElementById("puzzle-message").style.display = "none";
 
-/* HEARTS */
-const heartWords = ["Zodwa","I","am","sorry","I love you"];
-heartWords.forEach(word=>{
-    const h = document.createElement("div");
-    h.className="heart";
-    const text = document.createElement("span"); text.innerText=word;
-    h.appendChild(text);
-    h.style.left=Math.random()*(window.innerWidth-100)+"px";
-    h.style.top=Math.random()*(window.innerHeight-100)+"px";
-    h.style.animationDuration=(4+Math.random()*3)+"s";
-    main.appendChild(h);
-});
+    const container = document.getElementById("puzzle-container");
+    container.innerHTML = "";
+    tiles = [];
 
-/* PUZZLE */
-const puzzleImages=["Puzzel1.JPG","Puzzel2.JPG","Puzzel3.jpeg"];
-const puzzleMessages=["You are the best girlfriend!","You make me so happy and I love you so much!","I am sorry"];
-let gridSize, tiles=[], emptyPos={}, container;
+    const imgSrc = puzzleImages[size - 2];
+    const tileSize = imgSize / size;
 
-document.getElementById("show-puzzle").onclick = ()=>{ document.getElementById("puzzle-controls").style.display="block"; }
+    /* Create tiles */
+    for (let r = 0; r < size; r++) {
+        for (let c = 0; c < size; c++) {
 
-function startPuzzle(size){
-    gridSize=size;
-    container=document.getElementById("puzzle-container");
-    container.innerHTML=""; tiles=[];
-    document.getElementById("puzzle-message").style.display="none";
-    document.getElementById("puzzle-back").style.display="inline-block";
-
-    const imgSrc=puzzleImages[size-2];
-    const img=new Image();
-    img.src=imgSrc;
-    img.onload=function(){
-        const PUZZLE_SIZE=300;
-        const tileW = PUZZLE_SIZE/size;
-        const tileH = PUZZLE_SIZE/size;
-        container.style.width=PUZZLE_SIZE+"px";
-        container.style.height=PUZZLE_SIZE+"px";
-
-        for(let r=0;r<size;r++){
-            for(let c=0;c<size;c++){
-                if(r===size-1 && c===size-1){ emptyPos={row:r,col:c}; continue; }
-                const tile=document.createElement("div");
-                tile.className="tile";
-                tile.dataset.row=r;
-                tile.dataset.col=c;
-                tile.dataset.rowOrig=r;
-                tile.dataset.colOrig=c;
-                tile.style.width=tileW+"px";
-                tile.style.height=tileH+"px";
-                tile.style.top=(r*tileH)+"px";
-                tile.style.left=(c*tileW)+"px";
-                tile.style.backgroundImage=`url(${imgSrc})`;
-                tile.style.backgroundSize=`${PUZZLE_SIZE}px ${PUZZLE_SIZE}px`;
-                tile.style.backgroundPosition=`-${c*tileW}px -${r*tileH}px`;
-                tile.addEventListener("click",()=>moveTile(tile));
-                container.appendChild(tile);
-                tiles.push(tile);
+            if (r === size - 1 && c === size - 1) {
+                emptyPos = { row: r, col: c };
+                continue;
             }
+
+            const tile = document.createElement("img");
+            tile.src = imgSrc;
+            tile.className = "tile";
+
+            tile.dataset.row = r;
+            tile.dataset.col = c;
+            tile.dataset.rowOrig = r;
+            tile.dataset.colOrig = c;
+
+            tile.style.width = tileSize + "px";
+            tile.style.height = tileSize + "px";
+            tile.style.top = (r * tileSize) + "px";
+            tile.style.left = (c * tileSize) + "px";
+
+            tile.style.objectFit = "none";
+            tile.style.objectPosition = `-${c * tileSize}px -${r * tileSize}px`;
+
+            tile.addEventListener("click", () => moveTile(tile));
+
+            container.appendChild(tile);
+            tiles.push(tile);
         }
-        shuffleTiles();
+    }
+
+    shuffleTiles();
+}
+
+/* Shuffle by making valid moves */
+function shuffleTiles() {
+    for (let i = 0; i < 200; i++) {
+        const possible = tiles.filter(t => isNeighbor(t, emptyPos));
+        const tile = possible[Math.floor(Math.random() * possible.length)];
+        swapTile(tile);
     }
 }
 
-function shuffleTiles(){
-    for(let i=0;i<500;i++){
-        const neighbors=tiles.filter(t=>isNeighbor(t,emptyPos));
-        const tile=neighbors[Math.floor(Math.random()*neighbors.length)];
-        swapWithEmpty(tile);
+/* Check if tile touches empty space */
+function isNeighbor(tile, pos) {
+    const r = parseInt(tile.dataset.row);
+    const c = parseInt(tile.dataset.col);
+    return (r === pos.row && Math.abs(c - pos.col) === 1) ||
+           (c === pos.col && Math.abs(r - pos.row) === 1);
+}
+
+/* Move tile */
+function moveTile(tile) {
+    if (isNeighbor(tile, emptyPos)) {
+        swapTile(tile);
+        checkSolved();
     }
 }
 
-function isNeighbor(tile,pos){
-    const r=parseInt(tile.dataset.row), c=parseInt(tile.dataset.col);
-    return ((r===pos.row && Math.abs(c-pos.col)===1) || (c===pos.col && Math.abs(r-pos.row)===1));
+/* Swap tile with empty space */
+function swapTile(tile) {
+    const tileSize = imgSize / gridSize;
+
+    const oldRow = parseInt(tile.dataset.row);
+    const oldCol = parseInt(tile.dataset.col);
+
+    tile.dataset.row = emptyPos.row;
+    tile.dataset.col = emptyPos.col;
+
+    tile.style.top = (emptyPos.row * tileSize) + "px";
+    tile.style.left = (emptyPos.col * tileSize) + "px";
+
+    emptyPos.row = oldRow;
+    emptyPos.col = oldCol;
 }
 
-function moveTile(tile){
-    if(isNeighbor(tile,emptyPos)){ swapWithEmpty(tile); checkSolved(); }
-}
+/* Check solved */
+function checkSolved() {
+    const solved = tiles.every(tile =>
+        tile.dataset.row == tile.dataset.rowOrig &&
+        tile.dataset.col == tile.dataset.colOrig
+    );
 
-function swapWithEmpty(tile){
-    const tempTop=tile.style.top, tempLeft=tile.style.left;
-    tile.style.top=emptyPos.row*(300/gridSize)+"px";
-    tile.style.left=emptyPos.col*(300/gridSize)+"px";
-    const tr=parseInt(tile.dataset.row), tc=parseInt(tile.dataset.col);
-    tile.dataset.row=emptyPos.row; tile.dataset.col=emptyPos.col;
-    emptyPos.row=tr; emptyPos.col=tc;
-}
-
-function checkSolved(){
-    const solved=tiles.every(t=>parseInt(t.dataset.row)===parseInt(t.dataset.rowOrig) && parseInt(t.dataset.col)===parseInt(t.dataset.colOrig));
-    if(solved){
-        const msgBox=document.getElementById("puzzle-message");
-        msgBox.innerText=puzzleMessages[gridSize-2];
-        msgBox.style.display="block";
+    if (solved) {
+        const msgBox = document.getElementById("puzzle-message");
+        msgBox.innerText = messages[gridSize - 2];
+        msgBox.style.display = "block";
     }
 }
 
-function closePuzzle(){
-    document.getElementById("puzzle-container").innerHTML="";
-    document.getElementById("puzzle-message").style.display="none";
-    document.getElementById("puzzle-back").style.display="none";
-    document.getElementById("puzzle-controls").style.display="none";
+/* Close puzzle */
+function closePuzzle() {
+    document.getElementById("puzzle-box").style.display = "none";
+    document.getElementById("puzzle-container").innerHTML = "";
+    document.getElementById("puzzle-message").style.display = "none";
 }
 </script>
+
 </body>
 </html>
