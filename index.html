@@ -24,9 +24,9 @@ button { padding: 10px 20px; margin: 5px; background:#ff4d6d; color:white; borde
 
 <h2>Puzzle Surprise</h2>
 <div id="controls">
+    <button onclick="startPuzzle(2)">2x2</button>
     <button onclick="startPuzzle(3)">3x3</button>
     <button onclick="startPuzzle(4)">4x4</button>
-    <button onclick="startPuzzle(5)">5x5</button>
 </div>
 
 <div id="puzzle-container"></div>
@@ -41,9 +41,9 @@ const messages = [
 ];
 
 const puzzleImages = [
-    "Puzzel1.JPG",
-    "Puzzel2.JPG",
-    "Puzzel3.jpeg"
+    "Puzzel1.JPG", // 2x2
+    "Puzzel2.JPG", // 3x3
+    "Puzzel3.jpeg" // 4x4
 ];
 
 let gridSize, tiles=[], emptyPos={}, container, imgWidth, imgHeight;
@@ -55,7 +55,7 @@ function startPuzzle(size) {
     document.getElementById('message').style.display='none';
     document.getElementById('back-btn').style.display='inline-block';
     
-    const imgSrc = puzzleImages[size-3]; // 3x3=>first, 4x4=>second, 5x5=>third
+    const imgSrc = puzzleImages[size-2]; // 2x2=>first, 3x3=>second, 4x4=>third
     const img = new Image();
     img.src = imgSrc;
     img.onload = function() {
@@ -77,6 +77,8 @@ function startPuzzle(size) {
                 tile.className='tile';
                 tile.dataset.row=r;
                 tile.dataset.col=c;
+                tile.dataset.rowOrig=r;
+                tile.dataset.colOrig=c;
                 tile.style.width=(imgWidth/size)+'px';
                 tile.style.height=(imgHeight/size)+'px';
                 tile.style.top=(r*(imgHeight/size))+'px';
@@ -135,7 +137,7 @@ function checkSolved(){
         return parseInt(tile.dataset.row)==tile.dataset.rowOrig && parseInt(tile.dataset.col)==tile.dataset.colOrig;
     });
     if(solved){
-        document.getElementById('message').innerText = messages[gridSize-3];
+        document.getElementById('message').innerText = messages[gridSize-2];
         document.getElementById('message').style.display='block';
     }
 }
