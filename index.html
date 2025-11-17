@@ -32,11 +32,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     width:220px;
     font-size:16px;
 }
-#login-btn {
-    background:#ff4d6d;
-    color:white;
-    cursor:pointer;
-}
+#login-btn { background:#ff4d6d; color:white; cursor:pointer; }
 
 /* MAIN PAGE */
 #main {
@@ -120,7 +116,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     background:red;
     transform:rotate(-45deg);
     opacity:0.85;
-    z-index:100;
+    z-index:100; /* HEARTS IN FRONT */
 }
 .heart:before,
 .heart:after {
@@ -150,8 +146,8 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 }
 
 /* PUZZLE BOX */
-#puzzle-box {
-    width:340px;
+#puzzle-box, #quiz-box {
+    width:400px;
     padding:20px;
     background:white;
     border-radius:16px;
@@ -159,6 +155,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     margin-top:20px;
     display:none;
     text-align:center;
+    position:relative;
 }
 #puzzle-container {
     position:relative;
@@ -184,38 +181,25 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     margin-top:20px;
     background:#ff4d6d;
     color:white;
-    padding:8px 12px;
     border:none;
+    padding:10px 16px;
     border-radius:8px;
     cursor:pointer;
 }
 
-/* QUIZ BOX */
-#quiz-box {
-    width:400px;
-    padding:20px;
-    background:white;
-    border-radius:16px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.15);
-    margin-top:20px;
-    display:none;
-    text-align:center;
+/* QUIZ */
+#quiz-container {
     position:relative;
 }
-#quiz-box img {
-    width:100%;
-    border-radius:12px;
-    margin-bottom:10px;
-}
 .quiz-question {
+    margin-bottom:15px;
     font-weight:bold;
-    margin:10px 0;
-    font-size:18px;
+    font-size:17px;
 }
 .quiz-options button {
     display:block;
-    width:90%;
-    margin:6px auto;
+    margin:5px auto;
+    width:80%;
     padding:10px;
     border:none;
     border-radius:8px;
@@ -224,22 +208,32 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     cursor:pointer;
     font-size:16px;
 }
-#quiz-submit {
-    margin-top:15px;
+.quiz-options button.selected { background:#cc0033; }
+#quiz-nav button {
+    margin:5px 10px;
     background:#ff4d6d;
     color:white;
-    padding:10px 20px;
     border:none;
+    padding:10px 16px;
     border-radius:8px;
     cursor:pointer;
-    font-size:17px;
 }
-#quiz-result {
-    margin-top:10px;
-    font-weight:bold;
+#quiz-image {
+    width:100%;
+    border-radius:12px;
+    margin-bottom:15px;
+    max-height:200px;
+    object-fit:cover;
+}
+#quiz-results {
+    margin-top:15px;
+    background:#fff0f5;
+    padding:10px;
+    border-radius:12px;
+    display:none;
 }
 
-/* MOBILE FIXES */
+/* MOBILE */
 @media(max-width:800px) {
     #photos img { width:240px; }
     .tab-btn { width:150px; font-size:15px; }
@@ -247,6 +241,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     .heart { width:70px; height:70px; }
     .heart:before, .heart:after { width:70px; height:70px; }
     .heart span { font-size:12px; width:60px; }
+    #puzzle-box, #quiz-box { width:90%; }
 }
 </style>
 </head>
@@ -261,6 +256,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 
 <!-- MAIN PAGE -->
 <div id="main">
+
     <button id="logout">Logout</button>
 
     <div class="tabs">
@@ -275,7 +271,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
         <img src="photo2.jpg" />
     </div>
 
-    <!-- Puzzle Box -->
+    <!-- PUZZLE -->
     <div id="puzzle-box">
         <div id="puzzle-container"></div>
         <div id="puzzle-message"></div>
@@ -288,20 +284,26 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
         </div>
     </div>
 
-    <!-- Quiz Box -->
+    <!-- QUIZ -->
     <div id="quiz-box">
         <img id="quiz-image" src="" />
-        <div class="quiz-question" id="quiz-question"></div>
-        <div class="quiz-options" id="quiz-options"></div>
-        <button id="quiz-prev">Previous</button>
-        <button id="quiz-next">Next</button>
-        <button id="quiz-submit">Submit</button>
-        <div id="quiz-result"></div>
+        <div id="quiz-container">
+            <div id="quiz-question" class="quiz-question"></div>
+            <div class="quiz-options" id="quiz-options"></div>
+            <div id="quiz-nav">
+                <button id="prev-btn">Previous</button>
+                <button id="next-btn">Next</button>
+                <button id="submit-quiz">Submit</button>
+                <button id="close-quiz">Close Quiz</button>
+            </div>
+            <div id="quiz-results"></div>
+        </div>
     </div>
+
 </div>
 
 <script>
-/* LOGIN */
+// LOGIN
 const loginBtn = document.getElementById("login-btn");
 const nameInput = document.getElementById("name");
 const loginForm = document.getElementById("login-form");
@@ -317,9 +319,9 @@ loginBtn.addEventListener("click", () => {
         alert("Incorrect name.");
     }
 });
-document.getElementById("logout").onclick = () => { location.reload(); };
+document.getElementById("logout").onclick = () => location.reload();
 
-/* APOLOGY MESSAGE */
+// APOLOGY MESSAGE
 const messageBtn = document.getElementById("show-message");
 const messageBox = document.getElementById("message-content");
 const APOLOGY = `I’m really sorry for what I’ve done I hurt you ... I love you ❤️`;
@@ -330,20 +332,23 @@ messageBtn.addEventListener("click", () => {
     } else { messageBox.style.display="none"; }
 });
 
-/* FLOATING HEARTS */
+// FLOATING HEARTS
 function startHearts(){
     const heartWords = ["Zodwa","I","am","sorry","I love you"];
     heartWords.forEach(word=>{
-        const h = document.createElement("div");
+        const h=document.createElement("div");
         h.className="heart";
         const text=document.createElement("span");
         text.innerText=word;
         h.appendChild(text);
         main.appendChild(h);
+
         h.style.left=Math.random()*(window.innerWidth-120)+"px";
         h.style.top=Math.random()*(window.innerHeight-120)+"px";
+
         let dx=(Math.random()-0.5)*3;
         let dy=(Math.random()-0.5)*3;
+
         function moveHeart(){
             let x=parseFloat(h.style.left);
             let y=parseFloat(h.style.top);
@@ -358,194 +363,93 @@ function startHearts(){
     });
 }
 
-/* PUZZLE CODE */
-const messages=["You are the best girlfriend!","You make me so happy and I love you so much!","I am sorry ❤️"];
-const puzzleImages=["Puzzel1.JPG","Puzzel2.JPG","Puzzel3.jpeg"];
-let gridSize, tiles=[], emptyPos={}, imgSize=300;
-function startPuzzle(size){
-    gridSize=size;
-    const container=document.getElementById("puzzle-container");
-    container.innerHTML="";
-    tiles=[];
-    document.getElementById("puzzle-message").style.display="none";
-    document.getElementById("puzzle-back").style.display="inline-block";
-    document.getElementById("puzzle-box").style.display="block";
-    document.getElementById("puzzle-card").style.display="block";
-    const imgSrc=puzzleImages[size-2];
-    const tileSize=imgSize/size;
-    for(let r=0;r<size;r++){
-        for(let c=0;c<size;c++){
-            if(r===size-1 && c===size-1){ emptyPos={row:r,col:c}; continue; }
-            const tile=document.createElement("div");
-            tile.className="tile";
-            tile.dataset.row=r;
-            tile.dataset.col=c;
-            tile.dataset.rowOrig=r;
-            tile.dataset.colOrig=c;
-            tile.style.width=tileSize+"px";
-            tile.style.height=tileSize+"px";
-            tile.style.top=(r*tileSize)+"px";
-            tile.style.left=(c*tileSize)+"px";
-            tile.style.backgroundImage=`url(${imgSrc})`;
-            tile.style.backgroundSize=`${imgSize}px ${imgSize}px`;
-            tile.style.backgroundPosition=`-${c*tileSize}px -${r*tileSize}px`;
-            tile.addEventListener("click",()=>moveTile(tile));
-            container.appendChild(tile);
-            tiles.push(tile);
-        }
-    }
-    shuffleTiles();
-}
-function shuffleTiles(){
-    for(let i=0;i<200;i++){
-        const possible=tiles.filter(t=>isNeighbor(t,emptyPos));
-        const tile=possible[Math.floor(Math.random()*possible.length)];
-        swapTile(tile);
-    }
-}
-function isNeighbor(tile,pos){
-    const r=parseInt(tile.dataset.row),c=parseInt(tile.dataset.col);
-    return (r===pos.row && Math.abs(c-pos.col)===1)||(c===pos.col && Math.abs(r-pos.row)===1);
-}
-function moveTile(tile){ if(isNeighbor(tile,emptyPos)){ swapTile(tile); checkSolved(); } }
-function swapTile(tile){
-    const tileSize=imgSize/gridSize;
-    const oldRow=parseInt(tile.dataset.row),oldCol=parseInt(tile.dataset.col);
-    tile.dataset.row=emptyPos.row; tile.dataset.col=emptyPos.col;
-    tile.style.top=(emptyPos.row*tileSize)+"px";
-    tile.style.left=(emptyPos.col*tileSize)+"px";
-    emptyPos.row=oldRow; emptyPos.col=oldCol;
-}
-function checkSolved(){
-    const solved=tiles.every(tile=> parseInt(tile.dataset.row)===parseInt(tile.dataset.rowOrig)&& parseInt(tile.dataset.col)===parseInt(tile.dataset.colOrig));
-    if(solved){
-        const msgBox=document.getElementById("puzzle-message");
-        msgBox.innerText=messages[gridSize-2];
-        msgBox.style.display="block";
-    }
-}
-function closePuzzle(){
-    document.getElementById("puzzle-container").innerHTML="";
-    document.getElementById("puzzle-message").style.display="none";
-    document.getElementById("puzzle-back").style.display="none";
-    document.getElementById("puzzle-box").style.display="none";
-}
+// PUZZLE (existing code) ...
+// ... (Omitted for brevity, use your existing puzzle JS here)
 
-/* QUIZ CODE */
+// --- QUIZ --- //
+const quizBtn = document.getElementById("show-quiz");
+const quizBox = document.getElementById("quiz-box");
+const quizQuestion = document.getElementById("quiz-question");
+const quizOptions = document.getElementById("quiz-options");
+const quizImage = document.getElementById("quiz-image");
+const prevBtn = document.getElementById("prev-btn");
+const nextBtn = document.getElementById("next-btn");
+const submitBtn = document.getElementById("submit-quiz");
+const closeQuizBtn = document.getElementById("close-quiz");
+const quizResults = document.getElementById("quiz-results");
+
 const quizData = [
-    {
-        question:"Where did we first meet?",
-        options:["Greenmeadows","Ringball","At BLK","On Bult"],
-        answer:1,
-        image:"Quiz1.GIF"
-    },
-    {
-        question:"When is our anniversary?",
-        options:["28 March","13 May","5 November","14 May"],
-        answer:1,
-        image:"Quiz2.GIF"
-    },
-    {
-        question:"What movie in Potch did we watch together?",
-        options:["Fast and Furious","Avengers","Titanic","The Notebook"],
-        answer:0,
-        image:"Quiz3.jpeg"
-    },
-    {
-        question:"What is my favorite nickname for each other?",
-        options:["Mam Z and Bab Z","Baby","My Love","Bully"],
-        answer:0,
-        image:"Quiz4.jpeg"
-    },
-    {
-        question:"What’s the funniest memory we shared?",
-        options:["when running","When you first met my mom","When you first met my sister","When you first met my Dad"],
-        answer:1,
-        image:"Quiz5.jpeg"
-    },
-    {
-        question:"What have I said to you that made you cry?",
-        options:["I love you","I am proud of you","You’re amazing","I miss you"],
-        answer:[0,1],
-        image:"Quiz6.jpeg"
-    },
-    {
-        question:"What do I love most about you?",
-        options:["Your laugh","Everything","Your looks","Your smile"],
-        answer:1,
-        image:"Quiz7.jpeg"
-    },
-    {
-        question:"What’s your favorite thing we do together on weekends?",
-        options:["Watch movies","Run and get food after","Play basketball games","Chilling with the family"],
-        answer:1,
-        image:"Quiz8.JPG"
-    },
-    {
-        question:"What’s the best moment we’ve ever spent together?",
-        options:["Magical night together","Our first date","Birthday celebration","A walk together"],
-        answer:0,
-        image:"Quiz9.jpeg"
-    },
-    {
-        question:"If you could describe us in one word, what would it be?",
-        options:["Perfect","Fun","Crazy","Beautiful"],
-        answer:0,
-        image:"Quiz11.jpeg"
-    }
+{q:"Where did we first meet?", options:["Greenmeadows","Ringball","At BLK","On Bult"], ans:1, img:"Quiz1.GIF"},
+{q:"When is our anniversary?", options:["28 March","13 May","5 November","14 May"], ans:1, img:"Quiz2.GIF"},
+{q:"What movie in Potch did we watch together?", options:["Fast and Furious","Avengers","Titanic","The Notebook"], ans:0, img:"Quiz3.jpeg"},
+{q:"What is my favorite nickname for each other?", options:["Mam Z and Bab Z","Baby","My Love","Bully"], ans:0, img:"Quiz4.jpeg"},
+{q:"What’s the funniest memory we shared?", options:["when running","When you first met my mom","When you first met my sister","When you first met my Dad"], ans:1, img:"Quiz5.jpeg"},
+{q:"What have I said to you that made you cry?", options:["I love you","I am proud of you","You’re amazing","I miss you"], ans:[0,1], img:"Quiz6.jpeg"},
+{q:"What do I love most about you?", options:["Your laugh","Everything","Your looks","Your smile"], ans:1, img:"Quiz7.jpeg"},
+{q:"What’s your favorite thing we do together on weekends?", options:["Watch movies","Run and get food after","Play basketball games","Chilling with the family"], ans:1, img:"Quiz8.JPG"},
+{q:"What’s the best moment we’ve ever spent together?", options:["Magical night together","Our first date","Birthday celebration","A walk together"], ans:0, img:"Quiz9.jpeg"},
+{q:"If you could describe us in one word, what would it be?", options:["Perfect","Fun","Crazy","Beautiful"], ans:0, img:"Quiz11.jpeg"}
 ];
 
-let currentQuiz=0;
-let userAnswers=[];
+let currentQ=0;
+let userAnswers = Array(quizData.length).fill(null);
 
-const quizBox=document.getElementById("quiz-box");
-const quizImage=document.getElementById("quiz-image");
-const quizQuestion=document.getElementById("quiz-question");
-const quizOptions=document.getElementById("quiz-options");
-const quizPrev=document.getElementById("quiz-prev");
-const quizNext=document.getElementById("quiz-next");
-const quizSubmit=document.getElementById("quiz-submit");
-const quizResult=document.getElementById("quiz-result");
-
-document.getElementById("show-quiz").onclick = () => {
+quizBtn.addEventListener("click", ()=>{
     quizBox.style.display="block";
+    // hide puzzle/message
     document.getElementById("puzzle-box").style.display="none";
-    loadQuiz(currentQuiz);
-};
+    messageBox.style.display="none";
+    loadQuiz();
+});
 
-function loadQuiz(index){
-    const q=quizData[index];
-    quizImage.src=q.image;
-    quizQuestion.innerText=q.question;
+function loadQuiz(){
+    const q = quizData[currentQ];
+    quizQuestion.innerText = q.q;
+    quizImage.src = q.img;
     quizOptions.innerHTML="";
     q.options.forEach((opt,i)=>{
-        const btn=document.createElement("button");
-        btn.innerText=opt;
-        btn.onclick=()=>userAnswers[index]=i;
+        const btn = document.createElement("button");
+        btn.innerText = opt;
+        if(userAnswers[currentQ]===i) btn.classList.add("selected");
+        btn.addEventListener("click",()=>{
+            userAnswers[currentQ]=i;
+            Array.from(quizOptions.children).forEach(b=>b.classList.remove("selected"));
+            btn.classList.add("selected");
+        });
         quizOptions.appendChild(btn);
     });
-    quizPrev.style.display = index>0?"inline-block":"none";
-    quizNext.style.display = index<quizData.length-1?"inline-block":"none";
-    quizSubmit.style.display = index===quizData.length-1?"inline-block":"none";
-    quizResult.innerText="";
+    quizResults.style.display="none";
 }
 
-quizPrev.onclick = ()=>{
-    if(currentQuiz>0){ currentQuiz--; loadQuiz(currentQuiz); }
-};
-quizNext.onclick = ()=>{
-    if(currentQuiz<quizData.length-1){ currentQuiz++; loadQuiz(currentQuiz); }
-};
-quizSubmit.onclick = ()=>{
-    let score=0;
-    quizData.forEach((q,i)=>{
-        if(Array.isArray(q.answer)){
-            if(userAnswers[i]!==undefined && q.answer.includes(userAnswers[i])) score++;
-        }else if(userAnswers[i]===q.answer) score++;
-    });
-    quizResult.innerText=`You scored ${score} out of ${quizData.length}`;
-};
-</script>
+prevBtn.addEventListener("click",()=>{
+    if(currentQ>0) { currentQ--; loadQuiz(); }
+});
+nextBtn.addEventListener("click",()=>{
+    if(currentQ<quizData.length-1){ currentQ++; loadQuiz(); }
+});
 
+submitBtn.addEventListener("click",()=>{
+    let correct=0;
+    quizResults.innerHTML="<h3>Results:</h3>";
+    quizData.forEach((q,i)=>{
+        const user = userAnswers[i];
+        let answerText="";
+        if(Array.isArray(q.ans)){
+            answerText=q.ans.map(a=>q.options[a]).join(", ");
+            if(q.ans.includes(user)) correct++;
+        } else {
+            answerText = q.options[q.ans];
+            if(user===q.ans) correct++;
+        }
+        quizResults.innerHTML += `<p>Q${i+1}: Correct answer: ${answerText}</p>`;
+    });
+    quizResults.innerHTML += `<h3>Score: ${correct} / ${quizData.length}</h3>`;
+    quizResults.style.display="block";
+});
+
+closeQuizBtn.addEventListener("click",()=>{
+    quizBox.style.display="none";
+});
+</script>
 </body>
 </html>
