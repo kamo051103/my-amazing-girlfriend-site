@@ -39,18 +39,18 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     height:100vh;
     background:#ffe6ec;
     position:relative;
-    padding:20px;
     display:flex;
     justify-content:space-between;
 }
 
-/* Left side: tabs and puzzle */
+/* Left side: scrollable content */
 #left-side {
     display:flex;
     flex-direction:column;
     align-items:flex-start;
-    max-height:90vh;
+    max-height:100%;
     overflow-y:auto;
+    padding-right:20px;
     z-index:20;
 }
 
@@ -224,7 +224,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 
     <button id="logout">Logout</button>
 
-    <!-- Left side: tabs + puzzle -->
+    <!-- Left side: scrollable content -->
     <div id="left-side">
         <div class="tabs">
             <button class="tab-btn" id="show-message">Apology Message</button>
@@ -276,9 +276,7 @@ document.getElementById("logout").onclick = () => location.reload();
 // APOLOGY MESSAGE
 const messageBtn = document.getElementById("show-message");
 const messageBox = document.getElementById("message-content");
-const APOLOGY = `I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again in which we just reestablished and rebuilt and that you gave me I want you to know that my actions are a reflection of my flaws I should’ve handled the situation differently I handled everything terribly you are an incredible strong caring intelligent I should have been as amazing as you have been to me and I’m sorry for failing you I just want you to know that I truly value you and I’m committed to understanding you better you deserve the world I’m sorry for hurting you you mean a lot to me and I hope that I can show you that I only handled the situation wrong not that I don’t love you
-
-I love you ❤️`;
+const APOLOGY = `I’m really sorry for what I’ve done I hurt you ... I love you ❤️`;
 messageBtn.addEventListener("click", () => {
     if(messageBox.style.display==="none" || messageBox.style.display===""){
         messageBox.style.display="block";
@@ -314,7 +312,7 @@ function startHearts(){
     });
 }
 
-// PUZZLE
+// PUZZLE LOGIC (unchanged)
 const messages=["You are the best girlfriend!","You make me so happy and I love you so much!","I am sorry ❤️"];
 const puzzleImages=["Puzzel1.JPG","Puzzel2.JPG","Puzzel3.jpeg"];
 let gridSize, tiles=[], emptyPos={}, imgSize=300;
@@ -352,7 +350,6 @@ function startPuzzle(size){
     }
     shuffleTiles();
 }
-
 function shuffleTiles(){
     for(let i=0;i<200;i++){
         const possible=tiles.filter(t=>isNeighbor(t,emptyPos));
@@ -364,14 +361,11 @@ function isNeighbor(tile,pos){
     const r=parseInt(tile.dataset.row),c=parseInt(tile.dataset.col);
     return (r===pos.row && Math.abs(c-pos.col)===1)||(c===pos.col && Math.abs(r-pos.row)===1);
 }
-function moveTile(tile){
-    if(isNeighbor(tile,emptyPos)){ swapTile(tile); checkSolved(); }
-}
+function moveTile(tile){ if(isNeighbor(tile,emptyPos)){ swapTile(tile); checkSolved(); } }
 function swapTile(tile){
     const tileSize=imgSize/gridSize;
     const oldRow=parseInt(tile.dataset.row),oldCol=parseInt(tile.dataset.col);
-    tile.dataset.row=emptyPos.row;
-    tile.dataset.col=emptyPos.col;
+    tile.dataset.row=emptyPos.row; tile.dataset.col=emptyPos.col;
     tile.style.top=(emptyPos.row*tileSize)+"px";
     tile.style.left=(emptyPos.col*tileSize)+"px";
     emptyPos.row=oldRow; emptyPos.col=oldCol;
