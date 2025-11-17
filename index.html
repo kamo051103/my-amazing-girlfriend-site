@@ -4,10 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Apology Website</title>
+
 <style>
 * { margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
 
-/* Login Page */
+/* LOGIN PAGE */
 #login-form {
     display:flex;
     flex-direction:column;
@@ -19,72 +20,104 @@
     background-position:center;
     color:white;
 }
+
 #login-form input[type='text'], #login-form input[type='submit'] {
     padding:10px;
     margin:10px 0;
-    border-radius:5px;
     width:220px;
     font-size:16px;
+    border-radius:5px;
     border:none;
 }
 
-/* Main Page */
+/* MAIN PAGE */
 #main {
     display:none;
     height:100vh;
+    background:#ffe6ec;
     position:relative;
     padding:20px;
     display:flex;
     justify-content:flex-end;
     align-items:center;
-    background:#ffe6ec;
 }
 
-/* Photos on right */
-#photos { display:flex; flex-direction:column; margin-left:20px; }
-#photos img { width:400px; height:auto; border-radius:12px; margin-bottom:15px; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
-
-/* Tabs */
-.tabs { position:absolute; left:20px; top:50%; transform:translateY(-50%); }
-.tab-btn { padding:10px 20px; margin-bottom:10px; border:none; border-radius:8px; background:#ff4d6d; color:white; cursor:pointer; font-size:16px; width:180px; }
-#message-content { margin-top:15px; background:rgba(255,255,255,0.9); padding:20px; border-radius:12px; max-width:400px; line-height:1.6; white-space:pre-line; display:none; }
-
-/* Heart Shape */
-.heart {
-    position:absolute;
-    width:100px;
-    height:90px;
-    background:red;
-    transform: rotate(-45deg);
+/* ADMIN PAGE */
+#admin {
+    display:none;
+    height:100vh;
+    background:#000000cc;
+    color:white;
     display:flex;
     justify-content:center;
     align-items:center;
-    border-radius:10px 10px 0 0;
-    overflow:hidden;
+    flex-direction:column;
 }
+
+/* PHOTOS RIGHT */
+#photos img {
+    width:400px;
+    border-radius:12px;
+    margin-bottom:15px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* TABS */
+.tabs { position:absolute; left:20px; top:50%; transform:translateY(-50%); }
+.tab-btn {
+    padding:10px 20px;
+    margin-bottom:10px;
+    background:#ff4d6d;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+    width:180px;
+}
+#message-content {
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    width:350px;
+    display:none;
+}
+
+/* PERFECT HEART SHAPE */
+.heart {
+    position:absolute;
+    width:80px;
+    height:80px;
+    background:red;
+    transform: rotate(-45deg);
+}
+
 .heart::before,
 .heart::after {
-    content:'';
+    content:"";
     position:absolute;
-    width:100px;
-    height:90px;
+    width:80px;
+    height:80px;
     background:red;
     border-radius:50%;
 }
-.heart::before { top:-50px; left:0; }
-.heart::after { left:50px; top:0; }
+
+.heart::before { top:-40px; left:0; }
+.heart::after  { left:40px; top:0; }
+
+/* TEXT INSIDE HEART */
 .heart span {
-    position:relative;
-    z-index:2;
-    color:white;
-    font-weight:bold;
+    position:absolute;
+    transform:rotate(45deg);
+    width:100%;
     text-align:center;
+    top:25px;
     font-size:14px;
-    line-height:1.1;
-    padding:5px;
+    font-weight:bold;
+    color:white;
 }
 
-/* Logout button */
+/* LOGOUT BUTTON */
 #logout-btn {
     position:absolute;
     bottom:20px;
@@ -99,105 +132,131 @@
 }
 </style>
 </head>
+
 <body>
 
-<!-- Login Form -->
+<!-- LOGIN PAGE -->
 <div id="login-form">
     <h1>Login</h1>
-    <input type="text" id="name" placeholder="Enter your name" />
-    <input type="submit" value="Login" id="login-btn" />
+    <input type="text" id="name" placeholder="Enter your name">
+    <input type="submit" value="Login" id="login-btn">
 </div>
 
-<!-- Main Page -->
+<!-- MAIN PAGE -->
 <div id="main">
+
     <div class="tabs">
-        <button class="tab-btn" id="show-message">Apology Message</button>
+        <button class="tab-btn" id="toggle-msg">Apology Message</button>
         <div id="message-content"></div>
     </div>
 
     <div id="photos">
-        <img src="photo.jpg" alt="Photo 1" />
-        <img src="photo2.jpg" alt="Photo 2" />
+        <img src="photo.jpg">
+        <img src="photo2.jpg">
     </div>
 
-    <button id="logout-btn">Log Out</button>
+    <button id="logout-btn">Logout</button>
+</div>
+
+<!-- ADMIN PAGE -->
+<div id="admin">
+    <h1>Admin Panel</h1>
+    <p>Welcome Admin</p>
+    <button id="logout-btn-admin" style="padding:10px 20px; margin-top:20px;">Logout</button>
 </div>
 
 <script>
-const loginBtn = document.getElementById('login-btn');
-const nameInput = document.getElementById('name');
-const loginForm = document.getElementById('login-form');
-const main = document.getElementById('main');
-const logoutBtn = document.getElementById('logout-btn');
-const messageBtn = document.getElementById('show-message');
-const messageContent = document.getElementById('message-content');
+const loginForm = document.getElementById("login-form");
+const main = document.getElementById("main");
+const admin = document.getElementById("admin");
 
-// Login
-loginBtn.addEventListener('click', ()=>{
-    const name = nameInput.value.trim();
-    if(name === 'Zodwa'){
-        loginForm.style.display='none';
-        main.style.display='flex';
-        createHearts();
-    } else{
-        alert('Incorrect name');
+/* LOGIN */
+document.getElementById("login-btn").addEventListener("click", () => {
+    const name = document.getElementById("name").value.trim();
+
+    if (name === "Admin") {
+        loginForm.style.display = "none";
+        admin.style.display = "flex";
+        return;
     }
+
+    if (name === "Zodwa") {
+        loginForm.style.display = "none";
+        main.style.display = "flex";
+        createHearts();
+        return;
+    }
+
+    alert("Incorrect name");
 });
 
-// Logout
-logoutBtn.addEventListener('click', ()=>{
-    main.style.display='none';
-    loginForm.style.display='flex';
-    document.querySelectorAll('.heart').forEach(h => h.remove());
+/* LOGOUT */
+document.getElementById("logout-btn").addEventListener("click", () => {
+    main.style.display = "none";
+    loginForm.style.display = "flex";
+    document.querySelectorAll(".heart").forEach(h => h.remove());
 });
 
-// Toggle Apology Message
-messageBtn.addEventListener('click', ()=>{
-    messageContent.style.display = messageContent.style.display === 'block' ? 'none' : 'block';
-    messageContent.innerText = `I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again in which we just reestablished and rebuilt and that you gave me I want you to know that my actions are a reflection of my flaws I should’ve handled the situation differently I handled everything terribly you are an incredible strong caring intelligent I should have been as amazing as you have been to me and I’m sorry for failing you I just want you to know that I truly value you and I’m committed to understanding you better you deserve the world I’m sorry for hurting you you mean a lot to me and I hope that I can show you that I only handled the situation wrong not that I don’t love you\n\nI love you ❤️`;
+document.getElementById("logout-btn-admin").addEventListener("click", () => {
+    admin.style.display = "none";
+    loginForm.style.display = "flex";
 });
 
-// Create floating hearts
-function createHearts(){
-    const heartTexts = ['Zodwa','I','am','sorry','I love you'];
-    heartTexts.forEach(text => {
-        const heart = document.createElement('div');
-        heart.className='heart';
-        const span = document.createElement('span');
+/* TOGGLE MESSAGE */
+const msgBtn = document.getElementById("toggle-msg");
+const msgContent = document.getElementById("message-content");
+
+msgBtn.addEventListener("click", () => {
+    msgContent.style.display = msgContent.style.display === "block" ? "none" : "block";
+
+    msgContent.innerText =
+`I’m really sorry for what I’ve done...
+I love you ❤️`;
+});
+
+/* FLOATING HEARTS */
+function createHearts() {
+    const texts = ["Zodwa","I","am","sorry","I love you"];
+
+    texts.forEach(text => {
+        const heart = document.createElement("div");
+        heart.className = "heart";
+
+        const span = document.createElement("span");
         span.innerText = text;
+
         heart.appendChild(span);
-        heart.style.left = Math.random() * (window.innerWidth - 100) + 'px';
-        heart.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+
+        heart.style.left = Math.random() * window.innerWidth + "px";
+        heart.style.top  = Math.random() * window.innerHeight + "px";
+
         main.appendChild(heart);
-        animateHeart(heart);
+        moveHeart(heart);
     });
 }
 
-// Animate each heart freely
-function animateHeart(heart){
+function moveHeart(heart) {
     let x = parseFloat(heart.style.left);
     let y = parseFloat(heart.style.top);
-    let dx = (Math.random()*2 + 0.5) * (Math.random()<0.5?-1:1);
-    let dy = -(Math.random()*1.5 + 0.5);
 
-    function move(){
-        x += dx; y += dy;
-        heart.style.left = x+'px';
-        heart.style.top = y+'px';
+    let dx = (Math.random() * 2 + 0.5) * (Math.random() < 0.5 ? -1 : 1);
+    let dy = -1;
 
-        // Wrap horizontally
-        if(x < 0) x = window.innerWidth - 100;
-        if(x > window.innerWidth - 100) x = 0;
+    function animate() {
+        x += dx;
+        y += dy;
 
-        // Reset top
-        if(y < -100){
-            y = window.innerHeight + 50;
-            x = Math.random() * (window.innerWidth - 100);
-        }
+        if (x < -100) x = window.innerWidth;
+        if (x > window.innerWidth) x = -50;
+        if (y < -100) y = window.innerHeight + 50;
 
-        requestAnimationFrame(move);
+        heart.style.left = x + "px";
+        heart.style.top = y + "px";
+
+        requestAnimationFrame(animate);
     }
-    move();
+
+    animate();
 }
 </script>
 
