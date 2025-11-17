@@ -51,35 +51,36 @@ html,body { height:100%; margin:0; font-family: Arial, sans-serif; background:#f
   font-size:16px;
 }
 
-/* Puzzle box matches style of card */
-#puzzle-card { display:none; margin-top:12px; width:340px; padding:18px; }
+/* Puzzle card matches style of card */
+#puzzle-card { display:none; margin-top:12px; }
 
-/* Puzzle controls */
-#puzzle-controls { display:flex; gap:8px; margin-bottom:12px; justify-content:center; }
-#puzzle-controls button { padding:8px 12px; border-radius:8px; border:0; background:#ff4d6d; color:white; cursor:pointer; }
-
-/* Puzzle container (300x300 working size) */
+/* Puzzle box */
 #puzzle-box {
   width:340px; background:white; border-radius:12px; padding:16px; box-shadow:0 6px 20px rgba(0,0,0,0.12);
   text-align:center;
 }
-#puzzle-container { width:300px; height:300px; margin:8px auto 0; position:relative; }
+#puzzle-controls { display:flex; gap:8px; margin-bottom:12px; justify-content:center; }
+#puzzle-controls button { padding:8px 12px; border-radius:8px; border:0; background:#ff4d6d; color:white; cursor:pointer; }
 
-/* tiles are <img> with object-fit none and object-position set */
+/* Puzzle container (300x300 working size) */
+#puzzle-container { width:300px; height:300px; margin:8px auto 0; position:relative; background:transparent; }
+
+/* tiles as div with background image cut */
 .tile {
   position:absolute;
   box-sizing:border-box;
   border:1px solid #fff;
   cursor:pointer;
   transition: top 0.25s, left 0.25s;
-  display:block;
+  background-repeat:no-repeat;
+  background-size:300px 300px; /* important: fixed sized slicing */
 }
 
 /* puzzle solved msg and back button */
 #puzzle-message { display:none; margin-top:12px; background:#fff0f5; padding:10px; border-radius:10px; font-weight:600; }
 #puzzle-back { margin-top:12px; padding:8px 12px; border-radius:8px; border:0; background:#ff4d6d; color:white; cursor:pointer; }
 
-/* ---------- Floating hearts (unchanged) ---------- */
+/* ---------- Floating hearts (only on main) ---------- */
 .heart {
   position:absolute;
   width:90px; height:90px;
@@ -87,6 +88,7 @@ html,body { height:100%; margin:0; font-family: Arial, sans-serif; background:#f
   transform:rotate(-45deg);
   z-index:30;
   pointer-events:none;
+  animation: float linear infinite;
 }
 .heart:before, .heart:after {
   content:""; position:absolute; width:90px; height:90px; background:red; border-radius:50%;
@@ -94,8 +96,9 @@ html,body { height:100%; margin:0; font-family: Arial, sans-serif; background:#f
 .heart:before { top:-45px; left:0; }
 .heart:after { left:45px; top:0; }
 .heart span { position:absolute; top:55%; left:50%; transform:translate(-50%,-50%) rotate(45deg); color:white; font-weight:bold; text-shadow:0 0 6px black; width:80px; text-align:center; pointer-events:none; }
+@keyframes float { 0% { transform:translate(0,0) rotate(-45deg); } 50% { transform:translate(0,-160px) rotate(-45deg); } 100% { transform:translate(0,0) rotate(-45deg); } }
 
-/* small responsive tweak so left area doesn't overflow on tiny screens */
+/* responsive */
 @media (max-width:480px) {
   .left-area { left:12px; width:320px; transform:none; top:20px; }
   #photos { right:12px; display:none; } /* hide photos on tiny screens to avoid crowding */
@@ -165,6 +168,9 @@ loginBtn.addEventListener('click', ()=> {
   if(!name) { alert('Please enter a name to continue'); return; }
   loginForm.style.display='none';
   main.style.display='block';
+
+  // create hearts AFTER login so they don't show on intro
+  createHearts();
 });
 document.getElementById('logout').addEventListener('click', ()=> location.reload());
 
@@ -175,9 +181,7 @@ const messageCard = document.getElementById('message-card');
 const puzzleCard = document.getElementById('puzzle-card');
 
 showMessageBtn.addEventListener('click', ()=>{
-  // toggle message card
   messageCard.style.display = (messageCard.style.display === 'block') ? 'none' : 'block';
-  // hide puzzle card when message opens
   if(messageCard.style.display === 'block') puzzleCard.style.display = 'none';
 });
 
@@ -186,21 +190,24 @@ showPuzzleTabBtn.addEventListener('click', ()=>{
   if(puzzleCard.style.display === 'block') messageCard.style.display = 'none';
 });
 
-/* ----------------- Floating hearts (unchanged) ----------------- */
-const heartWords = ["Zodwa","I","am","sorry","I love you"];
-heartWords.forEach(word=>{
-  const h = document.createElement('div');
-  h.className = 'heart';
-  const sp = document.createElement('span');
-  sp.innerText = word;
-  h.appendChild(sp);
-  h.style.left = (Math.random() * (window.innerWidth - 120)) + 'px';
-  h.style.top  = (Math.random() * (window.innerHeight - 120)) + 'px';
-  h.style.animationDuration = (4 + Math.random()*3) + 's';
-  document.body.appendChild(h);
-});
+/* ----------------- Hearts (created after login) ----------------- */
+function createHearts(){
+  const heartWords = ["Zodwa","I","am","sorry","I love you"];
+  heartWords.forEach(word=>{
+    const h = document.createElement('div');
+    h.className = 'heart';
+    const sp = document.createElement('span');
+    sp.innerText = word;
+    h.appendChild(sp);
+    // position inside main viewport (not over login)
+    h.style.left = (Math.random() * (window.innerWidth - 160)) + 'px';
+    h.style.top  = (Math.random() * (window.innerHeight - 160)) + 'px';
+    h.style.animationDuration = (4 + Math.random()*3) + 's';
+    document.body.appendChild(h);
+  });
+}
 
-/* ----------------- PUZZLE (exact working code you provided) ----------------- */
+/* ----------------- PUZZLE (div tiles with background-position slicing) ----------------- */
 /* Images and messages (keep your file names) */
 const puzzleImages = ["Puzzel1.JPG","Puzzel2.JPG","Puzzel3.jpeg"];
 const messages = [
@@ -211,7 +218,7 @@ const messages = [
 
 let gridSize, tiles = [], emptyPos = {}, imgSize = 300;
 
-/* Start puzzle: this is your same working logic (tiles are <img> with object-fit none & objectPosition) */
+/* Start puzzle: tile logic preserved, but tiles are DIVs with background-position so the slicing is exact */
 function startPuzzle(size){
   gridSize = size;
   const container = document.getElementById('puzzle-container');
@@ -220,6 +227,7 @@ function startPuzzle(size){
   document.getElementById('puzzle-message').style.display = 'none';
   document.getElementById('puzzle-back').style.display = 'inline-block';
   document.getElementById('puzzle-box').style.display = 'block';
+  document.getElementById('puzzle-card').style.display = 'block';
 
   const imgSrc = puzzleImages[size - 2];
   const tileSize = imgSize / size;
@@ -231,8 +239,8 @@ function startPuzzle(size){
         continue;
       }
 
-      const tile = document.createElement('img');
-      tile.src = imgSrc;
+      // create div tile (so background-position slicing works reliably)
+      const tile = document.createElement('div');
       tile.className = 'tile';
 
       tile.dataset.row = r;
@@ -245,8 +253,9 @@ function startPuzzle(size){
       tile.style.top = (r * tileSize) + 'px';
       tile.style.left = (c * tileSize) + 'px';
 
-      tile.style.objectFit = 'none';
-      tile.style.objectPosition = `-${c * tileSize}px -${r * tileSize}px`;
+      tile.style.backgroundImage = `url(${imgSrc})`;
+      tile.style.backgroundSize = `${imgSize}px ${imgSize}px`;
+      tile.style.backgroundPosition = `-${c * tileSize}px -${r * tileSize}px`;
 
       tile.addEventListener('click', ()=> moveTile(tile));
       container.appendChild(tile);
@@ -315,9 +324,7 @@ function closePuzzle(){
   document.getElementById('puzzle-message').style.display = 'none';
   document.getElementById('puzzle-back').style.display = 'none';
   document.getElementById('puzzle-box').style.display = 'none';
-  // keep puzzle-card visible for user to reopen controls if desired
-  // If you want to hide entire puzzle-card too, uncomment next line:
-  // document.getElementById('puzzle-card').style.display = 'none';
+  // keep puzzle-card visible so user can reopen controls if desired
 }
 </script>
 </body>
