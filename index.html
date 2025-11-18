@@ -273,6 +273,17 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     position:absolute;
 }
 
+/* CLOSE BIG QUESTION BUTTON FIX */
+#close-bigq {
+    padding:8px 14px;
+    background:#ff4d6d; /* same as other buttons */
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    margin-top:10px;
+}
+
 /* MOBILE */
 @media(max-width:800px) {
     #photos img { width:240px; }
@@ -571,7 +582,14 @@ function resetBigQ(){
     bigqNo.style.position="static";
 }
 
-bigqTab.onclick=()=>{ resetBigQ(); };
+/* BIG QUESTION TAB TOGGLE */
+bigqTab.onclick = () => { 
+    if(bigqBox.style.display === "block"){
+        closeBigq.click(); // reuse close function
+    } else {
+        resetBigQ();
+    }
+};
 
 bigqYes.onclick=()=>{
     bigqImage.style.backgroundImage="url('Yay.jpeg')";
