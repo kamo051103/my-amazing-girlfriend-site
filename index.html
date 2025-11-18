@@ -325,11 +325,10 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
         <div id="puzzle-message"></div>
         <button id="puzzle-back" onclick="closePuzzle()">Back</button>
         <div id="controls">
-			<button onclick="startPuzzle(0)">Puzzle 1</button>
-			<button onclick="startPuzzle(1)">Puzzle 2</button>
-			<button onclick="startPuzzle(2)">Puzzle 3</button>
-		</div>
-
+            <button onclick="startPuzzle(2)">2×2</button>
+            <button onclick="startPuzzle(3)">3×3</button>
+            <button onclick="startPuzzle(4)">4×4</button>
+        </div>
     </div>
 
     <!-- QUIZ BOX -->
@@ -428,83 +427,70 @@ puzzleBtn.onclick=()=>{
 };
 
 const puzzleImages = ["Puzzel1.JPG", "Puzzel2.JPG", "Puzzel3.jpeg"];
-const messages = ["Puzzle 1 complete! You are the best girlfriend!", 
-                  "Puzzle 2 complete! You make me so happy!", 
-                  "Puzzle 3 complete! I am sorry ❤️"];
+const messages = [ "You are the best girlfriend!", 
+                  " You make me so happy!", 
+                  " I am sorry ❤️"];
 let gridSize = 2, tiles = [], emptyPos = {}, imgSize = 300;
 
-function startPuzzle(size){
-    gridSize = 2;
-    const container=document.getElementById("puzzle-container");
-    container.innerHTML="";
-    tiles=[];
-    document.getElementById("puzzle-message").style.display="none";
-    document.getElementById("puzzle-back").style.display="inline-block";
-    document.getElementById("puzzle-box").style.display="block";
+function startPuzzle(puzzleIndex){
+    gridSize = 2; // always 2x2
+    const container = document.getElementById("puzzle-container");
+    container.innerHTML = "";
+    tiles = [];
+    document.getElementById("puzzle-message").style.display = "none";
+    document.getElementById("puzzle-back").style.display = "inline-block";
+    document.getElementById("puzzle-box").style.display = "block";
 
-    const imgSrc=puzzleImages[size-2];
-    const tileSize=imgSize/size;
+    const imgSrc = puzzleImages[puzzleIndex];
+    const tileSize = imgSize / gridSize;
 
-    for(let r=0;r<size;r++){
-        for(let c=0;c<size;c++){
-            if(r===size-1 && c===size-1){ emptyPos={row:r,col:c}; continue; }
-            const tile=document.createElement("div");
-            tile.className="tile";
-            tile.dataset.row=r;
-            tile.dataset.col=c;
-            tile.dataset.rowOrig=r;
-            tile.dataset.colOrig=c;
-            tile.style.width=tileSize+"px";
-            tile.style.height=tileSize+"px";
-            tile.style.top=(r*tileSize)+"px";
-            tile.style.left=(c*tileSize)+"px";
-            tile.style.backgroundImage=`url(${imgSrc})`;
-            tile.style.backgroundSize=`${imgSize}px ${imgSize}px`;
-            tile.style.backgroundPosition=`-${c*tileSize}px -${r*tileSize}px`;
-            tile.addEventListener("click",()=>moveTile(tile));
+    for(let r=0; r<gridSize; r++){
+        for(let c=0; c<gridSize; c++){
+            if(r===gridSize-1 && c===gridSize-1){ 
+                emptyPos = {row:r, col:c}; 
+                continue; 
+            }
+            const tile = document.createElement("div");
+            tile.className = "tile";
+            tile.dataset.row = r;
+            tile.dataset.col = c;
+            tile.dataset.rowOrig = r;
+            tile.dataset.colOrig = c;
+            tile.style.width = tileSize + "px";
+            tile.style.height = tileSize + "px";
+            tile.style.top = (r*tileSize) + "px";
+            tile.style.left = (c*tileSize) + "px";
+            tile.style.backgroundImage = `url(${imgSrc})`;
+            tile.style.backgroundSize = `${imgSize}px ${imgSize}px`;
+            tile.style.backgroundPosition = `-${c*tileSize}px -${r*tileSize}px`;
+            tile.style.zIndex = 50;
+            tile.addEventListener("click", ()=> moveTile(tile));
             container.appendChild(tile);
             tiles.push(tile);
         }
     }
-    shuffleTiles();
+    shuffleTiles(puzzleIndex);
 }
 
-function shuffleTiles(){
-    for(let i=0;i<200;i++){
-        const possible=tiles.filter(t=>isNeighbor(t,emptyPos));
-        const tile=possible[Math.floor(Math.random()*possible.length)];
+function shuffleTiles(puzzleIndex){
+    for(let i=0; i<200; i++){
+        const possible = tiles.filter(t => isNeighbor(t, emptyPos));
+        const tile = possible[Math.floor(Math.random() * possible.length)];
         swapTile(tile);
     }
 }
-function isNeighbor(tile,pos){
-    const r=parseInt(tile.dataset.row),c=parseInt(tile.dataset.col);
-    return (r===pos.row&&Math.abs(c-pos.col)===1)||(c===pos.col&&Math.abs(r-pos.row)===1);
-}
-function moveTile(tile){
-    if(isNeighbor(tile,emptyPos)){
-        swapTile(tile);
-        checkSolved();
-    }
-}
-function swapTile(tile){
-    const tileSize=imgSize/gridSize;
-    const oldRow=parseInt(tile.dataset.row),oldCol=parseInt(tile.dataset.col);
-    tile.dataset.row=emptyPos.row;
-    tile.dataset.col=emptyPos.col;
-    tile.style.top=(emptyPos.row*tileSize)+"px";
-    tile.style.left=(emptyPos.col*tileSize)+"px";
-    emptyPos.row=oldRow;
-    emptyPos.col=oldCol;
-}
+
 function checkSolved(){
-    const solved=tiles.every(tile=>
-        parseInt(tile.dataset.row)===parseInt(tile.dataset.rowOrig)&&
-        parseInt(tile.dataset.col)===parseInt(tile.dataset.colOrig)
+    const solved = tiles.every(tile =>
+        parseInt(tile.dataset.row) === parseInt(tile.dataset.rowOrig) &&
+        parseInt(tile.dataset.col) === parseInt(tile.dataset.colOrig)
     );
     if(solved){
-        const msgBox=document.getElementById("puzzle-message");
-        msgBox.innerText=messages[gridSize-2];
-        msgBox.style.display="block";
+        const msgBox = document.getElementById("puzzle-message");
+        // Show message based on which image was used
+        const idx = puzzleImages.indexOf(tiles[0].style.backgroundImage.replace(/^url\(["']?/, '').replace(/["']?\)$/, ''));
+        msgBox.innerText = messages[idx] || "Puzzle complete!";
+        msgBox.style.display = "block";
     }
 }
 function closePuzzle(){
