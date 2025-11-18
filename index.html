@@ -272,8 +272,16 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 #bigq-no {
     position:absolute;
 }
+
+/* CLOSE BIG QUESTION BUTTON FIX */
 #close-bigq {
-    background:#ff4d6d;
+    padding:8px 14px;
+    background:#ff4d6d; /* same as other buttons */
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    margin-top:10px;
 }
 
 /* MOBILE */
@@ -317,9 +325,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
         <div id="puzzle-message"></div>
         <button id="puzzle-back" onclick="closePuzzle()">Back</button>
         <div id="controls">
-            <button>Puzzle 1</button>
-            <button>Puzzle 2</button>
-            <button>Puzzle 3</button>
+            <button onclick="startPuzzle(2)">Start 2×2 Puzzle</button>
         </div>
     </div>
 
@@ -418,45 +424,52 @@ puzzleBtn.onclick=()=>{
     box.style.display = box.style.display==="block" ? "none" : "block"; 
 };
 
-const messages=["Puzzle 1 completed!","Puzzle 2 completed!","Puzzle 3 completed!"];
-const puzzleImages=["Puzzle1.JPG","Puzzle2.JPG","Puzzle3.JPG"];
+const messages=["You are the best girlfriend!","You make me so happy!","I am sorry ❤️"];
+const puzzleImages=["Puzzel1.JPG","Puzzel2.JPG","Puzzel3.jpeg"];
 let gridSize, tiles=[], emptyPos={}, imgSize=300;
 
-function startPuzzle(size){
-    gridSize=2; // force 2x2
-    const container=document.getElementById("puzzle-container");
-    container.innerHTML="";
-    tiles=[];
-    document.getElementById("puzzle-message").style.display="none";
-    document.getElementById("puzzle-back").style.display="inline-block";
-    document.getElementById("puzzle-box").style.display="block";
+function startPuzzle(){
+    const size = 2; // always 2x2
+    gridSize = size;
+    const container = document.getElementById("puzzle-container");
+    container.innerHTML = "";
+    tiles = [];
+    document.getElementById("puzzle-message").style.display = "none";
+    document.getElementById("puzzle-back").style.display = "inline-block";
+    document.getElementById("puzzle-box").style.display = "block";
 
-    const imgSrc=puzzleImages[size-2] || puzzleImages[0];
-    const tileSize=imgSize/gridSize;
+    const imgSrc = "Puzzel1.JPG"; // choose one main image
+    const tileSize = imgSize / size;
 
-    for(let r=0;r<gridSize;r++){
-        for(let c=0;c<gridSize;c++){
-            if(r===gridSize-1 && c===gridSize-1){ emptyPos={row:r,col:c}; continue; }
-            const tile=document.createElement("div");
-            tile.className="tile";
-            tile.dataset.row=r;
-            tile.dataset.col=c;
-            tile.dataset.rowOrig=r;
-            tile.dataset.colOrig=c;
-            tile.style.width=tileSize+"px";
-            tile.style.height=tileSize+"px";
-            tile.style.top=(r*tileSize)+"px";
-            tile.style.left=(c*tileSize)+"px";
-            tile.style.backgroundImage=`url(${imgSrc})`;
-            tile.style.backgroundSize=`${imgSize}px ${imgSize}px`;
-            tile.style.backgroundPosition=`-${c*tileSize}px -${r*tileSize}px`;
-            tile.addEventListener("click",()=>moveTile(tile));
+    for(let r=0; r<size; r++){
+        for(let c=0; c<size; c++){
+            if(r===size-1 && c===size-1){ 
+                emptyPos = {row:r, col:c}; 
+                continue; 
+            }
+            const tile = document.createElement("div");
+            tile.className = "tile";
+            tile.dataset.row = r;
+            tile.dataset.col = c;
+            tile.dataset.rowOrig = r;
+            tile.dataset.colOrig = c;
+            tile.style.width = tileSize + "px";
+            tile.style.height = tileSize + "px";
+            tile.style.top = (r*tileSize) + "px";
+            tile.style.left = (c*tileSize) + "px";
+            tile.style.backgroundImage = `url(${imgSrc})`;
+            tile.style.backgroundSize = `${imgSize}px ${imgSize}px`;
+            tile.style.backgroundPosition = `-${c*tileSize}px -${r*tileSize}px`;
+            tile.style.zIndex = 50;
+            tile.addEventListener("click", ()=> moveTile(tile));
             container.appendChild(tile);
             tiles.push(tile);
         }
     }
+
     shuffleTiles();
 }
+
 
 function shuffleTiles(){
     for(let i=0;i<200;i++){
@@ -492,7 +505,7 @@ function checkSolved(){
     );
     if(solved){
         const msgBox=document.getElementById("puzzle-message");
-        msgBox.innerText=messages[0]; // always use first message for 2x2
+        msgBox.innerText=messages[gridSize-2];
         msgBox.style.display="block";
     }
 }
@@ -502,11 +515,6 @@ function closePuzzle(){
     document.getElementById("puzzle-back").style.display="none";
     document.getElementById("puzzle-box").style.display="none";
 }
-
-// Make puzzle buttons always 2x2
-document.querySelectorAll("#controls button").forEach((btn,i)=>{
-    btn.onclick = () => startPuzzle(i);
-});
 
 /* QUIZ */
 const quizTab=document.getElementById("quiz-tab");
@@ -547,8 +555,8 @@ function loadQuiz(){
     quizResult.innerHTML="";
 }
 
-quizTab.onclick=()=>{ 
-    quizBox.style.display = quizBox.style.display==="block" ? "none" : "block"; 
+quizTab.onclick=()=>{
+    quizBox.style.display = quizBox.style.display==="block" ? "none" : "block";
     if(quizBox.style.display==="block") loadQuiz();
 };
 document.getElementById("next-btn").onclick=()=>{ if(currentQ<9){ currentQ++; loadQuiz(); } else { showResults(); } };
@@ -574,12 +582,19 @@ const bigqNo=document.getElementById("bigq-no");
 const closeBigq=document.getElementById("close-bigq");
 
 function resetBigQ(){
-    bigqBox.style.display=(bigqBox.style.display==="block")?"none":"block"; // toggle
+    bigqBox.style.display="block";
     bigqImage.style.backgroundImage="url('BigQ.jpeg')";
     bigqNo.style.position="static";
 }
 
-bigqTab.onclick=()=>{ resetBigQ(); };
+/* BIG QUESTION TAB TOGGLE */
+bigqTab.onclick = () => { 
+    if(bigqBox.style.display === "block"){
+        closeBigq.click(); // reuse close function
+    } else {
+        resetBigQ();
+    }
+};
 
 bigqYes.onclick=()=>{
     bigqImage.style.backgroundImage="url('Yay.jpeg')";
