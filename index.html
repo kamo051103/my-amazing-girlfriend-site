@@ -235,31 +235,42 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 
 /* BIG QUESTION BOX */
 #bigq-box {
-    width:600px;
-    max-width:90%;
+    width:400px;
     padding:20px;
     background:white;
     border-radius:16px;
     box-shadow:0 4px 12px rgba(0,0,0,0.15);
-    margin-top:20px;
     display:none;
     text-align:center;
-    position:relative;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
     z-index:40;
 }
-#bigq-box img {
+#bigq-image {
     width:100%;
+    height:200px;
+    background-size:cover;
+    background-position:center;
     border-radius:12px;
     margin-bottom:10px;
 }
-#bigq-box button {
+#bigq-question {
+    font-size:18px;
+    margin-bottom:15px;
+}
+#bigq-buttons button {
     padding:10px 16px;
     margin:5px;
-    background:#ff4d6d;
-    color:white;
     border:none;
     border-radius:8px;
     cursor:pointer;
+    background:#ff4d6d;
+    color:white;
+}
+#bigq-no {
+    position:absolute;
 }
 
 /* MOBILE */
@@ -324,10 +335,12 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 
     <!-- BIG QUESTION BOX -->
     <div id="bigq-box">
-        <img src="BigQ.jpeg" />
-        <h2>Will you forgive me?</h2>
-        <button id="yes-btn">Yes</button>
-        <button id="no-btn">No</button>
+        <div id="bigq-image"></div>
+        <div id="bigq-question">Will you forgive me?</div>
+        <div id="bigq-buttons">
+            <button id="bigq-yes">Yes</button>
+            <button id="bigq-no">No</button>
+        </div>
         <button id="close-bigq">Close Big Question</button>
     </div>
 
@@ -402,17 +415,90 @@ puzzleBtn.onclick=()=>{
     box.style.display = box.style.display==="block" ? "none" : "block"; 
 };
 
-/* PUZZLE FUNCTIONS REMAIN SAME (startPuzzle, shuffleTiles, moveTile, swapTile, checkSolved, closePuzzle) */
 const messages=["You are the best girlfriend!","You make me so happy!","I am sorry ❤️"];
 const puzzleImages=["Puzzel1.JPG","Puzzel2.JPG","Puzzel3.jpeg"];
 let gridSize, tiles=[], emptyPos={}, imgSize=300;
-function startPuzzle(size){ /* same code as before */ const container=document.getElementById("puzzle-container"); container.innerHTML=""; tiles=[]; document.getElementById("puzzle-message").style.display="none"; document.getElementById("puzzle-back").style.display="inline-block"; document.getElementById("puzzle-box").style.display="block"; const imgSrc=puzzleImages[size-2]; const tileSize=imgSize/size; for(let r=0;r<size;r++){ for(let c=0;c<size;c++){ if(r===size-1&&c===size-1){ emptyPos={row:r,col:c}; continue; } const tile=document.createElement("div"); tile.className="tile"; tile.dataset.row=r; tile.dataset.col=c; tile.dataset.rowOrig=r; tile.dataset.colOrig=c; tile.style.width=tileSize+"px"; tile.style.height=tileSize+"px"; tile.style.top=(r*tileSize)+"px"; tile.style.left=(c*tileSize)+"px"; tile.style.backgroundImage=`url(${imgSrc})`; tile.style.backgroundSize=`${imgSize}px ${imgSize}px`; tile.style.backgroundPosition=`-${c*tileSize}px -${r*tileSize}px`; tile.addEventListener("click",()=>moveTile(tile)); container.appendChild(tile); tiles.push(tile); } } shuffleTiles(); }
-function shuffleTiles(){ for(let i=0;i<200;i++){ const possible=tiles.filter(t=>isNeighbor(t,emptyPos)); const tile=possible[Math.floor(Math.random()*possible.length)]; swapTile(tile); } }
-function isNeighbor(tile,pos){ const r=parseInt(tile.dataset.row),c=parseInt(tile.dataset.col); return (r===pos.row&&Math.abs(c-pos.col)===1)||(c===pos.col&&Math.abs(r-pos.row)===1); }
-function moveTile(tile){ if(isNeighbor(tile,emptyPos)){ swapTile(tile); checkSolved(); } }
-function swapTile(tile){ const tileSize=imgSize/gridSize; const oldRow=parseInt(tile.dataset.row),oldCol=parseInt(tile.dataset.col); tile.dataset.row=emptyPos.row; tile.dataset.col=emptyPos.col; tile.style.top=(emptyPos.row*tileSize)+"px"; tile.style.left=(emptyPos.col*tileSize)+"px"; emptyPos.row=oldRow; emptyPos.col=oldCol; }
-function checkSolved(){ const solved=tiles.every(tile=> parseInt(tile.dataset.row)===parseInt(tile.dataset.rowOrig)&& parseInt(tile.dataset.col)===parseInt(tile.dataset.colOrig)); if(solved){ const msgBox=document.getElementById("puzzle-message"); msgBox.innerText=messages[gridSize-2]; msgBox.style.display="block"; } }
-function closePuzzle(){ document.getElementById("puzzle-container").innerHTML=""; document.getElementById("puzzle-message").style.display="none"; document.getElementById("puzzle-back").style.display="none"; document.getElementById("puzzle-box").style.display="none"; }
+
+function startPuzzle(size){
+    gridSize=size;
+    const container=document.getElementById("puzzle-container");
+    container.innerHTML="";
+    tiles=[];
+    document.getElementById("puzzle-message").style.display="none";
+    document.getElementById("puzzle-back").style.display="inline-block";
+    document.getElementById("puzzle-box").style.display="block";
+
+    const imgSrc=puzzleImages[size-2];
+    const tileSize=imgSize/size;
+
+    for(let r=0;r<size;r++){
+        for(let c=0;c<size;c++){
+            if(r===size-1 && c===size-1){ emptyPos={row:r,col:c}; continue; }
+            const tile=document.createElement("div");
+            tile.className="tile";
+            tile.dataset.row=r;
+            tile.dataset.col=c;
+            tile.dataset.rowOrig=r;
+            tile.dataset.colOrig=c;
+            tile.style.width=tileSize+"px";
+            tile.style.height=tileSize+"px";
+            tile.style.top=(r*tileSize)+"px";
+            tile.style.left=(c*tileSize)+"px";
+            tile.style.backgroundImage=`url(${imgSrc})`;
+            tile.style.backgroundSize=`${imgSize}px ${imgSize}px`;
+            tile.style.backgroundPosition=`-${c*tileSize}px -${r*tileSize}px`;
+            tile.addEventListener("click",()=>moveTile(tile));
+            container.appendChild(tile);
+            tiles.push(tile);
+        }
+    }
+    shuffleTiles();
+}
+
+function shuffleTiles(){
+    for(let i=0;i<200;i++){
+        const possible=tiles.filter(t=>isNeighbor(t,emptyPos));
+        const tile=possible[Math.floor(Math.random()*possible.length)];
+        swapTile(tile);
+    }
+}
+function isNeighbor(tile,pos){
+    const r=parseInt(tile.dataset.row),c=parseInt(tile.dataset.col);
+    return (r===pos.row&&Math.abs(c-pos.col)===1)||(c===pos.col&&Math.abs(r-pos.row)===1);
+}
+function moveTile(tile){
+    if(isNeighbor(tile,emptyPos)){
+        swapTile(tile);
+        checkSolved();
+    }
+}
+function swapTile(tile){
+    const tileSize=imgSize/gridSize;
+    const oldRow=parseInt(tile.dataset.row),oldCol=parseInt(tile.dataset.col);
+    tile.dataset.row=emptyPos.row;
+    tile.dataset.col=emptyPos.col;
+    tile.style.top=(emptyPos.row*tileSize)+"px";
+    tile.style.left=(emptyPos.col*tileSize)+"px";
+    emptyPos.row=oldRow;
+    emptyPos.col=oldCol;
+}
+function checkSolved(){
+    const solved=tiles.every(tile=>
+        parseInt(tile.dataset.row)===parseInt(tile.dataset.rowOrig)&&
+        parseInt(tile.dataset.col)===parseInt(tile.dataset.colOrig)
+    );
+    if(solved){
+        const msgBox=document.getElementById("puzzle-message");
+        msgBox.innerText=messages[gridSize-2];
+        msgBox.style.display="block";
+    }
+}
+function closePuzzle(){
+    document.getElementById("puzzle-container").innerHTML="";
+    document.getElementById("puzzle-message").style.display="none";
+    document.getElementById("puzzle-back").style.display="none";
+    document.getElementById("puzzle-box").style.display="none";
+}
 
 /* QUIZ */
 const quizTab=document.getElementById("quiz-tab");
@@ -421,9 +507,11 @@ const quizQuestion=document.getElementById("quiz-question");
 const quizOptions=document.getElementById("quiz-options");
 const quizImage=document.getElementById("quiz-image");
 const quizResult=document.getElementById("quiz-result");
+
 let currentQ=0;
 let answers=Array(10).fill(null);
-const Q=[ /* same as before */ 
+
+const Q=[
 { q:"Where did we first meet?", a:["Greenmeadows","Ringball","At BLK","On Bult"], correct:1, img:"Quiz1.GIF" },
 { q:"When is our anniversary?", a:["28 March","13 May","5 November","14 May"], correct:1, img:"Quiz2.GIF" },
 { q:"What movie in Potch did we watch together?", a:["Fast and Furious","Avengers","Titanic","The Notebook"], correct:0, img:"Quiz3.jpeg" },
@@ -433,41 +521,83 @@ const Q=[ /* same as before */
 { q:"What do I love most about you?", a:["Your laugh","Everything","Your looks","Your smile"], correct:1, img:"Quiz7.jpeg" },
 { q:"Favorite weekend thing?", a:["Movies","Run + food","Basketball","Family"], correct:1, img:"Quiz8.JPG" },
 { q:"Best moment ever?", a:["Our first night together","First date","Birthday","Walk"], correct:0, img:"Quiz9.jpeg" },
-{ q:"Describe us in one word?", a:["Perfect","Fun","Crazy","Beautiful"], correct:0, img:"Quiz11.jpeg" } ];
+{ q:"Describe us in one word?", a:["Perfect","Fun","Crazy","Beautiful"], correct:0, img:"Quiz11.jpeg" }
+];
 
-function loadQuiz(){ quizImage.style.backgroundImage=`url(${Q[currentQ].img})`; quizQuestion.innerText=Q[currentQ].q; quizOptions.innerHTML=""; Q[currentQ].a.forEach((opt,i)=>{ const div=document.createElement("div"); div.className="quiz-option"; if(answers[currentQ]===i) div.classList.add("selected"); div.innerText=opt; div.onclick=()=>{ answers[currentQ]=i; loadQuiz(); }; quizOptions.appendChild(div); }); quizResult.innerHTML=""; }
-quizTab.onclick=()=>{ quizBox.style.display = quizBox.style.display==="block" ? "none" : "block"; if(quizBox.style.display==="block") loadQuiz(); };
+function loadQuiz(){
+    quizImage.style.backgroundImage=`url(${Q[currentQ].img})`;
+    quizQuestion.innerText=Q[currentQ].q;
+    quizOptions.innerHTML="";
+    Q[currentQ].a.forEach((opt,i)=>{
+        const div=document.createElement("div");
+        div.className="quiz-option";
+        if(answers[currentQ]===i) div.classList.add("selected");
+        div.innerText=opt;
+        div.onclick=()=>{ answers[currentQ]=i; loadQuiz(); };
+        quizOptions.appendChild(div);
+    });
+    quizResult.innerHTML="";
+}
+
+quizTab.onclick=()=>{
+    quizBox.style.display = quizBox.style.display==="block" ? "none" : "block";
+    if(quizBox.style.display==="block") loadQuiz();
+};
 document.getElementById("next-btn").onclick=()=>{ if(currentQ<9){ currentQ++; loadQuiz(); } else { showResults(); } };
 document.getElementById("prev-btn").onclick=()=>{ if(currentQ>0){ currentQ--; loadQuiz(); } };
 document.getElementById("close-quiz").onclick=()=>{ quizBox.style.display="none"; };
-function showResults(){ let score=0; quizResult.innerHTML="<h3>Results:</h3>"; Q.forEach((q,i)=>{ const correct=(answers[i]===q.correct); if(correct) score++; quizResult.innerHTML+=`<p>${i+1}. ${correct?"✔️ Correct":"❌ Wrong"}</p>`; }); quizResult.innerHTML+=`<h2>Score: ${score}/10</h2>`; }
+function showResults(){
+    let score=0;
+    quizResult.innerHTML="<h3>Results:</h3>";
+    Q.forEach((q,i)=>{
+        const correct=(answers[i]===q.correct);
+        if(correct) score++;
+        quizResult.innerHTML+=`<p>${i+1}. ${correct?"✔️ Correct":"❌ Wrong"}</p>`;
+    });
+    quizResult.innerHTML+=`<h2>Score: ${score}/10</h2>`;
+}
 
 /* BIG QUESTION */
 const bigqTab=document.getElementById("bigq-tab");
 const bigqBox=document.getElementById("bigq-box");
-const yesBtn=document.getElementById("yes-btn");
-const noBtn=document.getElementById("no-btn");
-const closeBig=document.getElementById("close-bigq");
+const bigqImage=document.getElementById("bigq-image");
+const bigqYes=document.getElementById("bigq-yes");
+const bigqNo=document.getElementById("bigq-no");
+const closeBigq=document.getElementById("close-bigq");
 
-bigqTab.onclick=()=>{ bigqBox.style.display = bigqBox.style.display==="block" ? "none" : "block"; };
+function resetBigQ(){
+    bigqBox.style.display="block";
+    bigqImage.style.backgroundImage="url('BigQ.jpeg')";
+    bigqNo.style.position="static";
+}
 
-// Yes button
-yesBtn.onclick=()=>{ bigqBox.innerHTML=`<img src="Yay.jpeg"><h2>Yay I love you!</h2><button id="close-bigq">Close Big Question</button>`; document.getElementById("close-bigq").onclick=()=>{ bigqBox.style.display="none"; }; };
+bigqTab.onclick=()=>{ resetBigQ(); };
 
-// No button (moves randomly)
-noBtn.onmouseover=()=>{ 
-    const boxRect=bigqBox.getBoundingClientRect();
-    const x=Math.random()*(boxRect.width-80);
-    const y=Math.random()*(boxRect.height-40);
-    noBtn.style.position="absolute";
-    noBtn.style.left=x+"px";
-    noBtn.style.top=y+"px";
+bigqYes.onclick=()=>{
+    bigqImage.style.backgroundImage="url('Yay.jpeg')";
+    document.getElementById("bigq-question").innerText="Yay I love you";
+    bigqYes.style.display="none";
+    bigqNo.style.display="none";
 };
 
-// Close button
-closeBig.onclick=()=>{ bigqBox.style.display="none"; };
+bigqNo.onclick=()=>{
+    const boxRect=bigqBox.getBoundingClientRect();
+    const btnWidth=bigqNo.offsetWidth;
+    const btnHeight=bigqNo.offsetHeight;
+    const x=Math.random()*(boxRect.width-btnWidth-20);
+    const y=Math.random()*(boxRect.height-btnHeight-20);
+    bigqNo.style.position="absolute";
+    bigqNo.style.left=x+"px";
+    bigqNo.style.top=y+"px";
+};
 
+closeBigq.onclick=()=>{
+    bigqBox.style.display="none";
+    bigqYes.style.display="inline-block";
+    bigqNo.style.display="inline-block";
+    document.getElementById("bigq-question").innerText="Will you forgive me?";
+    bigqImage.style.backgroundImage="url('BigQ.jpeg')";
+};
 </script>
-
 </body>
 </html>
