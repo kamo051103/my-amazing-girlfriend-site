@@ -41,6 +41,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     background:#ffe6ec;
     position:relative;
     padding:20px;
+    overflow:hidden;
 }
 
 /* Logout bottom-left */
@@ -151,15 +152,16 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     cursor:pointer;
 }
 
-/* HEART SHAPE */
+/* HEART SHAPE - FLOATING BACKGROUND */
 .heart {
     position:absolute;
     width:90px;
     height:90px;
     background:red;
     transform:rotate(-45deg);
-    opacity:0.85;
-    z-index:100;
+    opacity:0.5;       /* subtle in background */
+    z-index:1;          /* behind content */
+    pointer-events:none; /* allow clicks through hearts */
 }
 .heart:before,
 .heart:after {
@@ -183,7 +185,6 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     width:80px;
     text-align:center;
     pointer-events:none;
-    z-index:101;
 }
 
 /* MOBILE */
@@ -262,7 +263,7 @@ messageBtn.addEventListener("click",()=>{
     }else{ messageBox.style.display="none"; }
 });
 
-/* HEARTS */
+/* FLOATING HEARTS BACKGROUND */
 function startHearts(){
     const heartWords=["Zodwa","I","am","sorry","I love you"];
     heartWords.forEach(word=>{
@@ -276,13 +277,15 @@ function startHearts(){
         h.style.left=Math.random()*(window.innerWidth-120)+"px";
         h.style.top=Math.random()*(window.innerHeight-120)+"px";
 
-        let dx=(Math.random()-0.5)*3;
-        let dy=(Math.random()-0.5)*3;
+        // slower, smooth floating
+        let dx=(Math.random()-0.5)*1;
+        let dy=(Math.random()-0.5)*1;
 
         function moveHeart(){
             let x=parseFloat(h.style.left);
             let y=parseFloat(h.style.top);
-            x+=dx*2; y+=dy*2;
+            x+=dx;
+            y+=dy;
             if(x<0||x>window.innerWidth-90) dx*=-1;
             if(y<0||y>window.innerHeight-90) dy*=-1;
             h.style.left=x+"px";
