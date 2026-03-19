@@ -1,624 +1,358 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Apology Website</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For You ❤️</title>
 
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 
-/* LOGIN PAGE */
-#login-form {
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    height:100vh;
-    background:url('photo3.jpeg') center/cover no-repeat;
-}
-#login-form h1 {
-    font-size:32px;
-    margin-bottom:20px;
-    color:white;
-    text-shadow:0 0 10px black;
-}
-#login-form input {
-    padding:10px;
-    border-radius:6px;
-    border:none;
-    margin:5px 0;
-    width:220px;
-    font-size:16px;
-}
-#login-btn { background:#ff4d6d; color:white; cursor:pointer; }
-
-/* MAIN PAGE */
-#main {
-    display:none;
-    height:100vh;
+body {
+    font-family: Arial, sans-serif;
     background:#ffe6ec;
-    position:relative;
-    padding:20px;
+    overflow-x:hidden;
 }
 
-/* Logout bottom-left */
-#logout {
-    position:absolute;
-    bottom:20px;
-    left:20px;
-    padding:8px 16px;
-    background:#ff4d6d;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    z-index:50;
+/* HEART BACKGROUND */
+#hearts-bg {
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0;
+    left:0;
+    z-index:0;
+    overflow:hidden;
 }
 
-/* Photos on right */
-#photos {
-    position:absolute;
-    right:40px;
-    top:50%;
-    transform:translateY(-50%);
-    display:flex;
-    flex-direction:column;
-    z-index:10;
-}
-#photos img {
-    width:350px;
-    border-radius:15px;
-    margin-bottom:20px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.2);
-    max-width:90vw;
-}
-
-/* Tabs Left */
-.tabs {
-    position:absolute;
-    left:40px;
-    top:50%;
-    transform:translateY(-50%);
-    z-index:20;
-}
-.tab-btn {
-    padding:12px 20px;
-    margin-bottom:10px;
-    border:none;
-    border-radius:8px;
-    background:#ff4d6d;
-    color:white;
-    cursor:pointer;
-    font-size:17px;
-    width:180px;
-}
-#message-content {
-    display:none;
-    margin-top:15px;
-    background:white;
-    padding:20px;
-    border-radius:12px;
-    box-shadow:0 0 10px rgba(0,0,0,0.15);
-    max-width:400px;
-    white-space:pre-line;
-    line-height:1.6;
-    z-index:25;
-    position:relative;
-}
-
-/* PUZZLE BOX */
-#puzzle-box {
-    width:340px;
-    padding:20px;
-    background:white;
-    border-radius:16px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.15);
-    margin-top:20px;
-    display:none;
-    text-align:center;
-    position:relative;
-    z-index:30;
-}
-#puzzle-container {
-    position:relative;
-    width:300px;
-    height:300px;
-    margin:auto;
-}
-.tile {
-    position:absolute;
-    cursor:pointer;
-    border:1px solid white;
-    transition:top 0.25s, left 0.25s;
-}
-#puzzle-message {
-    margin-top:20px;
-    display:none;
-    background:#fff0f5;
-    padding:15px;
-    border-radius:12px;
-    font-weight:bold;
-}
-#puzzle-back, #controls button {
-    margin-top:20px;
-    padding:10px 16px;
-    background:#ff4d6d;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-}
-
-/* HEART SHAPE */
 .heart {
     position:absolute;
-    width:90px;
-    height:90px;
+    width:20px;
+    height:20px;
     background:red;
     transform:rotate(-45deg);
-    opacity:0.85;
-    z-index:100;
+    opacity:0.4;
 }
 .heart:before,
 .heart:after {
     content:"";
     position:absolute;
-    width:90px;
-    height:90px;
+    width:20px;
+    height:20px;
     background:red;
     border-radius:50%;
 }
-.heart:before { top:-45px; left:0; }
-.heart:after { left:45px; top:0; }
-.heart span {
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%) rotate(45deg);
-    color:white;
-    font-weight:bold;
-    font-size:16px;
-    width:80px;
-    text-align:center;
-    pointer-events:none;
-    z-index:101;
+.heart:before { top:-10px; left:0; }
+.heart:after { left:10px; top:0; }
+
+/* LOGIN */
+#login {
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    z-index:2;
+    position:relative;
 }
 
-/* QUIZ BOX */
-#quiz-box {
-    width:340px;
+input, button, textarea {
+    padding:10px;
+    margin:6px;
+    border-radius:8px;
+    border:none;
+    font-size:16px;
+}
+
+button {
+    background:#ff4d6d;
+    color:white;
+    cursor:pointer;
+}
+
+/* MAIN */
+#main {
+    display:none;
     padding:20px;
+    position:relative;
+    z-index:2;
+}
+
+.tabs {
+    display:flex;
+    flex-direction:column;
+    max-width:400px;
+}
+
+.tab-btn {
+    margin-bottom:10px;
+}
+
+/* MESSAGE */
+#message-box {
     background:white;
-    border-radius:16px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.15);
+    padding:15px;
+    border-radius:10px;
+    margin-top:10px;
+    white-space:pre-line;
+}
+
+/* ADMIN EDIT */
+#admin-box {
+    display:none;
+    margin-top:15px;
+}
+#admin-box textarea {
+    width:100%;
+    height:120px;
+}
+
+/* IMAGES */
+#photos {
+    margin-top:20px;
+}
+#photos img {
+    width:100%;
+    max-width:400px;
+    border-radius:12px;
+    margin-bottom:10px;
+}
+
+/* PUZZLE */
+#puzzle-box {
     margin-top:20px;
     display:none;
-    position:relative;
-    z-index:30;
-}
-.quiz-option {
-    padding:10px;
-    background:#ffe6ec;
-    border-radius:10px;
-    margin:8px 0;
-    cursor:pointer;
-}
-.quiz-option.selected {
-    background:#ff4d6d;
-    color:white;
-    font-weight:bold;
-}
-.quiz-nav {
-    margin-top:10px;
-    display:flex;
-    justify-content:space-between;
-}
-.quiz-nav button, #close-quiz {
-    padding:8px 14px;
-    background:#ff4d6d;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    margin-top:10px;
-}
-#quiz-image {
-    width:100%;
-    height:180px;
-    background-size:cover;
-    background-position:center;
-    border-radius:12px;
-    margin-bottom:10px;
-}
-
-/* BIG QUESTION BOX */
-#bigq-box {
-    width:400px;
-    padding:20px;
-    background:white;
-    border-radius:16px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.15);
-    display:none;
     text-align:center;
+}
+#puzzle-container {
+    width:300px;
+    height:300px;
+    margin:auto;
+    position:relative;
+}
+.tile {
     position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    z-index:40;
-}
-#bigq-image {
-    width:100%;
-    height:200px;
-    background-size:cover;
-    background-position:center;
-    border-radius:12px;
-    margin-bottom:10px;
-}
-#bigq-question {
-    font-size:18px;
-    margin-bottom:15px;
-}
-#bigq-buttons button {
-    padding:10px 16px;
-    margin:5px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    background:#ff4d6d;
-    color:white;
-}
-#bigq-no {
-    position:absolute;
-}
-
-/* CLOSE BIG QUESTION BUTTON FIX */
-#close-bigq {
-    padding:8px 14px;
-    background:#ff4d6d; /* same as other buttons */
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    margin-top:10px;
+    border:1px solid white;
 }
 
 /* MOBILE */
-@media(max-width:800px) {
-    #photos img { width:240px; }
-    .tab-btn { width:150px; font-size:15px; }
-    #message-content { max-width:300px; }
-    #bigq-box { width:90%; }
+@media(max-width:600px){
+    #puzzle-container {
+        width:90vw;
+        height:90vw;
+    }
 }
 </style>
 </head>
+
 <body>
 
+<div id="hearts-bg"></div>
+
 <!-- LOGIN -->
-<div id="login-form">
-    <h1>Login</h1>
-    <input type="text" id="name" placeholder="Enter your name" />
-    <input type="submit" value="Login" id="login-btn" />
+<div id="login">
+    <h2>Login ❤️</h2>
+    <input type="text" id="username" placeholder="Enter name">
+    <button onclick="login()">Enter</button>
 </div>
 
-<!-- MAIN PAGE -->
+<!-- MAIN -->
 <div id="main">
-    <button id="logout">Logout</button>
+
+    <button onclick="logout()">Logout</button>
 
     <div class="tabs">
-        <button class="tab-btn" id="show-message">Apology Message</button>
-        <div id="message-content"></div>
-        <button class="tab-btn" id="quiz-tab">Quiz</button>
-        <button class="tab-btn" id="puzzle-toggle">Puzzle</button>
-        <button class="tab-btn" id="bigq-tab">Big Question</button>
+        <button class="tab-btn" onclick="toggleMessage()">Message</button>
+        <div id="message-box"></div>
+
+        <div id="admin-box">
+            <textarea id="edit-message"></textarea>
+            <button onclick="saveMessage()">Save Message</button>
+        </div>
+
+        <button class="tab-btn" onclick="togglePuzzle()">Puzzle</button>
     </div>
 
     <div id="photos">
-        <img src="photo.jpg" />
-        <img src="photo2.jpg" />
+        <img src="photo.jpg">
+        <img src="photo2.jpg">
     </div>
 
-    <!-- PUZZLE BOX -->
     <div id="puzzle-box">
         <div id="puzzle-container"></div>
-        <div id="puzzle-message"></div>
-        <button id="puzzle-back" onclick="closePuzzle()">Back</button>
-        <div id="controls">
-            <button onclick="startPuzzle(2)">2×2</button>
-            <button onclick="startPuzzle(3)">3×3</button>
-            <button onclick="startPuzzle(4)">4×4</button>
-        </div>
-    </div>
-
-    <!-- QUIZ BOX -->
-    <div id="quiz-box">
-        <div id="quiz-image"></div>
-        <h3 id="quiz-question"></h3>
-        <div id="quiz-options"></div>
-        <div class="quiz-nav">
-            <button id="prev-btn">Previous</button>
-            <button id="next-btn">Next</button>
-        </div>
-        <button id="close-quiz">Close Quiz</button>
-        <div id="quiz-result"></div>
-    </div>
-
-    <!-- BIG QUESTION BOX -->
-    <div id="bigq-box">
-        <div id="bigq-image"></div>
-        <div id="bigq-question">Will you forgive me?</div>
-        <div id="bigq-buttons">
-            <button id="bigq-yes">Yes</button>
-            <button id="bigq-no">No</button>
-        </div>
-        <button id="close-bigq">Close Big Question</button>
+        <button onclick="startPuzzle(3)">Start Puzzle</button>
     </div>
 
 </div>
 
 <script>
-/* LOGIN */
-const loginBtn=document.getElementById("login-btn");
-const nameInput=document.getElementById("name");
-const loginForm=document.getElementById("login-form");
-const main=document.getElementById("main");
 
-loginBtn.addEventListener("click",()=>{
-    const name=nameInput.value.trim();
-    if(name==="Zodwa" || name==="Admin"){
-        loginForm.style.display="none";
-        main.style.display="block";
-        startHearts();
-    }else{ alert("Incorrect name."); }
-});
-document.getElementById("logout").onclick=()=>{ location.reload(); };
+/* LOGIN SYSTEM */
+let isAdmin = false;
 
-/* APOLOGY MESSAGE */
-const messageBtn=document.getElementById("show-message");
-const messageBox=document.getElementById("message-content");
-const APOLOGY=`I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again in which we just reestablished and rebuilt and that you gave me I want you to know that my actions are a reflection of my flaws I should’ve handled the situation differently I handled everything terribly you are an incredible strong caring intelligent I should have been as amazing as you have been to me and I’m sorry for failing you I just want you to know that I truly value you and I’m committed to understanding you better you deserve the world I’m sorry for hurting you you mean a lot to me and I hope that I can show you that I only handled the situation wrong not that I don’t love you
+function login(){
+    const name = document.getElementById("username").value.trim();
 
-I love you ❤️`;
-messageBtn.addEventListener("click",()=>{
-    if(messageBox.style.display==="none"||messageBox.style.display===""){ 
-        messageBox.style.display="block"; 
-        messageBox.innerText=APOLOGY;
-    }else{ messageBox.style.display="none"; }
-});
+    if(name === "Admin"){
+        isAdmin = true;
+    } else if(name === "Zodwa"){
+        isAdmin = false;
+    } else {
+        alert("Wrong name ❤️");
+        return;
+    }
 
-/* FLOATING HEARTS */
+    document.getElementById("login").style.display="none";
+    document.getElementById("main").style.display="block";
+
+    if(isAdmin){
+        document.getElementById("admin-box").style.display="block";
+        document.getElementById("edit-message").value = getMessage();
+    }
+
+    startHearts();
+}
+
+/* LOGOUT */
+function logout(){
+    location.reload();
+}
+
+/* MESSAGE SYSTEM */
+function getMessage(){
+    return localStorage.getItem("msg") || "I love you ❤️";
+}
+
+function toggleMessage(){
+    const box = document.getElementById("message-box");
+    box.innerText = getMessage();
+}
+
+function saveMessage(){
+    const text = document.getElementById("edit-message").value;
+    localStorage.setItem("msg", text);
+    alert("Saved ❤️");
+}
+
+/* HEARTS BACKGROUND */
 function startHearts(){
-    const heartWords=["Zodwa","I","am","sorry","I love you"];
-    heartWords.forEach(word=>{
-        const h=document.createElement("div");
+    const container = document.getElementById("hearts-bg");
+
+    for(let i=0;i<30;i++){
+        const h = document.createElement("div");
         h.className="heart";
-        const text=document.createElement("span");
-        text.innerText=word;
-        h.appendChild(text);
-        main.appendChild(h);
+        h.style.left = Math.random()*100+"%";
+        h.style.top = Math.random()*100+"%";
+        container.appendChild(h);
 
-        h.style.left=Math.random()*(window.innerWidth-120)+"px";
-        h.style.top=Math.random()*(window.innerHeight-120)+"px";
-        h.style.zIndex=100;
+        animateHeart(h);
+    }
+}
 
-        let dx=(Math.random()-0.5)*3;
-        let dy=(Math.random()-0.5)*3;
+function animateHeart(h){
+    let y = Math.random()*window.innerHeight;
 
-        function moveHeart(){
-            let x=parseFloat(h.style.left);
-            let y=parseFloat(h.style.top);
-            x+=dx*2; y+=dy*2;
-            if(x<0||x>window.innerWidth-90) dx*=-1;
-            if(y<0||y>window.innerHeight-90) dy*=-1;
-            h.style.left=x+"px";
-            h.style.top=y+"px";
-            requestAnimationFrame(moveHeart);
+    function move(){
+        y -= 0.3;
+        if(y < -20){
+            y = window.innerHeight;
         }
-        moveHeart();
-    });
+        h.style.top = y + "px";
+        requestAnimationFrame(move);
+    }
+    move();
 }
 
 /* PUZZLE */
-const puzzleBtn=document.getElementById("puzzle-toggle");
-puzzleBtn.onclick=()=>{ 
-    const box=document.getElementById("puzzle-box");
-    box.style.display = box.style.display==="block" ? "none" : "block"; 
-};
+let size = 3;
+let tiles = [];
+let empty = {r:2,c:2};
 
-const messages=["You are the best girlfriend!","You make me so happy!","I am sorry ❤️"];
-const puzzleImages=["Puzzel1.JPG","Puzzel2.JPG","Puzzel3.jpeg"];
-let gridSize, tiles=[], emptyPos={}, imgSize=300;
+function togglePuzzle(){
+    const box = document.getElementById("puzzle-box");
+    box.style.display = box.style.display==="block" ? "none" : "block";
+}
 
-function startPuzzle(size){
-    gridSize=size;
-    const container=document.getElementById("puzzle-container");
+function startPuzzle(n){
+    size = n;
+    const container = document.getElementById("puzzle-container");
     container.innerHTML="";
-    tiles=[];
-    document.getElementById("puzzle-message").style.display="none";
-    document.getElementById("puzzle-back").style.display="inline-block";
-    document.getElementById("puzzle-box").style.display="block";
+    tiles = [];
 
-    const imgSrc=puzzleImages[size-2];
-    const tileSize=imgSize/size;
+    const img = "photo.jpg";
+    const width = container.offsetWidth;
+    const tileSize = width/size;
+
+    empty = {r:size-1,c:size-1};
 
     for(let r=0;r<size;r++){
         for(let c=0;c<size;c++){
-            if(r===size-1 && c===size-1){ emptyPos={row:r,col:c}; continue; }
-            const tile=document.createElement("div");
-            tile.className="tile";
-            tile.dataset.row=r;
-            tile.dataset.col=c;
-            tile.dataset.rowOrig=r;
-            tile.dataset.colOrig=c;
-            tile.style.width=tileSize+"px";
-            tile.style.height=tileSize+"px";
-            tile.style.top=(r*tileSize)+"px";
-            tile.style.left=(c*tileSize)+"px";
-            tile.style.backgroundImage=`url(${imgSrc})`;
-            tile.style.backgroundSize=`${imgSize}px ${imgSize}px`;
-            tile.style.backgroundPosition=`-${c*tileSize}px -${r*tileSize}px`;
-            tile.addEventListener("click",()=>moveTile(tile));
-            container.appendChild(tile);
-            tiles.push(tile);
+            if(r===size-1 && c===size-1) continue;
+
+            const t = document.createElement("div");
+            t.className="tile";
+
+            t.style.width = tileSize+"px";
+            t.style.height = tileSize+"px";
+            t.style.top = r*tileSize+"px";
+            t.style.left = c*tileSize+"px";
+
+            t.dataset.r = r;
+            t.dataset.c = c;
+            t.dataset.or = r;
+            t.dataset.oc = c;
+
+            t.style.backgroundImage = `url(${img})`;
+            t.style.backgroundSize = `${width}px ${width}px`;
+            t.style.backgroundPosition = `-${c*tileSize}px -${r*tileSize}px`;
+
+            t.onclick = ()=>moveTile(t);
+
+            container.appendChild(t);
+            tiles.push(t);
         }
     }
-    shuffleTiles();
+
+    shuffle();
 }
 
-function shuffleTiles(){
-    for(let i=0;i<200;i++){
-        const possible=tiles.filter(t=>isNeighbor(t,emptyPos));
-        const tile=possible[Math.floor(Math.random()*possible.length)];
-        swapTile(tile);
+function shuffle(){
+    for(let i=0;i<500;i++){
+        const neighbors = tiles.filter(t=>isNeighbor(t));
+        const rand = neighbors[Math.floor(Math.random()*neighbors.length)];
+        swap(rand);
     }
 }
-function isNeighbor(tile,pos){
-    const r=parseInt(tile.dataset.row),c=parseInt(tile.dataset.col);
-    return (r===pos.row&&Math.abs(c-pos.col)===1)||(c===pos.col&&Math.abs(r-pos.row)===1);
+
+function isNeighbor(t){
+    const r = +t.dataset.r;
+    const c = +t.dataset.c;
+    return (Math.abs(r-empty.r)+Math.abs(c-empty.c))===1;
 }
-function moveTile(tile){
-    if(isNeighbor(tile,emptyPos)){
-        swapTile(tile);
-        checkSolved();
+
+function moveTile(t){
+    if(isNeighbor(t)){
+        swap(t);
     }
 }
-function swapTile(tile){
-    const tileSize=imgSize/gridSize;
-    const oldRow=parseInt(tile.dataset.row),oldCol=parseInt(tile.dataset.col);
-    tile.dataset.row=emptyPos.row;
-    tile.dataset.col=emptyPos.col;
-    tile.style.top=(emptyPos.row*tileSize)+"px";
-    tile.style.left=(emptyPos.col*tileSize)+"px";
-    emptyPos.row=oldRow;
-    emptyPos.col=oldCol;
-}
-function checkSolved(){
-    const solved=tiles.every(tile=>
-        parseInt(tile.dataset.row)===parseInt(tile.dataset.rowOrig)&&
-        parseInt(tile.dataset.col)===parseInt(tile.dataset.colOrig)
-    );
-    if(solved){
-        const msgBox=document.getElementById("puzzle-message");
-        msgBox.innerText=messages[gridSize-2];
-        msgBox.style.display="block";
-    }
-}
-function closePuzzle(){
-    document.getElementById("puzzle-container").innerHTML="";
-    document.getElementById("puzzle-message").style.display="none";
-    document.getElementById("puzzle-back").style.display="none";
-    document.getElementById("puzzle-box").style.display="none";
+
+function swap(t){
+    const width = document.getElementById("puzzle-container").offsetWidth;
+    const tileSize = width/size;
+
+    let r = +t.dataset.r;
+    let c = +t.dataset.c;
+
+    t.dataset.r = empty.r;
+    t.dataset.c = empty.c;
+
+    t.style.top = empty.r*tileSize+"px";
+    t.style.left = empty.c*tileSize+"px";
+
+    empty = {r:r,c:c};
 }
 
-/* QUIZ */
-const quizTab=document.getElementById("quiz-tab");
-const quizBox=document.getElementById("quiz-box");
-const quizQuestion=document.getElementById("quiz-question");
-const quizOptions=document.getElementById("quiz-options");
-const quizImage=document.getElementById("quiz-image");
-const quizResult=document.getElementById("quiz-result");
-
-let currentQ=0;
-let answers=Array(10).fill(null);
-
-const Q=[
-{ q:"Where did we first meet?", a:["Greenmeadows","Ringball","At BLK","On Bult"], correct:1, img:"Quiz1.GIF" },
-{ q:"When is our anniversary?", a:["28 March","13 May","5 November","14 May"], correct:1, img:"Quiz2.GIF" },
-{ q:"What movie in Potch did we watch together?", a:["Fast and Furious","Avengers","Titanic","The Notebook"], correct:0, img:"Quiz3.jpeg" },
-{ q:"My favourite nickname for us?", a:["Mam Z & Bab Z","Baby","My Love","Bully"], correct:0, img:"Quiz4.jpeg" },
-{ q:"Funniest memory?", a:["When running","Meeting my mom","Meeting my sister","Meeting my dad"], correct:1, img:"Quiz5.jpeg" },
-{ q:"What did you say that made me cry?", a:["I love you","I am proud of you","You’re amazing","I miss you"], correct:1, img:"Quiz6.jpeg" },
-{ q:"What do I love most about you?", a:["Your laugh","Everything","Your looks","Your smile"], correct:1, img:"Quiz7.jpeg" },
-{ q:"Favourite weekend thing?", a:["Movies","Run + food","Basketball","Family"], correct:1, img:"Quiz8.JPG" },
-{ q:"Best moment ever?", a:["Our first night together","First date","Birthday","Walk"], correct:0, img:"Quiz9.jpeg" },
-{ q:"Describe us in one word?", a:["Perfect","Fun","Crazy","Beautiful"], correct:0, img:"Quiz11.jpeg" }
-];
-
-function loadQuiz(){
-    quizImage.style.backgroundImage=`url(${Q[currentQ].img})`;
-    quizQuestion.innerText=Q[currentQ].q;
-    quizOptions.innerHTML="";
-    Q[currentQ].a.forEach((opt,i)=>{
-        const div=document.createElement("div");
-        div.className="quiz-option";
-        if(answers[currentQ]===i) div.classList.add("selected");
-        div.innerText=opt;
-        div.onclick=()=>{ answers[currentQ]=i; loadQuiz(); };
-        quizOptions.appendChild(div);
-    });
-    quizResult.innerHTML="";
-}
-
-quizTab.onclick=()=>{
-    quizBox.style.display = quizBox.style.display==="block" ? "none" : "block";
-    if(quizBox.style.display==="block") loadQuiz();
-};
-document.getElementById("next-btn").onclick=()=>{ if(currentQ<9){ currentQ++; loadQuiz(); } else { showResults(); } };
-document.getElementById("prev-btn").onclick=()=>{ if(currentQ>0){ currentQ--; loadQuiz(); } };
-document.getElementById("close-quiz").onclick=()=>{ quizBox.style.display="none"; };
-function showResults(){
-    let score=0;
-    quizResult.innerHTML="<h3>Results:</h3>";
-    Q.forEach((q,i)=>{
-        const correct=(answers[i]===q.correct);
-        if(correct) score++;
-        quizResult.innerHTML+=`<p>${i+1}. ${correct?"✔️ Correct":"❌ Wrong"}</p>`;
-    });
-    quizResult.innerHTML+=`<h2>Score: ${score}/10</h2>`;
-}
-
-/* BIG QUESTION */
-const bigqTab=document.getElementById("bigq-tab");
-const bigqBox=document.getElementById("bigq-box");
-const bigqImage=document.getElementById("bigq-image");
-const bigqYes=document.getElementById("bigq-yes");
-const bigqNo=document.getElementById("bigq-no");
-const closeBigq=document.getElementById("close-bigq");
-
-function resetBigQ(){
-    bigqBox.style.display="block";
-    bigqImage.style.backgroundImage="url('BigQ.jpeg')";
-    bigqNo.style.position="static";
-}
-
-/* BIG QUESTION TAB TOGGLE */
-bigqTab.onclick = () => { 
-    if(bigqBox.style.display === "block"){
-        closeBigq.click(); // reuse close function
-    } else {
-        resetBigQ();
-    }
-};
-
-bigqYes.onclick=()=>{
-    bigqImage.style.backgroundImage="url('Yay.jpeg')";
-    document.getElementById("bigq-question").innerText="Yay I love you";
-    bigqYes.style.display="none";
-    bigqNo.style.display="none";
-};
-
-bigqNo.onclick=()=>{
-    const boxRect=bigqBox.getBoundingClientRect();
-    const btnWidth=bigqNo.offsetWidth;
-    const btnHeight=bigqNo.offsetHeight;
-    const x=Math.random()*(boxRect.width-btnWidth-20);
-    const y=Math.random()*(boxRect.height-btnHeight-20);
-    bigqNo.style.position="absolute";
-    bigqNo.style.left=x+"px";
-    bigqNo.style.top=y+"px";
-};
-
-closeBigq.onclick=()=>{
-    bigqBox.style.display="none";
-    bigqYes.style.display="inline-block";
-    bigqNo.style.display="inline-block";
-    document.getElementById("bigq-question").innerText="Will you forgive me?";
-    bigqImage.style.backgroundImage="url('BigQ.jpeg')";
-};
 </script>
+
 </body>
 </html>
-
-
-
