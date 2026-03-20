@@ -151,7 +151,25 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     border-radius:8px;
     cursor:pointer;
 }
-
+/*Memories*/
+#memories-content {
+    display:none;
+    margin-top:15px;
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 0 10px rgba(0,0,0,0.15);
+    max-width:400px;
+    line-height:1.6;
+    z-index:25;
+    position:relative;
+}
+.memory {
+    margin-bottom:15px;
+    padding:10px;
+    background:#fff0f5;
+    border-radius:10px;
+}
 /* HEART SHAPE - FLOATING BACKGROUND */
 .heart {
     position:absolute;
@@ -213,6 +231,8 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
         <button class="tab-btn" id="show-message">Cute Message</button>
         <div id="message-content"></div>
         <button class="tab-btn" id="puzzle-toggle">Puzzle</button>
+		<button class="tab-btn" id="memories-btn">Memories</button>
+		<div id="memories-content"></div>
     </div>
 
     <div id="photos">
