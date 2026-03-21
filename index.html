@@ -184,9 +184,8 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 }
 
 /* OPTIONAL animation */
+    animation: flip 0.4s ease;
 .flipbook {
-    animation: flip 0.5s ease;
-    transform-origin: left;
 }
 
 @keyframes flip {
@@ -246,63 +245,6 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     max-width:400px;
     position:relative;
 }
-
-#loading-screen {
-    display:none;
-    position:fixed;
-    width:100%;
-    height:100vh;
-    background:#ffccd5;
-    top:0;
-    left:0;
-    z-index:999;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-}
-
-#loading-text {
-    font-size:28px;
-    margin-bottom:20px;
-}
-
-#progress-bar {
-    width:300px;
-    height:25px;
-    background:white;
-    border-radius:20px;
-    overflow:hidden;
-    margin-bottom:10px;
-}
-
-#progress-fill {
-    height:100%;
-    width:0%;
-    background:#ff4d6d;
-    transition:width 0.2s;
-}
-
-#percent {
-    font-size:18px;
-    margin-bottom:20px;
-}
-
-#warning-text {
-    display:none;
-    font-size:40px;
-    color:red;
-    font-weight:bold;
-    animation:flash 0.4s infinite;
-}
-
-@keyframes flash {
-    0% { opacity:1; }
-    50% { opacity:0; }
-    100% { opacity:1; }
-}
-
 </style>
 </head>
 <body>
@@ -312,18 +254,6 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     <h1>Login</h1>
     <input type="text" id="name" placeholder="Enter your name" />
     <input type="submit" value="Login" id="login-btn" />
-</div>
-
-<div id="loading-screen">
-    <h1 id="loading-text">Calculating Cuteness Level... </h1>
-
-    <div id="progress-bar">
-        <div id="progress-fill"></div>
-    </div>
-
-    <p id="percent">0%</p>
-
-    <h2 id="warning-text"> CUTENESS OVERLOAD </h2>
 </div>
 
 <!-- MAIN PAGE -->
@@ -367,40 +297,9 @@ const main=document.getElementById("main");
 loginBtn.addEventListener("click",()=>{
     const name=nameInput.value.trim();
     if(name==="Zodwa" || name==="Admin"){
-        loginForm.style.display = "none";
-
-	const loadingScreen = document.getElementById("loading-screen");
-	const progressFill = document.getElementById("progress-fill");
-	const percentText = document.getElementById("percent");
-	const warningText = document.getElementById("warning-text");
-
-	loadingScreen.style.display = "flex";
-
-	let progress = 0;
-
-	const interval = setInterval(() => {
-		progress++;
-
-		progressFill.style.width = progress + "%";
-		percentText.innerText = progress + "%";
-
-		if (progress > 80) progress += 0.5;
-
-		if (progress >= 99) {
-			warningText.style.display = "block";
-    }
-
-    if (progress >= 100) {
-        clearInterval(interval);
-
-        setTimeout(() => {
-            loadingScreen.style.display = "none";
-            main.style.display = "block";
-            startHearts();
-        }, 1500);
-    }
-
-}, 40);
+        loginForm.style.display="none";
+        main.style.display="block";
+        startHearts();
     }else{ alert("Incorrect name."); }
 });
 document.getElementById("logout").onclick=()=>{ location.reload(); };
