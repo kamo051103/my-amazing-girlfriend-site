@@ -293,10 +293,12 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 
 #warning-text {
     display:none;
-    font-size:40px;
+    font-size:34px;
     color:red;
     font-weight:bold;
+    text-align:center;
     animation:flash 0.4s infinite;
+    line-height:1.4;
 }
 
 @keyframes flash {
@@ -325,7 +327,11 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 
     <p id="percent">0%</p>
 
-    <h2 id="warning-text"> CUTENESS OVERLOAD ️</h2>
+    <h2 id="warning-text">
+	CUTENESS OVERLOAD<br>
+	System cannot handle how much I love you <br>
+	You are beautiful
+	</h2>
 </div>
 
 
@@ -382,28 +388,37 @@ loginBtn.addEventListener("click",()=>{
 	let progress = 0;
 
 	const interval = setInterval(() => {
-		progress++;
+    progress++;
 
-		progressFill.style.width = progress + "%";
-		percentText.innerText = progress + "%";
+    // Slow down near the end
+    if (progress > 80) progress += 0.3;
 
-		if (progress > 80) progress += 0.5;
+    progressFill.style.width = Math.min(progress, 100) + "%";
+    percentText.innerText = Math.floor(progress) + "%";
 
-		if (progress >= 99) {
-			warningText.style.display = "block";
+    // Stop at 99 first
+    if (progress >= 99 && progress < 100) {
+        progress = 99;
+        warningText.style.display = "block";
+
+        clearInterval(interval);
+
+        // Hold the moment (dramatic pause )
+        setTimeout(() => {
+            progressFill.style.width = "100%";
+            percentText.innerText = "100%";
+
+            // Then go to main page
+            setTimeout(() => {
+                loadingScreen.classList.remove("active");
+                main.style.display = "block";
+                startHearts();
+				}, 1000);
+
+			}, 2000);
 		}
 
-		if (progress >= 100) {
-			clearInterval(interval);
-
-			setTimeout(() => {
-				lloadingScreen.classList.remove("active");
-				main.style.display = "block";
-				startHearts();
-			}, 1500);
-		}
-
-	}, 40);
+		}, 40);
     }else{ alert("Incorrect name."); }
 });
 document.getElementById("logout").onclick=()=>{ location.reload(); };
