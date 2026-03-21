@@ -337,6 +337,20 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     100% { opacity:1; }
 }
 
+#birthday-content {
+    display: none;
+    position: relative;
+    width: 100%;
+    height: 500px; /* or full height: 100vh if you want */
+    margin-top: 15px;
+}
+
+#birthday-content canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
 </style>
 </head>
 <body>
@@ -375,6 +389,8 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
         <button class="tab-btn" id="puzzle-toggle">Puzzle</button>
 		<button class="tab-btn" id="memories-btn">Memories</button>
 		<div id="memories-content"></div>
+		<button class="tab-btn" id="birthday-btn">Birthday</button>
+		<div id="birthday-content"></div>
     </div>
 
     <div id="photos">
@@ -662,6 +678,67 @@ function closePuzzle(){
     document.getElementById("puzzle-back").style.display="none";
     document.getElementById("puzzle-box").style.display="none";
 }
+
+const birthdayBtn = document.getElementById("birthday-btn");
+const birthdayBox = document.getElementById("birthday-content");
+
+birthdayBtn.addEventListener("click", () => {
+    // Hide other content
+    messageBox.style.display = "none";
+    document.getElementById("puzzle-box").style.display = "none";
+    memoriesBox.style.display = "none";
+
+    // Toggle birthday tab
+    if (birthdayBox.style.display === "none" || birthdayBox.style.display === "") {
+        birthdayBox.style.display = "block";
+
+        // Only create canvas once
+        if (!document.getElementById("matrixCanvas")) {
+            const canvas = document.createElement("canvas");
+            canvas.id = "matrixCanvas";
+            birthdayBox.appendChild(canvas);
+            const ctx = canvas.getContext("2d");
+
+            canvas.width = birthdayBox.offsetWidth;
+            canvas.height = 400;
+
+            const words = ["I love you", "Zodwa Mthombeni", "Happy birthday", "You are the best"];
+            const fontSize = 24;
+            const columns = Math.floor(canvas.width / fontSize);
+            const drops = Array(columns).fill(0);
+
+            function drawMatrix() {
+                ctx.fillStyle = "rgba(0,0,0,0.05)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = "#00ff00";
+                ctx.font = fontSize + "px monospace";
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = words[Math.floor(Math.random() * words.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+
+                    drops[i]++;
+                }
+            }
+
+            setInterval(drawMatrix, 50);
+
+            // Optional: adjust canvas on window resize
+            window.addEventListener("resize", () => {
+                canvas.width = birthdayBox.offsetWidth;
+                canvas.height = 400;
+            });
+        }
+
+    } else {
+        birthdayBox.style.display = "none";
+    }
+});
 </script>
 </body>
 </html>
