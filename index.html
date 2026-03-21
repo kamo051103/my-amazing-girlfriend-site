@@ -183,6 +183,39 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     cursor:pointer;
 }
 
+/* BOOK STYLE */
+.book {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* space between left and right page */
+    cursor: pointer;
+    perspective: 1200px;
+}
+
+.page {
+    width: 160px;      /* page width */
+    max-width: 45%;    /* responsive */
+    height: 260px;
+    background: white;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+@media(max-width:500px){
+    .page { width: 140px; height: 220px; padding: 8px; }
+}
+
+/* Optional flip animation */
+.book.next { animation: bookNext 0.4s ease; }
+.book.prev { animation: bookPrev 0.4s ease; }
+
+@keyframes bookNext { from { transform: rotateY(-10deg); opacity:0.5; } to { transform: rotateY(0); opacity:1; } }
+@keyframes bookPrev { from { transform: rotateY(10deg); opacity:0.5; } to { transform: rotateY(0); opacity:1; } }
+
 /* OPTIONAL animation */
     .flipbook {
     position:relative;
@@ -565,16 +598,31 @@ const memoryPages = [
 ];
 
 function renderPage(direction = "next") {
-    const page = memoryPages[currentPage];
+    const leftPage = memoryPages[currentPage];
+    const rightPage = memoryPages[currentPage + 1];
 
     memoriesBox.innerHTML = `
-        <div class="flipbook ${direction}">
-            <img src="${page.img}" class="memory-img">
-            <p class="memory-text">${page.text}</p>
+        <div class="book ${direction}">
+            
+            <div class="page left">
+                ${leftPage ? `
+                    <img src="${leftPage.img}" class="memory-img">
+                    <p class="memory-text">${leftPage.text}</p>
+                ` : ""}
+            </div>
+
+            <div class="page right">
+				${rightPage ? `
+					<img src="${rightPage.img}" class="memory-img">
+					<p class="memory-text">${rightPage.text}</p>
+				` : `<p style="text-align:center; color:#aaa;">The End ❤️</p>`}
+			</div>
 
             <div class="page-indicator">
-                ${currentPage + 1} / ${memoryPages.length}
+                ${currentPage + 1} - ${Math.min(currentPage + 2, memoryPages.length)} 
+                / ${memoryPages.length}
             </div>
+
         </div>
     `;
 
@@ -590,17 +638,16 @@ function renderPage(direction = "next") {
         }
     };
 }
-
 function nextPage() {
-    if (currentPage < memoryPages.length - 1) {
-        currentPage++;
+    if (currentPage < memoryPages.length - 2) {
+        currentPage += 2;
         renderPage("next");
     }
 }
 
 function prevPage() {
     if (currentPage > 0) {
-        currentPage--;
+        currentPage -= 2;
         renderPage("prev");
     }
 }
