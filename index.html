@@ -1,3 +1,687 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Apology Website</title>
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
+
+/* LOGIN PAGE */
+#login-form {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    height:100vh;
+    background:url('photo3.jpeg') center/cover no-repeat;
+}
+#login-form h1 {
+    font-size:32px;
+    margin-bottom:20px;
+    color:white;
+    text-shadow:0 0 10px black;
+}
+#login-form input {
+    padding:10px;
+    border-radius:6px;
+    border:none;
+    margin:5px 0;
+    width:220px;
+    font-size:16px;
+}
+#login-btn { background:#ff4d6d; color:white; cursor:pointer; }
+
+/* MAIN PAGE */
+#main {
+    display:none;
+    height:100vh;
+    background:#ffe6ec;
+    position:relative;
+    padding:20px;
+    overflow:hidden;
+}
+
+/* Logout bottom-left */
+#logout {
+    position:absolute;
+    bottom:20px;
+    left:20px;
+    padding:8px 16px;
+    background:#ff4d6d;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    z-index:50;
+}
+
+/* Photos on right */
+#photos {
+    position:absolute;
+    right:40px;
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    flex-direction:column;
+    z-index:10;
+}
+#photos img {
+    width:350px;
+    border-radius:15px;
+    margin-bottom:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.2);
+    max-width:90vw;
+}
+
+/* Tabs Left */
+.tabs {
+    position:absolute;
+    left:40px;
+    top:50%;
+    transform:translateY(-50%);
+    z-index:20;
+}
+.tab-btn {
+    padding:12px 20px;
+    margin-bottom:10px;
+    border:none;
+    border-radius:8px;
+    background:#ff4d6d;
+    color:white;
+    cursor:pointer;
+    font-size:17px;
+    width:180px;
+}
+#message-content {
+    display:none;
+    margin-top:15px;
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 0 10px rgba(0,0,0,0.15);
+    max-width:400px;
+    white-space:pre-line;
+    line-height:1.6;
+    z-index:25;
+    position:relative;
+}
+
+/* PUZZLE BOX */
+#puzzle-box {
+    width:340px;
+    padding:20px;
+    background:white;
+    border-radius:16px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.15);
+    margin-top:20px;
+    display:none;
+    text-align:center;
+    position:relative;
+    z-index:30;
+}
+#puzzle-container {
+    position:relative;
+    width:300px;
+    height:300px;
+    margin:auto;
+}
+.tile {
+    position:absolute;
+    cursor:pointer;
+    border:1px solid white;
+    transition:top 0.25s, left 0.25s;
+}
+#puzzle-message {
+    margin-top:20px;
+    display:none;
+    background:#fff0f5;
+    padding:15px;
+    border-radius:12px;
+    font-weight:bold;
+}
+#puzzle-back, #controls button {
+    margin-top:20px;
+    padding:10px 16px;
+    background:#ff4d6d;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+/*Memories*/
+
+/* ADD THIS AT THE BOTTOM 👇 */
+.memory-img {
+    width:100%;
+    border-radius:12px;
+    margin-bottom:10px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+
+.memory-text {
+    text-align:center;
+    font-size:16px;
+    margin-bottom:10px;
+}
+
+.flip-controls {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:10px;
+}
+
+.flip-controls button {
+    padding:8px 14px;
+    background:#ff4d6d;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+/* OPTIONAL animation */
+    .flipbook {
+    position:relative;
+    cursor:pointer;
+    perspective:1000px;
+}
+
+/* Forward flip */
+.flipbook.next {
+    animation: flipNext 0.5s ease;
+}
+
+/* Back flip */
+.flipbook.prev {
+    animation: flipPrev 0.5s ease;
+}
+
+@keyframes flipNext {
+    0% { transform: rotateY(-90deg); opacity:0; }
+    100% { transform: rotateY(0); opacity:1; }
+}
+
+@keyframes flipPrev {
+    0% { transform: rotateY(90deg); opacity:0; }
+    100% { transform: rotateY(0); opacity:1; }
+}
+
+@keyframes flip {
+    from { transform: rotateY(90deg); opacity:0; }
+    to { transform: rotateY(0deg); opacity:1; }
+}
+/* HEART SHAPE - FLOATING BACKGROUND */
+.heart {
+    position:absolute;
+    width:90px;
+    height:90px;
+    background:red;
+    transform:rotate(-45deg);
+    opacity:0.5;       /* subtle in background */
+    z-index:1;          /* behind content */
+    pointer-events:none; /* allow clicks through hearts */
+}
+.heart:before,
+.heart:after {
+    content:"";
+    position:absolute;
+    width:90px;
+    height:90px;
+    background:red;
+    border-radius:50%;
+}
+.heart:before { top:-45px; left:0; }
+.heart:after { left:45px; top:0; }
+.heart span {
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%) rotate(45deg);
+    color:white;
+    font-weight:bold;
+    font-size:16px;
+    width:80px;
+    text-align:center;
+    pointer-events:none;
+    z-index:101;
+}
+
+/* MOBILE */
+@media(max-width:800px) {
+    #photos img { width:240px; }
+    .tab-btn { width:150px; font-size:15px; }
+    #message-content { max-width:300px; }
+}
+
+#memories-content {
+    display:none;
+    margin-top:15px;
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 0 10px rgba(0,0,0,0.15);
+    max-width:400px;
+    position:relative;
+}
+
+.page-indicator {
+    text-align:center;
+    margin-top:10px;
+    font-size:14px;
+    color:#555;
+}
+
+#loading-screen {
+    display:none;
+    position:fixed;
+    width:100%;
+    height:100vh;
+    background:#ffccd5;
+    top:0;
+    left:0;
+    z-index:999;
+}
+
+#loading-screen.active {
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+}
+
+#loading-text {
+    font-size:28px;
+    margin-bottom:20px;
+}
+
+#progress-bar {
+    width:300px;
+    height:25px;
+    background:white;
+    border-radius:20px;
+    overflow:hidden;
+    margin-bottom:10px;
+}
+
+#progress-fill {
+    height:100%;
+    width:0%;
+    background:#ff4d6d;
+    transition:width 0.2s;
+}
+
+#percent {
+    font-size:18px;
+    margin-bottom:20px;
+}
+
+#warning-text {
+    display:none;
+    font-size:34px;
+    color:red;
+    font-weight:bold;
+    text-align:center;
+    animation:flash 0.4s infinite;
+    line-height:1.4;
+}
+
+@keyframes flash {
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+
+#birthday-content {
+    display: none;
+    position: relative;
+    width: 100%;
+    height: 500px; /* or full height: 100vh if you want */
+    margin-top: 15px;
+}
+
+#birthday-content canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-form">
+    <h1>Login</h1>
+    <input type="text" id="name" placeholder="Enter your name" />
+    <input type="submit" value="Login" id="login-btn" />
+</div>
+
+<div id="loading-screen">
+    <h1 id="loading-text">Calculating Cuteness Level... </h1>
+
+    <div id="progress-bar">
+        <div id="progress-fill"></div>
+    </div>
+
+    <p id="percent">0%</p>
+
+    <h2 id="warning-text">
+	CUTENESS OVERLOAD<br>
+	System cannot handle how much I love you <br>
+	You are beautiful
+	</h2>
+</div>
+
+
+<!-- MAIN PAGE -->
+<div id="main">
+    <button id="logout">Logout</button>
+
+    <div class="tabs">
+        <button class="tab-btn" id="show-message">Cute Message</button>
+        <div id="message-content"></div>
+        <button class="tab-btn" id="puzzle-toggle">Puzzle</button>
+		<button class="tab-btn" id="memories-btn">Memories</button>
+		<div id="memories-content"></div>
+		<button class="tab-btn" id="birthday-btn">Birthday</button>
+		<div id="birthday-content"></div>
+    </div>
+
+    <div id="photos">
+        <img src="photo.jpg" />
+        <img src="photo2.jpg" />
+    </div>
+
+    <!-- PUZZLE BOX -->
+    <div id="puzzle-box">
+        <div id="puzzle-container"></div>
+        <div id="puzzle-message"></div>
+        <button id="puzzle-back" onclick="closePuzzle()">Back</button>
+        <div id="controls">
+            <button onclick="startPuzzle(2)">2×2</button>
+            <button onclick="startPuzzle(3)">3×3</button>
+            <button onclick="startPuzzle(4)">4×4</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+/* LOGIN */
+const loginBtn=document.getElementById("login-btn");
+const nameInput=document.getElementById("name");
+const loginForm=document.getElementById("login-form");
+const main=document.getElementById("main");
+
+loginBtn.addEventListener("click",()=>{
+    const name=nameInput.value.trim();
+    if(name==="Zodwa" || name==="Admin"){
+        loginForm.style.display = "none";
+
+	const loadingScreen = document.getElementById("loading-screen");
+	const progressFill = document.getElementById("progress-fill");
+	const percentText = document.getElementById("percent");
+	const warningText = document.getElementById("warning-text");
+
+	loadingScreen.classList.add("active");
+
+	let progress = 0;
+
+	const interval = setInterval(() => {
+    progress++;
+
+    // Slow down near the end
+    if (progress > 80) progress += 0.3;
+
+    progressFill.style.width = Math.min(progress, 100) + "%";
+    percentText.innerText = Math.floor(progress) + "%";
+
+    // Stop at 99 first
+    if (progress >= 99 && progress < 100) {
+        progress = 99;
+        warningText.style.display = "block";
+
+        clearInterval(interval);
+
+        // Hold the moment (dramatic pause )
+        setTimeout(() => {
+            progressFill.style.width = "100%";
+            percentText.innerText = "100%";
+
+            // Then go to main page
+            setTimeout(() => {
+                loadingScreen.classList.remove("active");
+                main.style.display = "block";
+                startHearts();
+				}, 1000);
+
+			}, 2000);
+		}
+
+		}, 40);
+    }else{ alert("Incorrect name."); }
+});
+document.getElementById("logout").onclick=()=>{ location.reload(); };
+
+/* Cute MESSAGE */
+const messageBtn=document.getElementById("show-message");
+const messageBox=document.getElementById("message-content");
+const Cute_Message=`I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again in which we just reestablished and rebuilt and that you gave me I want you to know that my actions are a reflection of my flaws I should’ve handled the situation differently I handled everything terribly you are an incredible strong caring intelligent I should have been as amazing as you have been to me and I’m sorry for failing you I just want you to know that I truly value you and I’m committed to understanding you better you deserve the world I’m sorry for hurting you you mean a lot to me and I hope that I can show you that I only handled the situation wrong not that I don’t love you
+
+I love you ❤️`;
+messageBtn.addEventListener("click",()=>{
+    if(messageBox.style.display==="none"||messageBox.style.display===""){ 
+        messageBox.style.display="block"; 
+        messageBox.innerText= Cute_Message;
+    }else{ messageBox.style.display="none"; }
+});
+
+/* FLOATING HEARTS BACKGROUND */
+function startHearts(){
+    const heartWords=["Zodwa","You","are","amazing","I love you"];
+    heartWords.forEach(word=>{
+        const h=document.createElement("div");
+        h.className="heart";
+        const text=document.createElement("span");
+        text.innerText=word;
+        h.appendChild(text);
+        main.appendChild(h);
+
+        h.style.left=Math.random()*(window.innerWidth-120)+"px";
+        h.style.top=Math.random()*(window.innerHeight-120)+"px";
+
+        // slower, smooth floating
+        let dx=(Math.random()-0.5)*1;
+        let dy=(Math.random()-0.5)*1;
+
+        function moveHeart(){
+            let x=parseFloat(h.style.left);
+            let y=parseFloat(h.style.top);
+            x+=dx;
+            y+=dy;
+            if(x<0||x>window.innerWidth-90) dx*=-1;
+            if(y<0||y>window.innerHeight-90) dy*=-1;
+            h.style.left=x+"px";
+            h.style.top=y+"px";
+            requestAnimationFrame(moveHeart);
+        }
+        moveHeart();
+    });
+}
+
+/* PUZZLE */
+const puzzleBtn=document.getElementById("puzzle-toggle");
+puzzleBtn.onclick=()=>{ 
+    const box=document.getElementById("puzzle-box");
+    box.style.display = box.style.display==="block" ? "none" : "block"; 
+};
+
+const messages=["You are the best girlfriend!","You make me so happy!","You are the best"];
+const puzzleImages=["Puzzel1.JPG","Puzzel2.JPG","Puzzel3.jpeg"];
+let gridSize, tiles=[], emptyPos={}, imgSize=300;
+
+function startPuzzle(size){
+    gridSize=size;
+    const container=document.getElementById("puzzle-container");
+    container.innerHTML="";
+    tiles=[];
+    document.getElementById("puzzle-message").style.display="none";
+    document.getElementById("puzzle-back").style.display="inline-block";
+    document.getElementById("puzzle-box").style.display="block";
+
+    const imgSrc=puzzleImages[size-2];
+    const tileSize=imgSize/size;
+
+    for(let r=0;r<size;r++){
+        for(let c=0;c<size;c++){
+            if(r===size-1 && c===size-1){ emptyPos={row:r,col:c}; continue; }
+            const tile=document.createElement("div");
+            tile.className="tile";
+            tile.dataset.row=r;
+            tile.dataset.col=c;
+            tile.dataset.rowOrig=r;
+            tile.dataset.colOrig=c;
+            tile.style.width=tileSize+"px";
+            tile.style.height=tileSize+"px";
+            tile.style.top=(r*tileSize)+"px";
+            tile.style.left=(c*tileSize)+"px";
+            tile.style.backgroundImage=`url(${imgSrc})`;
+            tile.style.backgroundSize=`${imgSize}px ${imgSize}px`;
+            tile.style.backgroundPosition=`-${c*tileSize}px -${r*tileSize}px`;
+            tile.addEventListener("click",()=>moveTile(tile));
+            container.appendChild(tile);
+            tiles.push(tile);
+        }
+    }
+    shuffleTiles();
+}
+/* MEMORIES CODE */
+
+const memoriesBtn = document.getElementById("memories-btn");
+const memoriesBox = document.getElementById("memories-content");
+
+let currentPage = 0;
+
+const memoryPages = [
+    { img: "Quiz1.GIF", text: "You make everything feel special ❤️" },
+    { img: "Quiz11.jpeg", text: "Every moment with you matters 🥺" },
+    { img: "Quiz2.GIF", text: "Your smile is my favorite thing 😍" },
+    { img: "Quiz3.jpeg", text: "You bring peace into my life 💫" },
+    { img: "Quiz4.jpeg", text: "I love every little thing about you ❤️" },
+    { img: "Quiz5.jpeg", text: "You make me genuinely happy 😊" },
+    { img: "Quiz6.jpeg", text: "I’ll always choose you 💯" },
+    { img: "Quiz7.jpeg", text: "You mean more than words can say 🫶" },
+    { img: "Quiz8.JPG", text: "You’re my favorite person ❤️" },
+    { img: "Quiz9.jpeg", text: "I love you more every day ❤️" }
+];
+
+function renderPage(direction = "next") {
+    const page = memoryPages[currentPage];
+
+    memoriesBox.innerHTML = `
+        <div class="flipbook ${direction}">
+            <img src="${page.img}" class="memory-img">
+            <p class="memory-text">${page.text}</p>
+
+            <div class="page-indicator">
+                ${currentPage + 1} / ${memoryPages.length}
+            </div>
+        </div>
+    `;
+
+    // CLICK LEFT / RIGHT SIDE
+    memoriesBox.onclick = (e) => {
+        const width = memoriesBox.offsetWidth;
+        const clickX = e.offsetX;
+
+        if (clickX < width / 2) {
+            prevPage();
+        } else {
+            nextPage();
+        }
+    };
+}
+
+function nextPage() {
+    if (currentPage < memoryPages.length - 1) {
+        currentPage++;
+        renderPage("next");
+    }
+}
+
+function prevPage() {
+    if (currentPage > 0) {
+        currentPage--;
+        renderPage("prev");
+    }
+}
+
+memoriesBtn.addEventListener("click", () => {
+    messageBox.style.display = "none";
+    document.getElementById("puzzle-box").style.display = "none";
+
+    if (memoriesBox.style.display === "none" || memoriesBox.style.display === "") {
+        memoriesBox.style.display = "block";
+        currentPage = 0;
+        renderPage();
+    } else {
+        memoriesBox.style.display = "none";
+    }
+});
+function shuffleTiles(){
+    for(let i=0;i<200;i++){
+        const possible=tiles.filter(t=>isNeighbor(t,emptyPos));
+        const tile=possible[Math.floor(Math.random()*possible.length)];
+        swapTile(tile);
+    }
+}
+function isNeighbor(tile,pos){
+    const r=parseInt(tile.dataset.row),c=parseInt(tile.dataset.col);
+    return (r===pos.row&&Math.abs(c-pos.col)===1)||(c===pos.col&&Math.abs(r-pos.row)===1);
+}
+function moveTile(tile){
+    if(isNeighbor(tile,emptyPos)){
+        swapTile(tile);
+        checkSolved();
+    }
+}
+function swapTile(tile){
+    const tileSize=imgSize/gridSize;
+    const oldRow=parseInt(tile.dataset.row),oldCol=parseInt(tile.dataset.col);
+    tile.dataset.row=emptyPos.row;
+    tile.dataset.col=emptyPos.col;
+    tile.style.top=(emptyPos.row*tileSize)+"px";
+    tile.style.left=(emptyPos.col*tileSize)+"px";
+    emptyPos.row=oldRow;
+    emptyPos.col=oldCol;
+}
+function checkSolved(){
+    const solved=tiles.every(tile=>
+        parseInt(tile.dataset.row)===parseInt(tile.dataset.rowOrig)&&
+        parseInt(tile.dataset.col)===parseInt(tile.dataset.colOrig)
+    );
+    if(solved){
+        const msgBox=document.getElementById("puzzle-message");
+        msgBox.innerText=messages[gridSize-2];
+        msgBox.style.display="block";
+    }
+}
+function closePuzzle(){
+    document.getElementById("puzzle-container").innerHTML="";
+    document.getElementById("puzzle-message").style.display="none";
+    document.getElementById("puzzle-back").style.display="none";
+    document.getElementById("puzzle-box").style.display="none";
+}
+
+const birthdayBtn = document.getElementById("birthday-btn");
+const birthdayBox = document.getElementById("birthday-content");
+
 birthdayBtn.addEventListener("click", () => {
     // Hide other content
     messageBox.style.display = "none";
@@ -57,3 +741,6 @@ birthdayBtn.addEventListener("click", () => {
         birthdayBox.style.display = "none";
     }
 });
+</script>
+</body>
+</html>
