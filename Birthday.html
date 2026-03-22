@@ -39,32 +39,57 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const words = ["I love you", "Zodwa Mthombeni", "Happy birthday", "You are the best"];
-const fontSize = 24;
-const columns = Math.floor(canvas.width / fontSize);
-const drops = Array(columns).fill(0);
+// Words for countdown
+const countdownWords = ["3", "2", "1", "happy", "Birthday", "Zodwa"];
+const fontSize = 60; // bigger for countdown
+ctx.font = `${fontSize}px monospace`;
+ctx.fillStyle = "#ff4d6d";
+ctx.textAlign = "center";
+ctx.textBaseline = "middle";
 
-function drawMatrix() {
-    ctx.fillStyle = "rgba(255,230,236,0.1)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+let index = 0;
 
-    ctx.fillStyle = "#ff4d6d";
-    ctx.font = fontSize + "px monospace";
+function showCountdown() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // clear screen
+    ctx.fillText(countdownWords[index], canvas.width/2, canvas.height/2);
 
-    for (let i = 0; i < drops.length; i++) {
-        const text = words[Math.floor(Math.random() * words.length)];
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-            drops[i] = 0;
-        }
-
-        drops[i]++;
+    index++;
+    if(index < countdownWords.length){
+        setTimeout(showCountdown, 1000); // 1 second per word
+    } else {
+        startMatrix(); // start your falling words after countdown
     }
 }
 
-setInterval(drawMatrix, 50);
+// MATRIX EFFECT
+const matrixWords = ["I love you ❤️","Zodwa Mthombeni","Happy Birthday 🎉","You are the best 💖"];
+const columns = Math.floor(canvas.width / 24);
+const drops = Array(columns).fill(0);
 
+function startMatrix() {
+    setInterval(() => {
+        ctx.fillStyle = "rgba(255,230,236,0.1)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#ff4d6d";
+        ctx.font = "24px monospace";
+
+        for(let i=0;i<drops.length;i++){
+            const text = matrixWords[Math.floor(Math.random()*matrixWords.length)];
+            ctx.fillText(text, i*24, drops[i]*24);
+
+            if(drops[i]*24 > canvas.height && Math.random() > 0.975){
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+    }, 50);
+}
+
+// Start countdown on page load
+showCountdown();
+
+// Resize handling
 window.addEventListener("resize", () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -74,6 +99,5 @@ document.getElementById("back").onclick = () => {
    window.location.href = "index.html#main";
 };
 </script>
-
 </body>
 </html>
