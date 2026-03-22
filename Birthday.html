@@ -49,31 +49,36 @@ body {
 
 .wheel {
     position: relative;
-    width: 350px;
-    height: 350px;
-    animation: spin 12s linear infinite;
+    width: 500px;   /* bigger circle */
+    height: 500px;
 }
 
+/* All images stacked in same spot */
 .wheel img {
     position: absolute;
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     border-radius: 15px;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
 }
 
-.wheel img:nth-child(1){ top:0px; left:135px; }
-.wheel img:nth-child(2){ top:40px; left:230px; }
-.wheel img:nth-child(3){ top:120px; left:270px; }
-.wheel img:nth-child(4){ top:210px; left:230px; }
-.wheel img:nth-child(5){ top:270px; left:135px; }
-.wheel img:nth-child(6){ top:210px; left:40px; }
-.wheel img:nth-child(7){ top:120px; left:0px; }
-.wheel img:nth-child(8){ top:40px; left:40px; }
-.wheel img:nth-child(9){ top:120px; left:135px; }
+/* Position images in a PERFECT circle */
+.wheel img:nth-child(1){ top:0px; left:200px; }
+.wheel img:nth-child(2){ top:60px; left:340px; }
+.wheel img:nth-child(3){ top:180px; left:400px; }
+.wheel img:nth-child(4){ top:320px; left:340px; }
+.wheel img:nth-child(5){ top:400px; left:200px; }
+.wheel img:nth-child(6){ top:320px; left:60px; }
+.wheel img:nth-child(7){ top:180px; left:0px; }
+.wheel img:nth-child(8){ top:60px; left:60px; }
+.wheel img:nth-child(9){ top:120px; left:200px; } 
 
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+/* Visible image */
+.wheel img.active {
+    opacity: 1;
+    transform: scale(1.2);
+    box-shadow: 0 0 20px rgba(255, 77, 109, 0.8);
 }
 
 </style>
@@ -85,7 +90,7 @@ body {
 
 <!-- ADD THIS HERE -->
 <div id="birthday-wheel" style="display:none;">
-    <div class="center-text">Happy Birthday Baby ❤️</div>
+    <div class="center-text">Happy Birthday Baby </div>
 
     <div class="wheel">
         <img src="Photo1.jpeg">
@@ -159,7 +164,8 @@ function drawMatrix() {
 				// When countdown finishes
 				if(countdownIndex >= countdownWords.length){
 					document.getElementById("birthday-wheel").style.display = "flex";
-					canvas.style.display = "none"; // 🔥 hide matrix so wheel is visible
+					canvas.style.display = "none";
+					startSlideshow(); 
 				}
 			}
         }
@@ -174,6 +180,19 @@ window.addEventListener("resize", () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 });
+
+const images = document.querySelectorAll(".wheel img");
+let current = 0;
+
+function startSlideshow() {
+    images[current].classList.add("active");
+
+    setInterval(() => {
+        images[current].classList.remove("active");
+        current = (current + 1) % images.length;
+        images[current].classList.add("active");
+    }, 1500);
+}
 
 // Back button
 document.getElementById("back").onclick = () => {
