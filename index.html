@@ -473,8 +473,9 @@ loginBtn.addEventListener("click",()=>{
             // Then go to main page
             setTimeout(() => {
                 loadingScreen.classList.remove("active");
-                main.style.display = "block";
-                startHearts();
+                localStorage.setItem("loggedIn", "true"); 
+				main.style.display = "block";
+				startHearts();
 				}, 1000);
 
 			}, 2000);
@@ -483,7 +484,10 @@ loginBtn.addEventListener("click",()=>{
 		}, 40);
     }else{ alert("Incorrect name."); }
 });
-document.getElementById("logout").onclick=()=>{ location.reload(); };
+document.getElementById("logout").onclick = () => {
+    localStorage.removeItem("loggedIn");
+    location.reload();
+};
 
 /* Cute MESSAGE */
 const messageBtn=document.getElementById("show-message");
@@ -701,6 +705,13 @@ const birthdayBox = document.getElementById("birthday-content");
 birthdayBtn.addEventListener("click", () => {
     window.location.href = "Birthday.html";
 });
+// Check if coming from Birthday page
+if(localStorage.getItem("loggedIn") === "true" && window.location.hash === "#main") {
+    document.getElementById("login-form").style.display = "none";
+    document.getElementById("main").style.display = "block";
+    startHearts(); // Keep your hearts animation running
+}
+
 </script>
 </body>
 </html>
