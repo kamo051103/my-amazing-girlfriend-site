@@ -39,55 +39,58 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-// Words for countdown
+// Countdown words
 const countdownWords = ["3", "2", "1", "happy", "Birthday", "Zodwa"];
-const fontSize = 60; // bigger for countdown
-ctx.font = `${fontSize}px monospace`;
-ctx.fillStyle = "#ff4d6d";
-ctx.textAlign = "center";
-ctx.textBaseline = "middle";
+const countdownFontSize = 80; 
+let countdownIndex = 0;
 
-let index = 0;
+// MATRIX EFFECT WORDS
+const matrixWords = ["I love you ❤️","Zodwa Mthombeni","Happy Birthday 🎉","You are the best 💖"];
+const matrixFontSize = 24;
+const columns = Math.floor(canvas.width / matrixFontSize);
+const drops = Array(columns).fill(0);
 
-function showCountdown() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // clear screen
-    ctx.fillText(countdownWords[index], canvas.width/2, canvas.height/2);
+// Draw matrix
+function drawMatrix() {
+    ctx.fillStyle = "rgba(255,230,236,0.1)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    index++;
-    if(index < countdownWords.length){
-        setTimeout(showCountdown, 1000); // 1 second per word
-    } else {
-        startMatrix(); // start your falling words after countdown
+    ctx.fillStyle = "#ff4d6d";
+    ctx.font = matrixFontSize + "px monospace";
+
+    for(let i=0;i<drops.length;i++){
+        const text = matrixWords[Math.floor(Math.random()*matrixWords.length)];
+        ctx.fillText(text, i*matrixFontSize, drops[i]*matrixFontSize);
+
+        if(drops[i]*matrixFontSize > canvas.height && Math.random() > 0.975){
+            drops[i] = 0;
+        }
+        drops[i]++;
+    }
+
+    // Draw countdown on top if still counting
+    if(countdownIndex < countdownWords.length){
+        ctx.fillStyle = "#ff1a53";
+        ctx.font = `${countdownFontSize}px monospace`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(countdownWords[countdownIndex], canvas.width/2, canvas.height/2);
     }
 }
 
-// MATRIX EFFECT
-const matrixWords = ["I love you ❤️","Zodwa Mthombeni","Happy Birthday 🎉","You are the best 💖"];
-const columns = Math.floor(canvas.width / 24);
-const drops = Array(columns).fill(0);
-
-function startMatrix() {
-    setInterval(() => {
-        ctx.fillStyle = "rgba(255,230,236,0.1)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.fillStyle = "#ff4d6d";
-        ctx.font = "24px monospace";
-
-        for(let i=0;i<drops.length;i++){
-            const text = matrixWords[Math.floor(Math.random()*matrixWords.length)];
-            ctx.fillText(text, i*24, drops[i]*24);
-
-            if(drops[i]*24 > canvas.height && Math.random() > 0.975){
-                drops[i] = 0;
-            }
-            drops[i]++;
+// Countdown timer
+function startCountdown() {
+    const countdownInterval = setInterval(() => {
+        countdownIndex++;
+        if(countdownIndex >= countdownWords.length){
+            clearInterval(countdownInterval);
         }
-    }, 50);
+    }, 1000);
 }
 
-// Start countdown on page load
-showCountdown();
+// Start everything
+startCountdown();
+setInterval(drawMatrix, 50);
 
 // Resize handling
 window.addEventListener("resize", () => {
@@ -95,6 +98,7 @@ window.addEventListener("resize", () => {
     canvas.height = window.innerHeight;
 });
 
+// Back button
 document.getElementById("back").onclick = () => {
    window.location.href = "index.html#main";
 };
