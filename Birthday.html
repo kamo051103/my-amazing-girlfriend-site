@@ -43,21 +43,24 @@ canvas.height = window.innerHeight;
 const countdownWords = ["3", "2", "1", "happy", "Birthday", "Zodwa"];
 const countdownFontSize = 80; 
 let countdownIndex = 0;
+let countdownOpacity = 0;
+let fadingIn = true;
 
 // MATRIX EFFECT WORDS
-const matrixWords = ["I love you ❤️","Zodwa Mthombeni","Happy Birthday 🎉","You are the best 💖"];
+const matrixWords = ["I love you","Zodwa Mthombeni","You are the best"];
 const matrixFontSize = 24;
 const columns = Math.floor(canvas.width / matrixFontSize);
 const drops = Array(columns).fill(0);
 
-// Draw matrix
+// Draw matrix + countdown
 function drawMatrix() {
+    // Matrix background
     ctx.fillStyle = "rgba(255,230,236,0.1)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // Matrix letters
     ctx.fillStyle = "#ff4d6d";
     ctx.font = matrixFontSize + "px monospace";
-
     for(let i=0;i<drops.length;i++){
         const text = matrixWords[Math.floor(Math.random()*matrixWords.length)];
         ctx.fillText(text, i*matrixFontSize, drops[i]*matrixFontSize);
@@ -68,28 +71,28 @@ function drawMatrix() {
         drops[i]++;
     }
 
-    // Draw countdown on top if still counting
+    // Countdown on top in black with fade
     if(countdownIndex < countdownWords.length){
-        ctx.fillStyle = "#ff1a53";
         ctx.font = `${countdownFontSize}px monospace`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
+        ctx.fillStyle = `rgba(0,0,0,${countdownOpacity})`;
         ctx.fillText(countdownWords[countdownIndex], canvas.width/2, canvas.height/2);
+
+        if(fadingIn){
+            countdownOpacity += 0.05; // fade in speed
+            if(countdownOpacity >= 1) fadingIn = false;
+        } else {
+            countdownOpacity -= 0.05; // fade out speed
+            if(countdownOpacity <= 0){
+                fadingIn = true;
+                countdownIndex++;
+            }
+        }
     }
 }
 
-// Countdown timer
-function startCountdown() {
-    const countdownInterval = setInterval(() => {
-        countdownIndex++;
-        if(countdownIndex >= countdownWords.length){
-            clearInterval(countdownInterval);
-        }
-    }, 1000);
-}
-
-// Start everything
-startCountdown();
+// Start animation
 setInterval(drawMatrix, 50);
 
 // Resize handling
