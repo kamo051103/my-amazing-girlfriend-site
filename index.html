@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -339,10 +338,27 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 
 #birthday-content {
     display: none;
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: 500px; /* or full height: 100vh if you want */
-    margin-top: 15px;
+    height: 100vh;
+    background: #ffe6ec;
+    z-index: 9999;
+}
+
+/* Back button */
+#birthday-back {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    padding: 10px 16px;
+    background: #ff4d6d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 10000;
 }
 
 #birthday-content canvas {
@@ -390,7 +406,8 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 		<button class="tab-btn" id="memories-btn">Memories</button>
 		<div id="memories-content"></div>
 		<button class="tab-btn" id="birthday-btn">Birthday</button>
-		<div id="birthday-content"></div>
+		<div id="birthday-content">
+		<button id="birthday-back">⬅ Back</button>
     </div>
 
     <div id="photos">
@@ -699,8 +716,8 @@ birthdayBtn.addEventListener("click", () => {
             birthdayBox.appendChild(canvas);
             const ctx = canvas.getContext("2d");
 
-            canvas.width = birthdayBox.offsetWidth;
-            canvas.height = 400;
+            canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
 
             const words = ["I love you", "Zodwa Mthombeni", "Happy birthday", "You are the best"];
             const fontSize = 24;
