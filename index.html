@@ -404,6 +404,26 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     font-size:14px;
 }
 
+#quiz-error-box {
+    margin-top:15px;
+    padding:12px;
+    background:#fff0f5;
+    border:2px solid #ff4d6d;
+    border-radius:12px;
+    color:#ff4d6d;
+    font-weight:bold;
+    display:none;
+    opacity:0;
+    transform:translateY(-5px);
+    transition:all 0.3s ease;
+}
+
+#quiz-error-box.show {
+    display:block;
+    opacity:1;
+    transform:translateY(0);
+}
+
 </style>
 </head>
 <body>
@@ -458,9 +478,11 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
         <button id="puzzle-back" onclick="closePuzzle()">Back</button>
         <div id="controls">
             <button onclick="startPuzzle(2)">2×2</button>
-            <button onclick="startBirthdayQuiz()" disabled>Math Quiz</button>
-            <button onclick="startPuzzle(4)">4×4</button>
+            <button id="quiz-btn" onclick="handleQuizClick()" disabled>Math Quiz </button>
         </div>
+		<div id="quiz-error-box">
+			Finish the 2×2 puzzle first to unlock your surprise 💖
+		</div>
     </div>
 
 </div>
@@ -531,7 +553,7 @@ const messageBtn=document.getElementById("show-message");
 const messageBox=document.getElementById("message-content");
 const Cute_Message=`I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again in which we just reestablished and rebuilt and that you gave me I want you to know that my actions are a reflection of my flaws I should’ve handled the situation differently I handled everything terribly you are an incredible strong caring intelligent I should have been as amazing as you have been to me and I’m sorry for failing you I just want you to know that I truly value you and I’m committed to understanding you better you deserve the world I’m sorry for hurting you you mean a lot to me and I hope that I can show you that I only handled the situation wrong not that I don’t love you
 
-I love you ❤️`;
+I love you `;
 messageBtn.addEventListener("click",()=>{
     if(messageBox.style.display==="none"||messageBox.style.display===""){ 
         messageBox.style.display="block"; 
@@ -574,14 +596,19 @@ function startHearts(){
 
 /* PUZZLE */
 const puzzleBtn=document.getElementById("puzzle-toggle");
-puzzleBtn.onclick=()=>{ 
-    const box=document.getElementById("puzzle-box");
-    box.style.display = box.style.display==="block" ? "none" : "block"; 
+puzzleBtn.onclick = () => {
+    const box = document.getElementById("puzzle-box");
+    const errorBox = document.getElementById("quiz-error-box");
+
+    box.style.display = box.style.display === "block" ? "none" : "block";
+
+    errorBox.classList.remove("show");
 };
 
 const messages=["You are the best girlfriend!","You make me so happy!","You are the best"];
 const puzzleImages=["Puzzel1.JPG","Puzzel2.JPG","Puzzel3.jpeg"];
 let gridSize, tiles=[], emptyPos={}, imgSize=300;
+let puzzleSolved = false;
 
 function startPuzzle(size){
     gridSize=size;
@@ -649,9 +676,9 @@ function startBirthdayQuiz(){
 
         { question: "Step 12 \nSubtract half the dating month (round down):", answer: 39, hint: "Half of 5 is 2.5 → use 2" },
 
-        { question: "Step 13 \nSubtract both our special months together:", answer: 31, hint: "3 + 5 again 😉" },
+        { question: "Step 13 \nSubtract both our special months together:", answer: 31, hint: "3 + 5 again " },
 
-        { question: "Step 14  Final Step\nSubtract your birth month:", answer: 28, hint: "Almost there 💖" }
+        { question: "Step 14  Final Step\nSubtract your birth month:", answer: 28, hint: "Almost there " }
     ];
 
     let currentStep = 0;
@@ -681,14 +708,14 @@ function startBirthdayQuiz(){
 
                 <button id="submit-answer"
                     style="padding:10px 20px; background:#ff4d6d; color:white; border:none; border-radius:8px;">
-                    Submit 💖
+                    Submit 
                 </button>
 
                 <br><br>
 
                 <button id="hint-btn"
                     style="padding:8px 14px; background:#ffc2d1; border:none; border-radius:8px;">
-                    Hint 💡
+                    Hint 
                 </button>
 
                 <div id="hint-box">
@@ -708,12 +735,12 @@ function startBirthdayQuiz(){
                     showStep(currentStep);
                 } else {
                     container.innerHTML = `
-                        <h2 style="color:#ff4d6d;">🎉 Perfect Number Found 🎉</h2>
+                        <h2 style="color:#ff4d6d;"> Perfect Number Found</h2>
                         <p>
                         See? Using all our special numbers—your birthday, our anniversary, your age…<br><br>
                                 we magically arrive at <b>28</b>, a perfect number.<br><br>
-                                Just like you perfectly you❤️<br><br>
-                                <b>Happy Birthday, my love 💖</b>
+                                Just like you perfectly you<br><br>
+                                <b>Happy Birthday, my love </b>
                         </p>
                     `;
                 }
@@ -725,11 +752,14 @@ function startBirthdayQuiz(){
         };
 
         document.getElementById("hint-btn").onclick = () => {
+			const hintBox = document.getElementById("hint-box");
 			const hintText = document.getElementById("hint-text");
 
-			if (hintText.innerText === "") {
+			if (!hintBox.classList.contains("show")) {
 				hintText.innerText = quizSteps[i].hint;
+			hintBox.classList.add("show");
 			} else {
+				hintBox.classList.remove("show");
 				hintText.innerText = "";
 			}
 		};
@@ -737,6 +767,22 @@ function startBirthdayQuiz(){
 
     showStep(currentStep);
 }
+function handleQuizClick() {
+    const errorBox = document.getElementById("quiz-error-box");
+
+    if (!puzzleSolved) {
+        errorBox.classList.add("show");
+
+        setTimeout(() => {
+            errorBox.classList.remove("show");
+        }, 2000);
+
+        return;
+    }
+
+    startBirthdayQuiz();
+}
+
 /* MEMORIES CODE */
 
 const memoriesBtn = document.getElementById("memories-btn");
@@ -845,13 +891,14 @@ function checkSolved(){
 
     if(solved){
         const msgBox = document.getElementById("puzzle-message");
-        msgBox.innerText = "🎉 You did it! Now unlock the next surprise...";
+        msgBox.innerText = "You did it! Now unlock the next surprise...";
         msgBox.style.display = "block";
+		puzzleSolved = true;
 
-        // 🔓 Unlock quiz button
-        const quizBtn = document.querySelector("#controls button:nth-child(2)");
-        quizBtn.disabled = false;
-        quizBtn.innerText = "Math Quiz 💖";
+        //Unlock quiz button
+        const quizBtn = document.getElementById("quiz-btn");
+		quizBtn.disabled = false;
+		quizBtn.innerText = "Math Quiz 💖";
     }
 }
 function closePuzzle(){
