@@ -421,7 +421,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
         <button id="puzzle-back" onclick="closePuzzle()">Back</button>
         <div id="controls">
             <button onclick="startPuzzle(2)">2×2</button>
-            <button onclick="startPuzzle(3)">3×3</button>
+            <button onclick="startBirthdayQuiz()">Math Quiz</button>
             <button onclick="startPuzzle(4)">4×4</button>
         </div>
     </div>
@@ -581,6 +581,61 @@ function startPuzzle(size){
     }
     shuffleTiles();
 }
+
+function startBirthdayQuiz(){
+    const container = document.getElementById("puzzle-container");
+    container.innerHTML = ""; // clear previous tiles
+    document.getElementById("puzzle-message").style.display = "none";
+    document.getElementById("puzzle-back").style.display="inline-block";
+    document.getElementById("puzzle-box").style.display="block";
+
+    const quizSteps = [
+        { question: "Step 1: Subtract birth year from dating year → 2022 − 1999 =", answer: 23 },
+        { question: "Step 2: Add your age → 23 + 27 =", answer: 50 },
+        { question: "Step 3: Subtract the sum of months (birthday + dating) → 50 − (3 + 5) =", answer: 42 },
+        { question: "Step 4: Subtract birthday day ÷ birthday month → 42 − (28 ÷ 3) =", answer: 33 },
+        { question: "Step 5: Subtract remainder from previous division → 33 − 1 =", answer: 32 },
+        { question: "Step 6: Subtract number of months in a year → 32 − 12 =", answer: 20 },
+        { question: "Step 7: Add birthday day ÷ dating month → 20 + (28 ÷ 5) =", answer: 25 },
+        { question: "Step 8: Add birthday month + remainder → 25 + (3 + 3) =", answer: 31 },
+        { question: "Step 9: Subtract your age ÷ birthday month → 31 − (27 ÷ 3) =", answer: 22 },
+        { question: "Step 10: Add birthday day ÷ 7 → 22 + (28 ÷ 7) =", answer: 26 },
+        { question: "Step 11: Add dating month × birthday month → 26 + (5 × 3) =", answer: 41 },
+        { question: "Step 12: Subtract dating month × 0.5 → 41 − (5 × 0.5) =", answer: 39 },
+        { question: "Step 13: Subtract birthday month + dating month → 39 − (3 + 5) =", answer: 31 },
+        { question: "Step 14: Subtract birthday month → 31 − 3 =", answer: 28 }
+    ];
+
+    let currentStep = 0;
+
+    function showStep(stepIndex){
+        container.innerHTML = `
+            <p>${quizSteps[stepIndex].question}</p>
+            <input type="number" id="quiz-answer" placeholder="Enter your answer" />
+            <button id="submit-answer">Submit</button>
+        `;
+
+        document.getElementById("submit-answer").addEventListener("click", () => {
+            const userAnswer = Number(document.getElementById("quiz-answer").value);
+            if(userAnswer === quizSteps[stepIndex].answer){
+                currentStep++;
+                if(currentStep < quizSteps.length){
+                    showStep(currentStep);
+                } else {
+                    container.innerHTML = `
+                        <p>🎉 Congratulations! 🎉</p>
+                        <p>See? Using all our special numbers—your birthday, our anniversary, our age… we magically arrive at 28, a perfect number. Just like you, perfectly me and perfectly you. Happy Birthday, my love! ❤️</p>
+                    `;
+                }
+            } else {
+                alert("Oops! Try again. Check your calculation for this step.");
+            }
+        });
+    }
+
+    showStep(currentStep);
+}
+
 /* MEMORIES CODE */
 
 const memoriesBtn = document.getElementById("memories-btn");
