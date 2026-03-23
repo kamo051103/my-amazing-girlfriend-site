@@ -551,48 +551,62 @@ document.getElementById("logout").onclick = () => {
 /* Cute MESSAGE */
 const messageBtn = document.getElementById("show-message");
 const messageBox = document.getElementById("message-content");
-const Cute_Message = `I’m really sorry for what I’ve done I hurt you and there’s no excuse for it…\n\nI love you`;
+
+const Cute_Message = `I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again...
+
+I love you`;
+
+let attemptCount = 0;
 
 messageBtn.addEventListener("click", () => {
+    // reset attempts every time button is clicked
+    attemptCount = 0;
+
     // hide other sections
     document.getElementById("puzzle-box").style.display = "none";
     document.getElementById("memories-content").style.display = "none";
 
-    // Show the love question first
     messageBox.style.display = "block";
+
+    showLoveQuestion();
+});
+
+function showLoveQuestion(){
     messageBox.innerHTML = `
         <p style="margin-bottom:15px;">Do you know how much I love you?</p>
+
         <input type="text" id="love-answer" placeholder="Type your answer..." 
             style="padding:8px; border-radius:8px; border:1px solid #ff4d6d; width:200px; text-align:center;">
+
         <br><br>
-        <button id="love-submit" style="padding:8px 16px; background:#ff4d6d; color:white; border:none; border-radius:8px; cursor:pointer;">
+
+        <button id="love-submit"
+            style="padding:8px 16px; background:#ff4d6d; color:white; border:none; border-radius:8px; cursor:pointer;">
             Submit
         </button>
+
         <p id="love-feedback" style="color:#ff4d6d; font-weight:bold; margin-top:10px;"></p>
     `;
 
-    const answerInput = document.getElementById("love-answer");
     const submitBtn = document.getElementById("love-submit");
     const feedback = document.getElementById("love-feedback");
 
     submitBtn.onclick = () => {
-        // Respond wrong every time
-        feedback.innerText = "Wrong! Way more than that… try again 😘";
+        attemptCount++;
 
-        // Optional: shake the input for fun
-        answerInput.classList.add("shake");
-        setTimeout(() => answerInput.classList.remove("shake"), 300);
+        if(attemptCount === 1){
+            feedback.innerText = "Wrong! Way more than that… try again 😘";
+        }
+        else if(attemptCount === 2){
+            feedback.innerText = "Still not even close… it can’t be put into words 💖";
 
-        // After 2 seconds, reveal the “bigger than infinity” message + cute message
-        setTimeout(() => {
-            messageBox.innerHTML = `
-                <p style="font-size:20px; color:#ff4d6d; font-weight:bold; text-align:center;">
-                    My love has no quantity… it’s bigger than infinity 💖
-                </p>
-                <hr style="margin:15px 0; border-color:#ffccd5;">
-                <p>${Cute_Message}</p>
-            `;
-        }, 2000);
+            // final reveal after short pause
+            setTimeout(() => {
+                messageBox.innerText = Cute_Message;
+            }, 2000);
+        }
+    };
+}
     };
 });
 
@@ -933,7 +947,7 @@ function checkSolved(){
         //Unlock quiz button
         const quizBtn = document.getElementById("quiz-btn");
 		quizBtn.disabled = false;
-		quizBtn.innerText = "Math Quiz 💖";
+		quizBtn.innerText = "Math Quiz ";
     }
 }
 function closePuzzle(){
