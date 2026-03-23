@@ -95,6 +95,39 @@ body {
     box-shadow: 0 0 20px rgba(255, 77, 109, 0.8);
 }
 
+#hearts-container .heart {
+    position:absolute;
+    width:60px;
+    height:60px;
+    background:red;
+    transform:rotate(-45deg);
+    opacity:0.4;
+    border-radius:5px;
+    pointer-events:none;
+    z-index:1;
+}
+#hearts-container .heart:before,
+#hearts-container .heart:after {
+    content:"";
+    position:absolute;
+    width:60px;
+    height:60px;
+    background:red;
+    border-radius:50%;
+}
+#hearts-container .heart:before { top:-30px; left:0; }
+#hearts-container .heart:after { left:30px; top:0; }
+
+#confetti-canvas {
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    z-index:2; /* above hearts, below center text and photos */
+}
+
 </style>
 </head>
 <body>
@@ -105,7 +138,10 @@ body {
 <!-- ADD THIS HERE -->
 <div id="birthday-wheel" style="display:none;">
     <div class="center-text">Happy Birthday Baby </div>
-
+	
+	<div id="hearts-container"></div>
+    <canvas id="confetti-canvas"></canvas>
+	
     <div class="wheel">
         <img src="Photo1.jpeg">
         <img src="Photo2.jpeg">
@@ -219,6 +255,101 @@ function startSlideshow() {
 document.getElementById("back").onclick = () => {
    window.location.href = "index.html#main";
 };
+
+// FLOATING HEARTS
+function startFloatingHearts(count = 12){
+    const container = document.getElementById("hearts-container");
+    for(let i=0;i<count;i++){
+        const h = document.createElement("div");
+        h.className = "heart";
+        container.appendChild(h);
+
+        h.style.left = Math.random()*window.innerWidth + "px";
+        h.style.top = Math.random()*window.innerHeight + "px";
+
+        let dx = (Math.random()-0.5) * 0.5;
+        let dy = (Math.random()-0.5) * 0.3;
+
+        function moveHeart(){
+            let x = parseFloat(h.style.left);
+            let y = parseFloat(h.style.top);
+            x += dx;
+            y += dy;
+            if(x<0 || x>window.innerWidth-60) dx*=-1;
+            if(y<0 || y>window.innerHeight-60) dy*=-1;
+            h.style.left = x+"px";
+            h.style.top = y+"px";
+            requestAnimationFrame(moveHeart);
+        }
+        moveHeart();
+    }
+}
+
+// CONFETTI
+function startConfetti(){
+    const canvas = document.getElementById("confetti-canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const confettiCount = 150;
+    const confetti = [];
+
+    for(let i=0;i<confettiCount;i++){
+        confetti.push({
+            x: Math.random()*canvas.width,
+            y: Math.random()*canvas.height,
+            r: Math.random()*6 + 4,
+            d: Math.random()*confettiCount,
+            color: `hsl(${Math.random()*360}, 70%, 60%)`,
+            tilt: Math.random()*10 - 10,
+            tiltAngleIncrement: Math.random()*0.07 + 0.05,
+            tiltAngle: 0
+        });
+    }
+
+    function draw(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        confetti.forEach((c,i)=>{
+            c.tiltAngle += c.tiltAngleIncrement;
+            c.y += (Math.cos(c.d) + 3 + c.r/2)/2;
+            c.x += Math.sin(c.tiltAngle) * 2;
+            c.tilt = Math.sin(c.tiltAngle) * 15;
+
+            ctx.beginPath();
+            ctx.lineWidth = c.r;
+            ctx.strokeStyle = c.color;
+            ctx.moveTo(c.x + c.tilt + c.r/2, c.y);
+            ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r/2);
+            ctx.stroke();
+
+            if(c.y > canvas.height) {
+                confetti[i] = {
+                    x: Math.random()*canvas.width,
+                    y: -10,
+                    r: c.r,
+                    d: c.d,
+                    color: c.color,
+                    tilt: c.tilt,
+                    tiltAngleIncrement: c.tiltAngleIncrement,
+                    tiltAngle: 0
+                }
+            }
+        });
+        requestAnimationFrame(draw);
+    }
+    draw();
+}
+
+// START HEARTS + CONFETTI when slideshow starts
+function startEffects(){
+    startFloatingHearts(12);
+    startConfetti();
+}
+
+// Call inside startSlideshow after first image shows
+startEffects();
+
 </script>
 </body>
 </html>
