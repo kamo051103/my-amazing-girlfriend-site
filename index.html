@@ -367,6 +367,19 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     display: block;
 }
 
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+.shake {
+  animation: shake 0.3s;
+  border: 2px solid red !important;
+}
 </style>
 </head>
 <body>
@@ -421,7 +434,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
         <button id="puzzle-back" onclick="closePuzzle()">Back</button>
         <div id="controls">
             <button onclick="startPuzzle(2)">2×2</button>
-            <button onclick="startBirthdayQuiz()">Math Quiz</button>
+            <button onclick="startBirthdayQuiz()" disabled>Locked</button>
             <button onclick="startPuzzle(4)">4×4</button>
         </div>
     </div>
@@ -584,58 +597,114 @@ function startPuzzle(size){
 
 function startBirthdayQuiz(){
     const container = document.getElementById("puzzle-container");
-    container.innerHTML = ""; // clear previous tiles
+    container.innerHTML = "";
     document.getElementById("puzzle-message").style.display = "none";
-    document.getElementById("puzzle-back").style.display="inline-block";
-    document.getElementById("puzzle-box").style.display="block";
 
     const quizSteps = [
-        { question: "Step 1: Subtract birth year from dating year → 2022 − 1999 =", answer: 23 },
-        { question: "Step 2: Add your age → 23 + 27 =", answer: 50 },
-        { question: "Step 3: Subtract the sum of months (birthday + dating) → 50 − (3 + 5) =", answer: 42 },
-        { question: "Step 4: Subtract birthday day ÷ birthday month → 42 − (28 ÷ 3) =", answer: 33 },
-        { question: "Step 5: Subtract remainder from previous division → 33 − 1 =", answer: 32 },
-        { question: "Step 6: Subtract number of months in a year → 32 − 12 =", answer: 20 },
-        { question: "Step 7: Add birthday day ÷ dating month → 20 + (28 ÷ 5) =", answer: 25 },
-        { question: "Step 8: Add birthday month + remainder → 25 + (3 + 3) =", answer: 31 },
-        { question: "Step 9: Subtract your age ÷ birthday month → 31 − (27 ÷ 3) =", answer: 22 },
-        { question: "Step 10: Add birthday day ÷ 7 → 22 + (28 ÷ 7) =", answer: 26 },
-        { question: "Step 11: Add dating month × birthday month → 26 + (5 × 3) =", answer: 41 },
-        { question: "Step 12: Subtract dating month × 0.5 → 41 − (5 × 0.5) =", answer: 39 },
-        { question: "Step 13: Subtract birthday month + dating month → 39 − (3 + 5) =", answer: 31 },
-        { question: "Step 14: Subtract birthday month → 31 − 3 =", answer: 28 }
+        { question: "Step 1 \nTake the year we started dating and subtract your birth year:\n2022 − 1999 =", answer: 23, hint: "Think early 20s " },
+
+        { question: "Step 2 \nNow add your age:\nPrevious answer + 27 =", answer: 50, hint: "You’re adding your age" },
+
+        { question: "Step 3 \nTake away the total of our special months:\n(3 + 5) =", answer: 42, hint: "Birthday month + dating month = 8" },
+
+        { question: "Step 4 \nNow subtract your birthday divided by your birth month:\n28 ÷ 3 (use whole number only)", answer: 33, hint: "Ignore the remainder" },
+
+        { question: "Step 5 \nNow subtract the leftover (remainder):", answer: 32, hint: "There was 1 left over earlier" },
+
+        { question: "Step 6 \nSubtract the number of months in a year:", answer: 20, hint: "How many months are there?" },
+
+        { question: "Step 7 \nAdd birthday day divided by dating month:\n28 ÷ 5 (whole number only)", answer: 25, hint: "Ignore the remainder again 😉" },
+
+        { question: "Step 8 \nAdd birthday month + that leftover remainder:", answer: 31, hint: "3 + 3 = ?" },
+
+        { question: "Step 9 \nSubtract your age divided by your birth month:", answer: 22, hint: "27 ÷ 3 = ?" },
+
+        { question: "Step 10 \nAdd birthday day divided by 7:", answer: 26, hint: "28 ÷ 7 = ?" },
+
+        { question: "Step 11 \nAdd dating month × birthday month:", answer: 41, hint: "5 × 3 = ?" },
+
+        { question: "Step 12 \nSubtract half the dating month (round down):", answer: 39, hint: "Half of 5 is 2.5 → use 2" },
+
+        { question: "Step 13 \nSubtract both our special months together:", answer: 31, hint: "3 + 5 again 😉" },
+
+        { question: "Step 14  Final Step\nSubtract your birth month:", answer: 28, hint: "Almost there 💖" }
     ];
 
     let currentStep = 0;
 
-    function showStep(stepIndex){
+    function showStep(i){
+        const progress = Math.floor((i / quizSteps.length) * 100);
+
         container.innerHTML = `
-            <p>${quizSteps[stepIndex].question}</p>
-            <input type="number" id="quiz-answer" placeholder="Enter your answer" />
-            <button id="submit-answer">Submit</button>
+            <div style="text-align:center;">
+                
+                <div style="margin-bottom:10px;">
+                    Step ${i+1} / ${quizSteps.length}
+                </div>
+
+                <div style="width:100%; background:#eee; border-radius:10px; overflow:hidden; margin-bottom:15px;">
+                    <div style="width:${progress}%; background:#ff4d6d; height:10px;"></div>
+                </div>
+
+                <p style="white-space:pre-line; margin-bottom:15px;">
+                    ${quizSteps[i].question}
+                </p>
+
+                <input type="number" id="quiz-answer"
+                    style="padding:10px; border-radius:8px; width:120px; text-align:center;" />
+
+                <br><br>
+
+                <button id="submit-answer"
+                    style="padding:10px 20px; background:#ff4d6d; color:white; border:none; border-radius:8px;">
+                    Submit 💖
+                </button>
+
+                <br><br>
+
+                <button id="hint-btn"
+                    style="padding:8px 14px; background:#ffc2d1; border:none; border-radius:8px;">
+                    Hint 💡
+                </button>
+
+                <p id="hint-text" style="margin-top:10px;"></p>
+            </div>
         `;
 
-        document.getElementById("submit-answer").addEventListener("click", () => {
-            const userAnswer = Number(document.getElementById("quiz-answer").value);
-            if(userAnswer === quizSteps[stepIndex].answer){
+        const input = document.getElementById("quiz-answer");
+
+        document.getElementById("submit-answer").onclick = () => {
+            const val = Number(input.value);
+
+            if(val === quizSteps[i].answer){
                 currentStep++;
                 if(currentStep < quizSteps.length){
                     showStep(currentStep);
                 } else {
                     container.innerHTML = `
-                        <p>🎉 Congratulations! 🎉</p>
-                        <p>See? Using all our special numbers—your birthday, our anniversary, our age… we magically arrive at 28, a perfect number. Just like you, perfectly me and perfectly you. Happy Birthday, my love! ❤️</p>
+                        <h2 style="color:#ff4d6d;">🎉 Perfect Number Found 🎉</h2>
+                        <p>
+                        See? Using all our special numbers—your birthday, our anniversary, your age…<br><br>
+                                we magically arrive at <b>28</b>, a perfect number.<br><br>
+                                Just like you perfectly you❤️<br><br>
+                                <b>Happy Birthday, my love 💖</b>
+                        </p>
                     `;
                 }
             } else {
-                alert("Oops! Try again. Check your calculation for this step.");
+                //SHAKE EFFECT
+                input.classList.add("shake");
+                setTimeout(()=>input.classList.remove("shake"),300);
             }
-        });
+        };
+
+        document.getElementById("hint-btn").onclick = () => {
+            document.getElementById("hint-text").innerText = quizSteps[i].hint;
+        };
     }
 
     showStep(currentStep);
 }
-
 /* MEMORIES CODE */
 
 const memoriesBtn = document.getElementById("memories-btn");
@@ -737,14 +806,20 @@ function swapTile(tile){
     emptyPos.col=oldCol;
 }
 function checkSolved(){
-    const solved=tiles.every(tile=>
-        parseInt(tile.dataset.row)===parseInt(tile.dataset.rowOrig)&&
-        parseInt(tile.dataset.col)===parseInt(tile.dataset.colOrig)
+    const solved = tiles.every(tile =>
+        parseInt(tile.dataset.row) === parseInt(tile.dataset.rowOrig) &&
+        parseInt(tile.dataset.col) === parseInt(tile.dataset.colOrig)
     );
+
     if(solved){
-        const msgBox=document.getElementById("puzzle-message");
-        msgBox.innerText=messages[gridSize-2];
-        msgBox.style.display="block";
+        const msgBox = document.getElementById("puzzle-message");
+        msgBox.innerText = "🎉 You did it! Now unlock the next surprise...";
+        msgBox.style.display = "block";
+
+        // 🔓 Unlock quiz button
+        const quizBtn = document.querySelector("#controls button:nth-child(2)");
+        quizBtn.disabled = false;
+        quizBtn.innerText = "Math Quiz 💖";
     }
 }
 function closePuzzle(){
