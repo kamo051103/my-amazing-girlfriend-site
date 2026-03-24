@@ -478,7 +478,9 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
         <button id="puzzle-back" onclick="closePuzzle()">Back</button>
         <div id="controls">
             <button onclick="startPuzzle(2)">2×2</button>
-            <button id="quiz-btn" onclick="handleQuizClick()" disabled>Math Quiz </button>
+            <button id="quiz-btn" onclick="handleQuizClick()" disabled style="opacity:0.6; cursor:not-allowed;">
+				 Math Quiz
+			</button>
         </div>
 		<div id="quiz-error-box">
 			Finish the 2×2 puzzle first to unlock your surprise 💖
@@ -549,6 +551,13 @@ document.getElementById("logout").onclick = () => {
 };
 
 /* Cute MESSAGE */
+
+function closeAllSections() {
+    document.getElementById("message-content").style.display = "none";
+    document.getElementById("puzzle-box").style.display = "none";
+    document.getElementById("memories-content").style.display = "none";
+}
+
 const messageBtn = document.getElementById("show-message");
 const messageBox = document.getElementById("message-content");
 
@@ -560,23 +569,19 @@ let attemptCount = 0;
 
 messageBtn.addEventListener("click", () => {
 
-    // TOGGLE LOGIC
+    // TOGGLE CLOSE
     if (messageBox.style.display === "block") {
         messageBox.style.display = "none";
         return;
     }
 
-    // reset attempts when opening
+    closeAllSections(); //  closes others
+
     attemptCount = 0;
-
-    // hide other sections
-    document.getElementById("puzzle-box").style.display = "none";
-    document.getElementById("memories-content").style.display = "none";
-
     messageBox.style.display = "block";
 
     showLoveQuestion();
-});
+});;
 
 function showLoveQuestion(){
     messageBox.innerHTML = `
@@ -602,10 +607,10 @@ function showLoveQuestion(){
         attemptCount++;
 
         if(attemptCount === 1){
-            feedback.innerText = "Wrong! Way more than that… try again 😘";
+            feedback.innerText = "Wrong! Way more than that… try again ";
         }
         else if(attemptCount === 2){
-            feedback.innerText = "Still not even close… it can’t be put into words 💖";
+            feedback.innerText = "Still not even close… it can’t be put into words ";
 
             // final reveal after short pause
             setTimeout(() => {
@@ -653,8 +658,15 @@ puzzleBtn.onclick = () => {
     const box = document.getElementById("puzzle-box");
     const errorBox = document.getElementById("quiz-error-box");
 
-    box.style.display = box.style.display === "block" ? "none" : "block";
+    // TOGGLE
+    if (box.style.display === "block") {
+        box.style.display = "none";
+        return;
+    }
 
+    closeAllSections();
+
+    box.style.display = "block";
     errorBox.classList.remove("show");
 };
 
@@ -664,7 +676,8 @@ let gridSize, tiles=[], emptyPos={}, imgSize=300;
 let puzzleSolved = false;
 
 function startPuzzle(size){
-    gridSize=size;
+    puzzleSolved = false;
+	gridSize=size;
     const container=document.getElementById("puzzle-container");
     container.innerHTML="";
     tiles=[];
@@ -822,13 +835,21 @@ function startBirthdayQuiz(){
 }
 function handleQuizClick() {
     const errorBox = document.getElementById("quiz-error-box");
+    const quizBtn = document.getElementById("quiz-btn");
 
     if (!puzzleSolved) {
+
+        // Show error
         errorBox.classList.add("show");
 
+        // SHAKE BUTTON 
+        quizBtn.classList.add("shake");
+        setTimeout(() => quizBtn.classList.remove("shake"), 300);
+
+        // Hide error after delay
         setTimeout(() => {
             errorBox.classList.remove("show");
-        }, 2000);
+        }, 2500);
 
         return;
     }
@@ -898,16 +919,18 @@ function prevPage() {
 }
 
 memoriesBtn.addEventListener("click", () => {
-    messageBox.style.display = "none";
-    document.getElementById("puzzle-box").style.display = "none";
 
-    if (memoriesBox.style.display === "none" || memoriesBox.style.display === "") {
-        memoriesBox.style.display = "block";
-        currentPage = 0;
-        renderPage();
-    } else {
+    // TOGGLE
+    if (memoriesBox.style.display === "block") {
         memoriesBox.style.display = "none";
+        return;
     }
+
+    closeAllSections();
+
+    memoriesBox.style.display = "block";
+    currentPage = 0;
+    renderPage();
 });
 function shuffleTiles(){
     for(let i=0;i<200;i++){
@@ -952,6 +975,9 @@ function checkSolved(){
         const quizBtn = document.getElementById("quiz-btn");
 		quizBtn.disabled = false;
 		quizBtn.innerText = "Math Quiz ";
+		
+		quizBtn.style.opacity = "1";
+		quizBtn.style.cursor = "pointer";
     }
 }
 function closePuzzle(){
