@@ -559,7 +559,14 @@ I love you`;
 let attemptCount = 0;
 
 messageBtn.addEventListener("click", () => {
-    // reset attempts every time button is clicked
+
+    // TOGGLE LOGIC
+    if (messageBox.style.display === "block") {
+        messageBox.style.display = "none";
+        return;
+    }
+
+    // reset attempts when opening
     attemptCount = 0;
 
     // hide other sections
