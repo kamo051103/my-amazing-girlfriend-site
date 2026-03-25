@@ -643,7 +643,7 @@ messageBtn.addEventListener("click", () => {
     closeAllSections(); //  closes others
 
     attemptCount = 0;
-    messageBox.style.display = "flex";
+    messageBox.style.display = "block";
 
     showLoveQuestion();
 });;
@@ -722,7 +722,7 @@ function startPuzzle(size){
     tiles=[];
     document.getElementById("puzzle-message").style.display="none";
     document.getElementById("puzzle-back").style.display="inline-block";
-    document.getElementById("puzzle-box").style.display="flex";
+    document.getElementById("puzzle-box").style.display="block";
 
     const imgSrc=puzzleImages[size-2];
     const tileSize=imgSize/size;
