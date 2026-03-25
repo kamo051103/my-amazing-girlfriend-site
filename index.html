@@ -403,7 +403,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 
 .scramble-word {
     position: absolute;
-    color: #ff4d6d;
+    color: #ff1f4b;
     font-family: monospace;
     font-size: 20px;
     opacity: 0.8;
@@ -418,12 +418,19 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     100% { transform: translateY(-10vh); opacity: 0; }
 }
 
-#main,
-#puzzle-box,
-#message-content,
-#memories-content {
+#main {
     position: relative;
-    z-index: 2;
+    z-index: 5;
+}
+
+#puzzle-box {
+    position: relative; /* NOT absolute */
+    z-index: 10;
+}
+
+#scramble-container {
+    position: fixed;
+    z-index: 0;
 }
 
 </style>
