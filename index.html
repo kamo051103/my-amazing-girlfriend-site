@@ -214,41 +214,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     from { transform: rotateY(90deg); opacity:0; }
     to { transform: rotateY(0deg); opacity:1; }
 }
-/* HEART SHAPE - FLOATING BACKGROUND */
-.heart {
-    position:absolute;
-    width:90px;
-    height:90px;
-    background:red;
-    transform:rotate(-45deg);
-    opacity:0.5;       /* subtle in background */
-    z-index:1;          /* behind content */
-    pointer-events:none; /* allow clicks through hearts */
-}
-.heart:before,
-.heart:after {
-    content:"";
-    position:absolute;
-    width:90px;
-    height:90px;
-    background:red;
-    border-radius:50%;
-}
-.heart:before { top:-45px; left:0; }
-.heart:after { left:45px; top:0; }
-.heart span {
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%) rotate(45deg);
-    color:white;
-    font-weight:bold;
-    font-size:16px;
-    width:80px;
-    text-align:center;
-    pointer-events:none;
-    z-index:101;
-}
+
 
 /* MOBILE */
 @media(max-width:800px) {
@@ -424,6 +390,42 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     transform:translateY(0);
 }
 
+/* SCRAMBLE BACKGROUND */
+#scramble-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.scramble-word {
+    position: absolute;
+    color: #ff4d6d;
+    font-family: monospace;
+    font-size: 20px;
+    opacity: 0.8;
+    white-space: nowrap;
+    text-shadow: 0 0 8px #ff4d6d;
+}
+
+@keyframes floatMove {
+    0% { transform: translateY(100vh); opacity: 0; }
+    20% { opacity: 0.8; }
+    80% { opacity: 0.8; }
+    100% { transform: translateY(-10vh); opacity: 0; }
+}
+
+#main,
+#puzzle-box,
+#message-content,
+#memories-content {
+    position: relative;
+    z-index: 2;
+}
+
 </style>
 </head>
 <body>
@@ -451,7 +453,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 	</h2>
 </div>
 
-
+<div id="scramble-container"></div>
 <!-- MAIN PAGE -->
 <div id="main">
     <button id="logout">Logout</button>
@@ -533,11 +535,12 @@ loginBtn.addEventListener("click",()=>{
 
             // Then go to main page
             setTimeout(() => {
-                loadingScreen.classList.remove("active");
-                localStorage.setItem("loggedIn", "true"); 
+				loadingScreen.classList.remove("active");
+				localStorage.setItem("loggedIn", "true"); 
 				main.style.display = "block";
-				startHearts();
-				}, 1000);
+
+				startScrambleEffect(); // ✅ NOW it's in the correct place
+			}, 1000);
 
 			}, 2000);
 		}
@@ -549,6 +552,65 @@ document.getElementById("logout").onclick = () => {
     localStorage.removeItem("loggedIn");
     location.reload();
 };
+
+let scrambleStarted = false;
+
+function startScrambleEffect() {
+    if (scrambleStarted) return;
+    scrambleStarted = true;
+
+    fillScreenWithWords();
+
+    // Rebuild chaos every few seconds
+    setInterval(() => {
+        fillScreenWithWords();
+    }, 8000);
+}
+
+function fillScreenWithWords() {
+    const container = document.getElementById("scramble-container");
+    const oldWords = container.querySelectorAll(".scramble-word");
+
+	oldWords.forEach(word => {
+		word.style.transition = "opacity 1s";
+		word.style.opacity = "0";
+
+			setTimeout(() => word.remove(), 1000);
+	});
+
+    const spacing = 120;
+    const cols = Math.floor(window.innerWidth / spacing);
+    const rows = Math.floor(window.innerHeight / spacing);
+
+    for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+
+            const word = document.createElement("div");
+            word.className = "scramble-word";
+
+            const text = scrambleMessages[Math.floor(Math.random() * scrambleMessages.length)];
+
+            // Spread across full screen grid
+            word.style.left = (x * spacing + Math.random() * 120 - 60) + "px";
+			word.style.top = (y * spacing + Math.random() * 120 - 60) + "px";
+
+            // Random styling
+            word.style.fontSize = (16 + Math.random() * 18) + "px";
+            word.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+            // Highlight her name
+            if (text === "Zodwa") {
+                word.style.color = "#ff1f4b";
+                word.style.fontWeight = "bold";
+                word.style.fontSize = "28px";
+            }
+
+            container.appendChild(word);
+
+            scrambleText(word, text);
+        }
+    }
+}
 
 /* Cute MESSAGE */
 
@@ -619,38 +681,6 @@ function showLoveQuestion(){
         }
     };
 }
-/* FLOATING HEARTS BACKGROUND */
-function startHearts(){
-    const heartWords=["Zodwa","You","are","amazing","I love you"];
-    heartWords.forEach(word=>{
-        const h=document.createElement("div");
-        h.className="heart";
-        const text=document.createElement("span");
-        text.innerText=word;
-        h.appendChild(text);
-        main.appendChild(h);
-
-        h.style.left=Math.random()*(window.innerWidth-120)+"px";
-        h.style.top=Math.random()*(window.innerHeight-120)+"px";
-
-        // slower, smooth floating
-        let dx=(Math.random()-0.5)*1;
-        let dy=(Math.random()-0.5)*1;
-
-        function moveHeart(){
-            let x=parseFloat(h.style.left);
-            let y=parseFloat(h.style.top);
-            x+=dx;
-            y+=dy;
-            if(x<0||x>window.innerWidth-90) dx*=-1;
-            if(y<0||y>window.innerHeight-90) dy*=-1;
-            h.style.left=x+"px";
-            h.style.top=y+"px";
-            requestAnimationFrame(moveHeart);
-        }
-        moveHeart();
-    });
-}
 
 /* PUZZLE */
 const puzzleBtn=document.getElementById("puzzle-toggle");
@@ -676,7 +706,7 @@ let gridSize, tiles=[], emptyPos={}, imgSize=300;
 let puzzleSolved = false;
 
 function startPuzzle(size){
-    puzzleSolved = false;
+    
 	gridSize=size;
     const container=document.getElementById("puzzle-container");
     container.innerHTML="";
@@ -997,8 +1027,82 @@ birthdayBtn.addEventListener("click", () => {
 if(localStorage.getItem("loggedIn") === "true" && window.location.hash === "#main") {
     document.getElementById("login-form").style.display = "none";
     document.getElementById("main").style.display = "block";
-    startHearts(); // Keep your hearts animation running
+
+    startScrambleEffect(); // 👈 ADD THIS
 }
+
+/* SCRAMBLE TEXT EFFECT */
+
+const scrambleMessages = [
+    "Zodwa",
+    "You",
+    "are",
+    "amazing",
+    "I love you",
+    "Happy Birthday"
+];
+
+const scrambleChars = "!<>-_\\/[]{}—=+*^?#________";
+
+function scrambleText(element, finalText) {
+    const chars = "!<>-_\\/[]{}—=+*^?#________";
+    let iteration = 0;
+
+    function animate() {
+        element.innerText = finalText
+            .split("")
+            .map((letter, index) => {
+                if (index < iteration) {
+                    return finalText[index];
+                }
+                return chars[Math.floor(Math.random() * chars.length)];
+            })
+            .join("");
+
+        iteration += 1 / 3;
+
+        if (iteration <= finalText.length) {
+            requestAnimationFrame(animate);
+        } else {
+            // HOLD the real word briefly
+            setTimeout(() => {
+                iteration = 0; // 🔁 RESET → re-jumble again
+                animate();
+            }, 1500 + Math.random() * 2000); // random pause
+        }
+    }
+
+    animate();
+}
+
+function createScrambleWord() {
+    const word = document.createElement("div");
+    word.className = "scramble-word";
+
+    const text = scrambleMessages[Math.floor(Math.random() * scrambleMessages.length)];
+
+    // RANDOM POSITION (FULL SCREEN)
+    word.style.left = Math.random() * 100 + "vw";
+    word.style.top = Math.random() * 100 + "vh";
+
+    // RANDOM SIZE
+    word.style.fontSize = (16 + Math.random() * 20) + "px";
+
+    // RANDOM ROTATION (more chaotic feel)
+    word.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+    // SPECIAL STYLE FOR HER NAME
+    if (text === "Zodwa") {
+        word.style.color = "#ff1f4b";
+        word.style.fontWeight = "bold";
+        word.style.fontSize = "30px";
+    }
+
+    document.getElementById("scramble-container").appendChild(word);
+
+    scrambleText(word, text);
+}
+
 </script>
 </body>
 </html>
