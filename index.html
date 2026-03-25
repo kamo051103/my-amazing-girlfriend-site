@@ -482,13 +482,45 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
         <div id="puzzle-message"></div>
         <button id="puzzle-back" onclick="closePuzzle()">Back</button>
         <div id="controls">
-            <button onclick="startPuzzle(2)">2×2</button>
+            <button onclick="startPuzzle(2)">Secret Code</button>
             <button id="quiz-btn" onclick="handleQuizClick()" disabled style="opacity:0.6; cursor:not-allowed;">
 				 Math Quiz
 			</button>
         </div>
+</div>
+
+<div id="secret-box" style="display:none; margin-top:15px; text-align:center;">
+
+    <p style="color:#ff4d6d; font-weight:bold;">
+        Spell the sentence 
+    </p>
+
+    <div style="font-size:14px; color:#555; margin-bottom:10px;">
+        1. First letter of your birth month<br>
+        2. First letter of your middle name<br>
+        3. First letter of our surname<br>
+        4. space<br>
+        5. First letter of your first name<br>
+        6. space<br>
+        7. What do you make me in this relationship<br>
+        8. space<br>
+        9. What is today 
+    </div>
+
+    <input id="secret-input" type="text" placeholder="Type your answer..."
+        style="padding:10px; border-radius:8px; border:1px solid #ccc; width:80%;">
+
+    <br><br>
+
+    <button onclick="checkSecretCode()">Submit</button>
+
+    <div id="secret-error" style="margin-top:10px; color:#ff4d6d; display:none;">
+        Not quite… try again my love 
+    </div>
+
+</div>
 		<div id="quiz-error-box">
-			Finish the 2×2 puzzle first to unlock your surprise 💖
+			Finish the Secret Code first to unlock your surprise
 		</div>
     </div>
 
@@ -631,6 +663,7 @@ const Cute_Message = `I’m really sorry for what I’ve done I hurt you and the
 I love you`;
 
 let attemptCount = 0;
+let secretSolved = false;
 
 messageBtn.addEventListener("click", () => {
 
@@ -885,7 +918,7 @@ function handleQuizClick() {
     const errorBox = document.getElementById("quiz-error-box");
     const quizBtn = document.getElementById("quiz-btn");
 
-    if (!puzzleSolved) {
+    if (!secretSolved) {
 
         // Show error
         errorBox.classList.add("show");
@@ -1033,6 +1066,44 @@ function closePuzzle(){
     document.getElementById("puzzle-message").style.display="none";
     document.getElementById("puzzle-back").style.display="none";
     document.getElementById("puzzle-box").style.display="none";
+}
+
+function openSecretCode() {
+    const box = document.getElementById("secret-box");
+
+    if (box.style.display === "block") {
+        box.style.display = "none";
+    } else {
+        box.style.display = "block";
+    }
+}
+
+function checkSecretCode() {
+    const input = document.getElementById("secret-input").value
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, " ");
+
+    const correct = "mam z happy birthday";
+
+    if (input === correct) {
+		secretSolved = true;
+        document.getElementById("secret-error").style.display = "none";
+		
+        const quizBtn = document.getElementById("quiz-btn");
+        quizBtn.disabled = false;
+        quizBtn.style.opacity = "1";
+        quizBtn.style.cursor = "pointer";
+
+        document.getElementById("secret-error").innerText =
+            "Correct  You unlocked something special!";
+        document.getElementById("secret-error").style.display = "block";
+
+    } else {
+        document.getElementById("secret-error").innerText =
+            "Not quite… try again my love ";
+        document.getElementById("secret-error").style.display = "block";
+    }
 }
 
 const birthdayBtn = document.getElementById("birthday-btn");
