@@ -408,7 +408,6 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     font-size: 20px;
     opacity: 0.8;
     white-space: nowrap;
-    animation: floatMove 12s linear infinite;
     text-shadow: 0 0 8px #ff4d6d;
 }
 
@@ -536,10 +535,12 @@ loginBtn.addEventListener("click",()=>{
 
             // Then go to main page
             setTimeout(() => {
-                loadingScreen.classList.remove("active");
-                localStorage.setItem("loggedIn", "true"); 
+				loadingScreen.classList.remove("active");
+				localStorage.setItem("loggedIn", "true"); 
 				main.style.display = "block";
-				}, 1000);
+
+				startScrambleEffect(); // ✅ NOW it's in the correct place
+			}, 1000);
 
 			}, 2000);
 		}
@@ -551,6 +552,65 @@ document.getElementById("logout").onclick = () => {
     localStorage.removeItem("loggedIn");
     location.reload();
 };
+
+let scrambleStarted = false;
+
+function startScrambleEffect() {
+    if (scrambleStarted) return;
+    scrambleStarted = true;
+
+    fillScreenWithWords();
+
+    // Rebuild chaos every few seconds
+    setInterval(() => {
+        fillScreenWithWords();
+    }, 8000);
+}
+
+function fillScreenWithWords() {
+    const container = document.getElementById("scramble-container");
+    const oldWords = container.querySelectorAll(".scramble-word");
+
+	oldWords.forEach(word => {
+		word.style.transition = "opacity 1s";
+		word.style.opacity = "0";
+
+			setTimeout(() => word.remove(), 1000);
+	});
+
+    const spacing = 120;
+    const cols = Math.floor(window.innerWidth / spacing);
+    const rows = Math.floor(window.innerHeight / spacing);
+
+    for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+
+            const word = document.createElement("div");
+            word.className = "scramble-word";
+
+            const text = scrambleMessages[Math.floor(Math.random() * scrambleMessages.length)];
+
+            // Spread across full screen grid
+            word.style.left = (x * spacing + Math.random() * 120 - 60) + "px";
+			word.style.top = (y * spacing + Math.random() * 120 - 60) + "px";
+
+            // Random styling
+            word.style.fontSize = (16 + Math.random() * 18) + "px";
+            word.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+            // Highlight her name
+            if (text === "Zodwa") {
+                word.style.color = "#ff1f4b";
+                word.style.fontWeight = "bold";
+                word.style.fontSize = "28px";
+            }
+
+            container.appendChild(word);
+
+            scrambleText(word, text);
+        }
+    }
+}
 
 /* Cute MESSAGE */
 
@@ -967,6 +1027,8 @@ birthdayBtn.addEventListener("click", () => {
 if(localStorage.getItem("loggedIn") === "true" && window.location.hash === "#main") {
     document.getElementById("login-form").style.display = "none";
     document.getElementById("main").style.display = "block";
+
+    startScrambleEffect(); // 👈 ADD THIS
 }
 
 /* SCRAMBLE TEXT EFFECT */
@@ -982,28 +1044,35 @@ const scrambleMessages = [
 
 const scrambleChars = "!<>-_\\/[]{}—=+*^?#________";
 
-function randomChar() {
-    return scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
-}
-
 function scrambleText(element, finalText) {
+    const chars = "!<>-_\\/[]{}—=+*^?#________";
     let iteration = 0;
 
-    const interval = setInterval(() => {
+    function animate() {
         element.innerText = finalText
             .split("")
             .map((letter, index) => {
-                if (index < iteration) return finalText[index];
-                return randomChar();
+                if (index < iteration) {
+                    return finalText[index];
+                }
+                return chars[Math.floor(Math.random() * chars.length)];
             })
             .join("");
 
-        if (iteration >= finalText.length) {
-            clearInterval(interval);
-        }
+        iteration += 1 / 3;
 
-        iteration += 0.5;
-    }, 40);
+        if (iteration <= finalText.length) {
+            requestAnimationFrame(animate);
+        } else {
+            // HOLD the real word briefly
+            setTimeout(() => {
+                iteration = 0; // 🔁 RESET → re-jumble again
+                animate();
+            }, 1500 + Math.random() * 2000); // random pause
+        }
+    }
+
+    animate();
 }
 
 function createScrambleWord() {
@@ -1012,27 +1081,27 @@ function createScrambleWord() {
 
     const text = scrambleMessages[Math.floor(Math.random() * scrambleMessages.length)];
 
+    // RANDOM POSITION (FULL SCREEN)
     word.style.left = Math.random() * 100 + "vw";
-    word.style.fontSize = (16 + Math.random() * 14) + "px";
+    word.style.top = Math.random() * 100 + "vh";
+
+    // RANDOM SIZE
+    word.style.fontSize = (16 + Math.random() * 20) + "px";
+
+    // RANDOM ROTATION (more chaotic feel)
+    word.style.transform = `rotate(${Math.random() * 360}deg)`;
 
     // SPECIAL STYLE FOR HER NAME
     if (text === "Zodwa") {
         word.style.color = "#ff1f4b";
         word.style.fontWeight = "bold";
-        word.style.fontSize = "28px";
+        word.style.fontSize = "30px";
     }
 
     document.getElementById("scramble-container").appendChild(word);
 
     scrambleText(word, text);
-
-    setTimeout(() => {
-        word.remove();
-    }, 12000);
 }
-
-// START EFFECT
-setInterval(createScrambleWord, 800);
 
 </script>
 </body>
