@@ -1,1107 +1,354 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Apology Website</title>
+<meta charset="UTF-8">
+<title>Birthday</title>
 
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
-
-/* LOGIN PAGE */
-#login-form {
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    height:100vh;
-    background:url('photo3.jpeg') center/cover no-repeat;
-}
-#login-form h1 {
-    font-size:32px;
-    margin-bottom:20px;
-    color:white;
-    text-shadow:0 0 10px black;
-}
-#login-form input {
-    padding:10px;
-    border-radius:6px;
-    border:none;
-    margin:5px 0;
-    width:220px;
-    font-size:16px;
-}
-#login-btn { background:#ff4d6d; color:white; cursor:pointer; }
-
-/* MAIN PAGE */
-#main {
-    display:none;
-    height:100vh;
+body {
+    margin:0;
     background:#ffe6ec;
-    position:relative;
-    padding:20px;
     overflow:hidden;
-}
-
-/* Logout bottom-left */
-#logout {
-    position:absolute;
-    bottom:20px;
-    left:20px;
-    padding:8px 16px;
-    background:#ff4d6d;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    z-index:50;
-}
-
-/* Photos on right */
-#photos {
-    position:absolute;
-    right:40px;
-    top:50%;
-    transform:translateY(-50%);
-    display:flex;
-    flex-direction:column;
-    z-index:10;
-}
-#photos img {
-    width:350px;
-    border-radius:15px;
-    margin-bottom:20px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.2);
-    max-width:90vw;
-}
-
-/* Tabs Left */
-.tabs {
-    position:absolute;
-    left:40px;
-    top:50%;
-    transform:translateY(-50%);
-    z-index:20;
-}
-.tab-btn {
-    padding:12px 20px;
-    margin-bottom:10px;
-    border:none;
-    border-radius:8px;
-    background:#ff4d6d;
-    color:white;
-    cursor:pointer;
-    font-size:17px;
-    width:180px;
-}
-#message-content {
-    display:none;
-    margin-top:15px;
-    background:white;
-    padding:20px;
-    border-radius:12px;
-    box-shadow:0 0 10px rgba(0,0,0,0.15);
-    max-width:400px;
-    white-space:pre-line;
-    line-height:1.6;
-    z-index:25;
-    position:relative;
-}
-
-/* PUZZLE BOX */
-#puzzle-box {
-    width:340px;
-    padding:20px;
-    background:white;
-    border-radius:16px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.15);
-    margin-top:20px;
-    display:none;
-    text-align:center;
-    position:relative;
-    z-index:30;
-}
-#puzzle-container {
-    position:relative;
-    width:300px;
-    height:300px;
-    margin:auto;
-}
-.tile {
-    position:absolute;
-    cursor:pointer;
-    border:1px solid white;
-    transition:top 0.25s, left 0.25s;
-}
-#puzzle-message {
-    margin-top:20px;
-    display:none;
-    background:#fff0f5;
-    padding:15px;
-    border-radius:12px;
-    font-weight:bold;
-}
-#puzzle-back, #controls button {
-    margin-top:20px;
-    padding:10px 16px;
-    background:#ff4d6d;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-}
-/*Memories*/
-
-/* ADD THIS AT THE BOTTOM 👇 */
-.memory-img {
-    width:100%;
-    border-radius:12px;
-    margin-bottom:10px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.2);
-}
-
-.memory-text {
-    text-align:center;
-    font-size:16px;
-    margin-bottom:10px;
-}
-
-.flip-controls {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-top:10px;
-}
-
-.flip-controls button {
-    padding:8px 14px;
-    background:#ff4d6d;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-}
-
-/* OPTIONAL animation */
-    .flipbook {
-    position:relative;
-    cursor:pointer;
-    perspective:1000px;
-}
-
-/* Forward flip */
-.flipbook.next {
-    animation: flipNext 0.5s ease;
-}
-
-/* Back flip */
-.flipbook.prev {
-    animation: flipPrev 0.5s ease;
-}
-
-@keyframes flipNext {
-    0% { transform: rotateY(-90deg); opacity:0; }
-    100% { transform: rotateY(0); opacity:1; }
-}
-
-@keyframes flipPrev {
-    0% { transform: rotateY(90deg); opacity:0; }
-    100% { transform: rotateY(0); opacity:1; }
-}
-
-@keyframes flip {
-    from { transform: rotateY(90deg); opacity:0; }
-    to { transform: rotateY(0deg); opacity:1; }
-}
-
-
-/* MOBILE */
-@media(max-width:800px) {
-    #photos img { width:240px; }
-    .tab-btn { width:150px; font-size:15px; }
-    #message-content { max-width:300px; }
-}
-
-#memories-content {
-    display:none;
-    margin-top:15px;
-    background:white;
-    padding:20px;
-    border-radius:12px;
-    box-shadow:0 0 10px rgba(0,0,0,0.15);
-    max-width:400px;
-    position:relative;
-}
-
-.page-indicator {
-    text-align:center;
-    margin-top:10px;
-    font-size:14px;
-    color:#555;
-}
-
-#loading-screen {
-    display:none;
-    position:fixed;
-    width:100%;
-    height:100vh;
-    background:#ffccd5;
-    top:0;
-    left:0;
-    z-index:999;
-}
-
-#loading-screen.active {
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-}
-
-#loading-text {
-    font-size:28px;
-    margin-bottom:20px;
-}
-
-#progress-bar {
-    width:300px;
-    height:25px;
-    background:white;
-    border-radius:20px;
-    overflow:hidden;
-    margin-bottom:10px;
-}
-
-#progress-fill {
-    height:100%;
-    width:0%;
-    background:#ff4d6d;
-    transition:width 0.2s;
-}
-
-#percent {
-    font-size:18px;
-    margin-bottom:20px;
-}
-
-#warning-text {
-    display:none;
-    font-size:34px;
-    color:red;
-    font-weight:bold;
-    text-align:center;
-    animation:flash 0.4s infinite;
-    line-height:1.4;
-}
-
-@keyframes flash {
-    0% { opacity:1; }
-    50% { opacity:0; }
-    100% { opacity:1; }
-}
-
-#birthday-content {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background: #ffe6ec;
-    z-index: 9999;
 }
 
 /* Back button */
-#birthday-back {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    padding: 10px 16px;
+#back {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
     background: #ff4d6d;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
-    z-index: 10000;
+    z-index: 1000;
 }
 
-#birthday-content canvas {
-    width: 100%;
-    height: 100%;
-    display: block;
-}
-
-
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  50% { transform: translateX(5px); }
-  75% { transform: translateX(-5px); }
-  100% { transform: translateX(0); }
-}
-
-.shake {
-  animation: shake 0.3s;
-  border: 2px solid red !important;
-}
-
-#hint-box {
-    margin-top:10px;
-    padding:12px;
-    background:#fff0f5;
-    border:2px solid #ff4d6d;
-    border-radius:12px;
-    display:none;
-    opacity:0;
-    transform:translateY(-5px);
-    transition:all 0.3s ease;
-}
-
-#hint-box.show {
-    display:block;
-    opacity:1;
-    transform:translateY(0);
-}
-
-#hint-text {
-    margin:0;
-    font-size:14px;
-}
-
-#quiz-error-box {
-    margin-top:15px;
-    padding:12px;
-    background:#fff0f5;
-    border:2px solid #ff4d6d;
-    border-radius:12px;
-    color:#ff4d6d;
-    font-weight:bold;
-    display:none;
-    opacity:0;
-    transform:translateY(-5px);
-    transition:all 0.3s ease;
-}
-
-#quiz-error-box.show {
-    display:block;
-    opacity:1;
-    transform:translateY(0);
-}
-
-/* SCRAMBLE BACKGROUND */
-#scramble-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 0;
-}
-
-.scramble-word {
+/* ADD THIS BELOW */
+#birthday-wheel {
     position: absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+}
+
+.center-text {
+    position: absolute;
+    font-size: 34px;
     color: #ff4d6d;
-    font-family: monospace;
-    font-size: 20px;
-    opacity: 0.8;
-    white-space: nowrap;
-    text-shadow: 0 0 8px #ff4d6d;
-}
-
-@keyframes floatMove {
-    0% { transform: translateY(100vh); opacity: 0; }
-    20% { opacity: 0.8; }
-    80% { opacity: 0.8; }
-    100% { transform: translateY(-10vh); opacity: 0; }
-}
-
-#main,
-#puzzle-box,
-#message-content,
-#memories-content {
-    position: relative;
+    font-weight: bold;
     z-index: 2;
+    animation: heartbeat 1.5s infinite;
+}
+
+/* Heartbeat effect */
+@keyframes heartbeat {
+    0%   { transform: scale(1); }
+    14%  { transform: scale(1.15); }
+    28%  { transform: scale(1); }
+    42%  { transform: scale(1.15); }
+    70%  { transform: scale(1); }
+}
+
+.wheel {
+    position: relative;
+    width: 500px;   /* bigger circle */
+    height: 500px;
+	box-shadow: 0 0 60px rgba(255, 77, 109, 0.2);
+	border-radius: 50%;
+}
+
+/* All images stacked in same spot */
+.wheel img {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border-radius: 15px;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out;
+	filter: brightness(1.1) contrast(1.1) saturate(1.2);
+}
+
+/* Position images in a PERFECT circle */
+.wheel img:nth-child(1){ top:0px; left:200px; }
+.wheel img:nth-child(2){ top:60px; left:340px; }
+.wheel img:nth-child(3){ top:180px; left:400px; }
+.wheel img:nth-child(4){ top:320px; left:340px; }
+.wheel img:nth-child(5){ top:400px; left:200px; }
+.wheel img:nth-child(6){ top:320px; left:60px; }
+.wheel img:nth-child(7){ top:180px; left:0px; }
+.wheel img:nth-child(8){ top:60px; left:60px; }
+.wheel img:nth-child(9){ top:120px; left:200px; } 
+
+/* Visible image */
+.wheel img.active {
+    opacity: 1;
+    transform: scale(1.2);
+    box-shadow: 0 0 20px rgba(255, 77, 109, 0.8);
+}
+
+#hearts-container .heart {
+    position:absolute;
+    width:60px;
+    height:60px;
+    background:red;
+    transform:rotate(-45deg);
+    opacity:0.4;
+    border-radius:5px;
+    pointer-events:none;
+    z-index:1;
+}
+#hearts-container .heart:before,
+#hearts-container .heart:after {
+    content:"";
+    position:absolute;
+    width:60px;
+    height:60px;
+    background:red;
+    border-radius:50%;
+}
+#hearts-container .heart:before { top:-30px; left:0; }
+#hearts-container .heart:after { left:30px; top:0; }
+
+#confetti-canvas {
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    z-index:2; /* above hearts, below center text and photos */
 }
 
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="login-form">
-    <h1>Login</h1>
-    <input type="text" id="name" placeholder="Enter your name" />
-    <input type="submit" value="Login" id="login-btn" />
-</div>
+<button id="back">⬅ Back</button>
+<canvas id="matrix"></canvas>
 
-<div id="loading-screen">
-    <h1 id="loading-text">Calculating Cuteness Level... </h1>
-
-    <div id="progress-bar">
-        <div id="progress-fill"></div>
+<!-- ADD THIS HERE -->
+<div id="birthday-wheel" style="display:none;">
+    <div class="center-text">Happy Birthday Baby </div>
+	
+	<div id="hearts-container"></div>
+    <canvas id="confetti-canvas"></canvas>
+	
+    <div class="wheel">
+        <img src="Photo1.jpeg">
+        <img src="Photo2.jpeg">
+        <img src="Photo3.jpeg">
+        <img src="Photo4.jpeg">
+        <img src="Photo5.jpeg">
+        <img src="Photo6.jpeg">
+        <img src="Photo7.jpeg">
+        <img src="Photo8.jpeg">
+        <img src="Photo9.jpeg">
     </div>
-
-    <p id="percent">0%</p>
-
-    <h2 id="warning-text">
-	CUTENESS OVERLOAD<br>
-	System cannot handle how much I love you <br>
-	You are beautiful
-	</h2>
-</div>
-
-<div id="scramble-container"></div>
-<!-- MAIN PAGE -->
-<div id="main">
-    <button id="logout">Logout</button>
-
-    <div class="tabs">
-        <button class="tab-btn" id="show-message">Cute Message</button>
-        <div id="message-content"></div>
-        <button class="tab-btn" id="puzzle-toggle">Puzzle</button>
-		<button class="tab-btn" id="memories-btn">Memories</button>
-		<div id="memories-content"></div>
-		<button class="tab-btn" id="birthday-btn">Birthday</button>
-		
-    </div>
-
-    <div id="photos">
-        <img src="photo.jpg" />
-        <img src="photo2.jpg" />
-    </div>
-
-    <!-- PUZZLE BOX -->
-    <div id="puzzle-box">
-        <div id="puzzle-container"></div>
-        <div id="puzzle-message"></div>
-        <button id="puzzle-back" onclick="closePuzzle()">Back</button>
-        <div id="controls">
-            <button onclick="startPuzzle(2)">2×2</button>
-            <button id="quiz-btn" onclick="handleQuizClick()" disabled style="opacity:0.6; cursor:not-allowed;">
-				 Math Quiz
-			</button>
-        </div>
-		<div id="quiz-error-box">
-			Finish the 2×2 puzzle first to unlock your surprise 💖
-		</div>
-    </div>
-
 </div>
 
 <script>
-/* LOGIN */
-const loginBtn=document.getElementById("login-btn");
-const nameInput=document.getElementById("name");
-const loginForm=document.getElementById("login-form");
-const main=document.getElementById("main");
+const canvas = document.getElementById("matrix");
+const ctx = canvas.getContext("2d");
 
-loginBtn.addEventListener("click",()=>{
-    const name=nameInput.value.trim();
-    if(name==="Zodwa" || name==="Admin"){
-        loginForm.style.display = "none";
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-	const loadingScreen = document.getElementById("loading-screen");
-	const progressFill = document.getElementById("progress-fill");
-	const percentText = document.getElementById("percent");
-	const warningText = document.getElementById("warning-text");
+// Countdown words
+const countdownWords = ["3", "2", "1", "Happy", "Birthday", "Zodwa"];
+const countdownFontSize = 80; 
+let countdownIndex = 0;
+let countdownOpacity = 0;
+let fadingIn = true;
 
-	loadingScreen.classList.add("active");
+// MATRIX EFFECT WORDS
+const matrixWords = ["I love you","Zodwa Mthombeni","You are the best"];
+const matrixFontSize = 24;
+const columns = Math.floor(canvas.width / matrixFontSize);
+const drops = Array(columns).fill(0);
 
-	let progress = 0;
+// Draw matrix + countdown
+function drawMatrix() {
+    // Matrix background
+    ctx.fillStyle = "rgba(255,230,236,0.1)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-	const interval = setInterval(() => {
-    progress++;
+    // Matrix letters
+    ctx.fillStyle = "#ff4d6d";
+    ctx.font = matrixFontSize + "px monospace";
+    for(let i=0;i<drops.length;i++){
+        const text = matrixWords[Math.floor(Math.random()*matrixWords.length)];
+        ctx.fillText(text, i*matrixFontSize, drops[i]*matrixFontSize);
 
-    // Slow down near the end
-    if (progress > 80) progress += 0.3;
-
-    progressFill.style.width = Math.min(progress, 100) + "%";
-    percentText.innerText = Math.floor(progress) + "%";
-
-    // Stop at 99 first
-    if (progress >= 99 && progress < 100) {
-        progress = 99;
-        warningText.style.display = "block";
-
-        clearInterval(interval);
-
-        // Hold the moment (dramatic pause )
-        setTimeout(() => {
-            progressFill.style.width = "100%";
-            percentText.innerText = "100%";
-
-            // Then go to main page
-            setTimeout(() => {
-				loadingScreen.classList.remove("active");
-				localStorage.setItem("loggedIn", "true"); 
-				main.style.display = "block";
-
-				startScrambleEffect(); // ✅ NOW it's in the correct place
-			}, 1000);
-
-			}, 2000);
-		}
-
-		}, 40);
-    }else{ alert("Incorrect name."); }
-});
-document.getElementById("logout").onclick = () => {
-    localStorage.removeItem("loggedIn");
-    location.reload();
-};
-
-let scrambleStarted = false;
-
-function startScrambleEffect() {
-    if (scrambleStarted) return;
-    scrambleStarted = true;
-
-    fillScreenWithWords();
-
-    // Rebuild chaos every few seconds
-    setInterval(() => {
-        fillScreenWithWords();
-    }, 8000);
-}
-
-function fillScreenWithWords() {
-    const container = document.getElementById("scramble-container");
-    const oldWords = container.querySelectorAll(".scramble-word");
-
-	oldWords.forEach(word => {
-		word.style.transition = "opacity 1s";
-		word.style.opacity = "0";
-
-			setTimeout(() => word.remove(), 1000);
-	});
-
-    const spacing = 120;
-    const cols = Math.floor(window.innerWidth / spacing);
-    const rows = Math.floor(window.innerHeight / spacing);
-
-    for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
-
-            const word = document.createElement("div");
-            word.className = "scramble-word";
-
-            const text = scrambleMessages[Math.floor(Math.random() * scrambleMessages.length)];
-
-            // Spread across full screen grid
-            word.style.left = (x * spacing + Math.random() * 120 - 60) + "px";
-			word.style.top = (y * spacing + Math.random() * 120 - 60) + "px";
-
-            // Random styling
-            word.style.fontSize = (16 + Math.random() * 18) + "px";
-            word.style.transform = `rotate(${Math.random() * 360}deg)`;
-
-            // Highlight her name
-            if (text === "Zodwa") {
-                word.style.color = "#ff1f4b";
-                word.style.fontWeight = "bold";
-                word.style.fontSize = "28px";
-            }
-
-            container.appendChild(word);
-
-            scrambleText(word, text);
+        if(drops[i]*matrixFontSize > canvas.height && Math.random() > 0.975){
+            drops[i] = 0;
         }
-    }
-}
-
-/* Cute MESSAGE */
-
-function closeAllSections() {
-    document.getElementById("message-content").style.display = "none";
-    document.getElementById("puzzle-box").style.display = "none";
-    document.getElementById("memories-content").style.display = "none";
-}
-
-const messageBtn = document.getElementById("show-message");
-const messageBox = document.getElementById("message-content");
-
-const Cute_Message = `I’m really sorry for what I’ve done I hurt you and there’s no excuse for it you’ve always shown me love loyalty and patience and I broke the trust again...
-
-I love you`;
-
-let attemptCount = 0;
-
-messageBtn.addEventListener("click", () => {
-
-    // TOGGLE CLOSE
-    if (messageBox.style.display === "block") {
-        messageBox.style.display = "none";
-        return;
+        drops[i]++;
     }
 
-    closeAllSections(); //  closes others
+    // Countdown on top in black with fade
+    if(countdownIndex < countdownWords.length){
+        ctx.font = `${countdownFontSize}px monospace`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = `rgba(0,0,0,${countdownOpacity})`;
+        ctx.fillText(countdownWords[countdownIndex], canvas.width/2, canvas.height/2);
 
-    attemptCount = 0;
-    messageBox.style.display = "block";
+        if(fadingIn){
+            countdownOpacity += 0.05; // fade in speed
+            if(countdownOpacity >= 1) fadingIn = false;
+        } else {
+            countdownOpacity -= 0.05; // fade out speed
+            if(countdownOpacity <= 0){
+				fadingIn = true;
+				countdownIndex++;
 
-    showLoveQuestion();
-});;
-
-function showLoveQuestion(){
-    messageBox.innerHTML = `
-        <p style="margin-bottom:15px;">Do you know how much I love you?</p>
-
-        <input type="text" id="love-answer" placeholder="Type your answer..." 
-            style="padding:8px; border-radius:8px; border:1px solid #ff4d6d; width:200px; text-align:center;">
-
-        <br><br>
-
-        <button id="love-submit"
-            style="padding:8px 16px; background:#ff4d6d; color:white; border:none; border-radius:8px; cursor:pointer;">
-            Submit
-        </button>
-
-        <p id="love-feedback" style="color:#ff4d6d; font-weight:bold; margin-top:10px;"></p>
-    `;
-
-    const submitBtn = document.getElementById("love-submit");
-    const feedback = document.getElementById("love-feedback");
-
-    submitBtn.onclick = () => {
-        attemptCount++;
-
-        if(attemptCount === 1){
-            feedback.innerText = "Wrong! Way more than that… try again ";
-        }
-        else if(attemptCount === 2){
-            feedback.innerText = "Still not even close… it can’t be put into words ";
-
-            // final reveal after short pause
-            setTimeout(() => {
-                messageBox.innerText = Cute_Message;
-            }, 2000);
-        }
-    };
-}
-
-/* PUZZLE */
-const puzzleBtn=document.getElementById("puzzle-toggle");
-puzzleBtn.onclick = () => {
-    const box = document.getElementById("puzzle-box");
-    const errorBox = document.getElementById("quiz-error-box");
-
-    // TOGGLE
-    if (box.style.display === "block") {
-        box.style.display = "none";
-        return;
-    }
-
-    closeAllSections();
-
-    box.style.display = "block";
-    errorBox.classList.remove("show");
-};
-
-const messages=["You are the best girlfriend!","You make me so happy!","You are the best"];
-const puzzleImages=["Puzzel1.JPG","Puzzel2.JPG","Puzzel3.jpeg"];
-let gridSize, tiles=[], emptyPos={}, imgSize=300;
-let puzzleSolved = false;
-
-function startPuzzle(size){
-    
-	gridSize=size;
-    const container=document.getElementById("puzzle-container");
-    container.innerHTML="";
-    tiles=[];
-    document.getElementById("puzzle-message").style.display="none";
-    document.getElementById("puzzle-back").style.display="inline-block";
-    document.getElementById("puzzle-box").style.display="block";
-
-    const imgSrc=puzzleImages[size-2];
-    const tileSize=imgSize/size;
-
-    for(let r=0;r<size;r++){
-        for(let c=0;c<size;c++){
-            if(r===size-1 && c===size-1){ emptyPos={row:r,col:c}; continue; }
-            const tile=document.createElement("div");
-            tile.className="tile";
-            tile.dataset.row=r;
-            tile.dataset.col=c;
-            tile.dataset.rowOrig=r;
-            tile.dataset.colOrig=c;
-            tile.style.width=tileSize+"px";
-            tile.style.height=tileSize+"px";
-            tile.style.top=(r*tileSize)+"px";
-            tile.style.left=(c*tileSize)+"px";
-            tile.style.backgroundImage=`url(${imgSrc})`;
-            tile.style.backgroundSize=`${imgSize}px ${imgSize}px`;
-            tile.style.backgroundPosition=`-${c*tileSize}px -${r*tileSize}px`;
-            tile.addEventListener("click",()=>moveTile(tile));
-            container.appendChild(tile);
-            tiles.push(tile);
-        }
-    }
-    shuffleTiles();
-}
-
-function startBirthdayQuiz(){
-    const container = document.getElementById("puzzle-container");
-    container.innerHTML = "";
-    document.getElementById("puzzle-message").style.display = "none";
-
-    const quizSteps = [
-        { question: "Step 1 \nTake the year we started dating and subtract your birth year:\n2022 − 1999 =", answer: 23, hint: "Think early 20s " },
-
-        { question: "Step 2 \nNow add your age:\nPrevious answer + 27 =", answer: 50, hint: "You’re adding your age" },
-
-        { question: "Step 3 \nTake away the total of our special months:\n(3 + 5) =", answer: 42, hint: "Birthday month + dating month = 8" },
-
-        { question: "Step 4 \nNow subtract your birthday divided by your birth month:\n28 ÷ 3 (use whole number only)", answer: 33, hint: "Ignore the remainder" },
-
-        { question: "Step 5 \nNow subtract the leftover (remainder):", answer: 32, hint: "There was 1 left over earlier" },
-
-        { question: "Step 6 \nSubtract the number of months in a year:", answer: 20, hint: "How many months are there?" },
-
-        { question: "Step 7 \nAdd birthday day divided by dating month:\n28 ÷ 5 (whole number only)", answer: 25, hint: "Ignore the remainder again 😉" },
-
-        { question: "Step 8 \nAdd birthday month + that leftover remainder:", answer: 31, hint: "3 + 3 = ?" },
-
-        { question: "Step 9 \nSubtract your age divided by your birth month:", answer: 22, hint: "27 ÷ 3 = ?" },
-
-        { question: "Step 10 \nAdd birthday day divided by 7:", answer: 26, hint: "28 ÷ 7 = ?" },
-
-        { question: "Step 11 \nAdd dating month × birthday month:", answer: 41, hint: "5 × 3 = ?" },
-
-        { question: "Step 12 \nSubtract half the dating month (round down):", answer: 39, hint: "Half of 5 is 2.5 → use 2" },
-
-        { question: "Step 13 \nSubtract both our special months together:", answer: 31, hint: "3 + 5 again " },
-
-        { question: "Step 14  Final Step\nSubtract your birth month:", answer: 28, hint: "Almost there " }
-    ];
-
-    let currentStep = 0;
-
-    function showStep(i){
-        const progress = Math.floor((i / quizSteps.length) * 100);
-
-        container.innerHTML = `
-            <div style="text-align:center;">
-                
-                <div style="margin-bottom:10px;">
-                    Step ${i+1} / ${quizSteps.length}
-                </div>
-
-                <div style="width:100%; background:#eee; border-radius:10px; overflow:hidden; margin-bottom:15px;">
-                    <div style="width:${progress}%; background:#ff4d6d; height:10px;"></div>
-                </div>
-
-                <p style="white-space:pre-line; margin-bottom:15px;">
-                    ${quizSteps[i].question}
-                </p>
-
-                <input type="number" id="quiz-answer"
-                    style="padding:10px; border-radius:8px; width:120px; text-align:center;" />
-
-                <br><br>
-
-                <button id="submit-answer"
-                    style="padding:10px 20px; background:#ff4d6d; color:white; border:none; border-radius:8px;">
-                    Submit 
-                </button>
-
-                <br><br>
-
-                <button id="hint-btn"
-                    style="padding:8px 14px; background:#ffc2d1; border:none; border-radius:8px;">
-                    Hint 
-                </button>
-
-                <div id="hint-box">
-					<p id="hint-text"></p>
-				</div>
-            </div>
-        `;
-
-        const input = document.getElementById("quiz-answer");
-
-        document.getElementById("submit-answer").onclick = () => {
-            const val = Number(input.value);
-
-            if(val === quizSteps[i].answer){
-                currentStep++;
-                if(currentStep < quizSteps.length){
-                    showStep(currentStep);
-                } else {
-                    container.innerHTML = `
-                        <h2 style="color:#ff4d6d;"> Perfect Number Found</h2>
-                        <p>
-                        See? Using all our special numbers—your birthday, our anniversary, your age…<br><br>
-                                we magically arrive at <b>28</b>, a perfect number.<br><br>
-                                Just like you perfectly you<br><br>
-                                <b>Happy Birthday, my love </b>
-                        </p>
-                    `;
-                }
-            } else {
-                //SHAKE EFFECT
-                input.classList.add("shake");
-                setTimeout(()=>input.classList.remove("shake"),300);
-            }
-        };
-
-        document.getElementById("hint-btn").onclick = () => {
-			const hintBox = document.getElementById("hint-box");
-			const hintText = document.getElementById("hint-text");
-
-			if (!hintBox.classList.contains("show")) {
-				hintText.innerText = quizSteps[i].hint;
-			hintBox.classList.add("show");
-			} else {
-				hintBox.classList.remove("show");
-				hintText.innerText = "";
+				// When countdown finishes
+				if(countdownIndex >= countdownWords.length){
+					document.getElementById("birthday-wheel").style.display = "flex";
+					canvas.style.display = "none";
+					startSlideshow(); 
+				}
 			}
-		};
+        }
     }
-
-    showStep(currentStep);
 }
-function handleQuizClick() {
-    const errorBox = document.getElementById("quiz-error-box");
-    const quizBtn = document.getElementById("quiz-btn");
 
-    if (!puzzleSolved) {
+// Start animation
+setInterval(drawMatrix, 50);
 
-        // Show error
-        errorBox.classList.add("show");
+// Resize handling
+window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
 
-        // SHAKE BUTTON 
-        quizBtn.classList.add("shake");
-        setTimeout(() => quizBtn.classList.remove("shake"), 300);
+const images = document.querySelectorAll(".wheel img");
+let current = 0;
 
-        // Hide error after delay
+function startSlideshow() {
+    images[current].classList.add("active");
+
+    setInterval(() => {
+        const prev = current;
+        current = (current + 1) % images.length;
+
+        // show next BEFORE removing previous (smooth crossfade)
+        images[current].classList.add("active");
+
         setTimeout(() => {
-            errorBox.classList.remove("show");
-        }, 2500);
-
-        return;
-    }
-
-    startBirthdayQuiz();
+            images[prev].classList.remove("active");
+        }, 400); // slight overlap
+        
+    }, 2200);
 }
 
-/* MEMORIES CODE */
+// Back button
+document.getElementById("back").onclick = () => {
+   window.location.href = "index.html#main";
+};
 
-const memoriesBtn = document.getElementById("memories-btn");
-const memoriesBox = document.getElementById("memories-content");
+// FLOATING HEARTS
+function startFloatingHearts(count = 12){
+    const container = document.getElementById("hearts-container");
+    for(let i=0;i<count;i++){
+        const h = document.createElement("div");
+        h.className = "heart";
+        container.appendChild(h);
 
-let currentPage = 0;
+        h.style.left = Math.random()*window.innerWidth + "px";
+        h.style.top = Math.random()*window.innerHeight + "px";
 
-const memoryPages = [
-    { img: "Quiz1.GIF", text: "You make everything feel special ❤️" },
-    { img: "Quiz11.jpeg", text: "Every moment with you matters 🥺" },
-    { img: "Quiz2.GIF", text: "Your smile is my favorite thing 😍" },
-    { img: "Quiz3.jpeg", text: "You bring peace into my life 💫" },
-    { img: "Quiz4.jpeg", text: "I love every little thing about you ❤️" },
-    { img: "Quiz5.jpeg", text: "You make me genuinely happy 😊" },
-    { img: "Quiz6.jpeg", text: "I’ll always choose you 💯" },
-    { img: "Quiz7.jpeg", text: "You mean more than words can say 🫶" },
-    { img: "Quiz8.JPG", text: "You’re my favorite person ❤️" },
-    { img: "Quiz9.jpeg", text: "I love you more every day ❤️" }
-];
+        let dx = (Math.random()-0.5) * 0.5;
+        let dy = (Math.random()-0.5) * 0.3;
 
-function renderPage(direction = "next") {
-    const page = memoryPages[currentPage];
-
-    memoriesBox.innerHTML = `
-        <div class="flipbook ${direction}">
-            <img src="${page.img}" class="memory-img">
-            <p class="memory-text">${page.text}</p>
-
-            <div class="page-indicator">
-                ${currentPage + 1} / ${memoryPages.length}
-            </div>
-        </div>
-    `;
-
-    // CLICK LEFT / RIGHT SIDE
-    memoriesBox.onclick = (e) => {
-        const width = memoriesBox.offsetWidth;
-        const clickX = e.offsetX;
-
-        if (clickX < width / 2) {
-            prevPage();
-        } else {
-            nextPage();
+        function moveHeart(){
+            let x = parseFloat(h.style.left);
+            let y = parseFloat(h.style.top);
+            x += dx;
+            y += dy;
+            if(x<0 || x>window.innerWidth-60) dx*=-1;
+            if(y<0 || y>window.innerHeight-60) dy*=-1;
+            h.style.left = x+"px";
+            h.style.top = y+"px";
+            requestAnimationFrame(moveHeart);
         }
-    };
-}
-
-function nextPage() {
-    if (currentPage < memoryPages.length - 1) {
-        currentPage++;
-        renderPage("next");
+        moveHeart();
     }
 }
 
-function prevPage() {
-    if (currentPage > 0) {
-        currentPage--;
-        renderPage("prev");
+// CONFETTI
+function startConfetti(){
+    const canvas = document.getElementById("confetti-canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const confettiCount = 150;
+    const confetti = [];
+
+    for(let i=0;i<confettiCount;i++){
+        confetti.push({
+            x: Math.random()*canvas.width,
+            y: Math.random()*canvas.height,
+            r: Math.random()*6 + 4,
+            d: Math.random()*confettiCount,
+            color: `hsl(${Math.random()*360}, 70%, 60%)`,
+            tilt: Math.random()*10 - 10,
+            tiltAngleIncrement: Math.random()*0.07 + 0.05,
+            tiltAngle: 0
+        });
     }
-}
 
-memoriesBtn.addEventListener("click", () => {
+    function draw(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        confetti.forEach((c,i)=>{
+            c.tiltAngle += c.tiltAngleIncrement;
+            c.y += (Math.cos(c.d) + 3 + c.r/2)/2;
+            c.x += Math.sin(c.tiltAngle) * 2;
+            c.tilt = Math.sin(c.tiltAngle) * 15;
 
-    // TOGGLE
-    if (memoriesBox.style.display === "block") {
-        memoriesBox.style.display = "none";
-        return;
-    }
+            ctx.beginPath();
+            ctx.lineWidth = c.r;
+            ctx.strokeStyle = c.color;
+            ctx.moveTo(c.x + c.tilt + c.r/2, c.y);
+            ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r/2);
+            ctx.stroke();
 
-    closeAllSections();
-
-    memoriesBox.style.display = "block";
-    currentPage = 0;
-    renderPage();
-});
-function shuffleTiles(){
-    for(let i=0;i<200;i++){
-        const possible=tiles.filter(t=>isNeighbor(t,emptyPos));
-        const tile=possible[Math.floor(Math.random()*possible.length)];
-        swapTile(tile);
-    }
-}
-function isNeighbor(tile,pos){
-    const r=parseInt(tile.dataset.row),c=parseInt(tile.dataset.col);
-    return (r===pos.row&&Math.abs(c-pos.col)===1)||(c===pos.col&&Math.abs(r-pos.row)===1);
-}
-function moveTile(tile){
-    if(isNeighbor(tile,emptyPos)){
-        swapTile(tile);
-        checkSolved();
-    }
-}
-function swapTile(tile){
-    const tileSize=imgSize/gridSize;
-    const oldRow=parseInt(tile.dataset.row),oldCol=parseInt(tile.dataset.col);
-    tile.dataset.row=emptyPos.row;
-    tile.dataset.col=emptyPos.col;
-    tile.style.top=(emptyPos.row*tileSize)+"px";
-    tile.style.left=(emptyPos.col*tileSize)+"px";
-    emptyPos.row=oldRow;
-    emptyPos.col=oldCol;
-}
-function checkSolved(){
-    const solved = tiles.every(tile =>
-        parseInt(tile.dataset.row) === parseInt(tile.dataset.rowOrig) &&
-        parseInt(tile.dataset.col) === parseInt(tile.dataset.colOrig)
-    );
-
-    if(solved){
-        const msgBox = document.getElementById("puzzle-message");
-        msgBox.innerText = "You did it! Now unlock the next surprise...";
-        msgBox.style.display = "block";
-		puzzleSolved = true;
-
-        //Unlock quiz button
-        const quizBtn = document.getElementById("quiz-btn");
-		quizBtn.disabled = false;
-		quizBtn.innerText = "Math Quiz ";
-		
-		quizBtn.style.opacity = "1";
-		quizBtn.style.cursor = "pointer";
-    }
-}
-function closePuzzle(){
-    document.getElementById("puzzle-container").innerHTML="";
-    document.getElementById("puzzle-message").style.display="none";
-    document.getElementById("puzzle-back").style.display="none";
-    document.getElementById("puzzle-box").style.display="none";
-}
-
-const birthdayBtn = document.getElementById("birthday-btn");
-const birthdayBox = document.getElementById("birthday-content");
-
-birthdayBtn.addEventListener("click", () => {
-    window.location.href = "Birthday.html";
-});
-// Check if coming from Birthday page
-if(localStorage.getItem("loggedIn") === "true" && window.location.hash === "#main") {
-    document.getElementById("login-form").style.display = "none";
-    document.getElementById("main").style.display = "block";
-
-    startScrambleEffect(); // 👈 ADD THIS
-}
-
-/* SCRAMBLE TEXT EFFECT */
-
-const scrambleMessages = [
-    "Zodwa",
-    "You",
-    "are",
-    "amazing",
-    "I love you",
-    "Happy Birthday"
-];
-
-const scrambleChars = "!<>-_\\/[]{}—=+*^?#________";
-
-function scrambleText(element, finalText) {
-    const chars = "!<>-_\\/[]{}—=+*^?#________";
-    let iteration = 0;
-
-    function animate() {
-        element.innerText = finalText
-            .split("")
-            .map((letter, index) => {
-                if (index < iteration) {
-                    return finalText[index];
+            if(c.y > canvas.height) {
+                confetti[i] = {
+                    x: Math.random()*canvas.width,
+                    y: -10,
+                    r: c.r,
+                    d: c.d,
+                    color: c.color,
+                    tilt: c.tilt,
+                    tiltAngleIncrement: c.tiltAngleIncrement,
+                    tiltAngle: 0
                 }
-                return chars[Math.floor(Math.random() * chars.length)];
-            })
-            .join("");
-
-        iteration += 1 / 3;
-
-        if (iteration <= finalText.length) {
-            requestAnimationFrame(animate);
-        } else {
-            // HOLD the real word briefly
-            setTimeout(() => {
-                iteration = 0; // 🔁 RESET → re-jumble again
-                animate();
-            }, 1500 + Math.random() * 2000); // random pause
-        }
+            }
+        });
+        requestAnimationFrame(draw);
     }
-
-    animate();
+    draw();
 }
 
-function createScrambleWord() {
-    const word = document.createElement("div");
-    word.className = "scramble-word";
-
-    const text = scrambleMessages[Math.floor(Math.random() * scrambleMessages.length)];
-
-    // RANDOM POSITION (FULL SCREEN)
-    word.style.left = Math.random() * 100 + "vw";
-    word.style.top = Math.random() * 100 + "vh";
-
-    // RANDOM SIZE
-    word.style.fontSize = (16 + Math.random() * 20) + "px";
-
-    // RANDOM ROTATION (more chaotic feel)
-    word.style.transform = `rotate(${Math.random() * 360}deg)`;
-
-    // SPECIAL STYLE FOR HER NAME
-    if (text === "Zodwa") {
-        word.style.color = "#ff1f4b";
-        word.style.fontWeight = "bold";
-        word.style.fontSize = "30px";
-    }
-
-    document.getElementById("scramble-container").appendChild(word);
-
-    scrambleText(word, text);
+// START HEARTS + CONFETTI when slideshow starts
+function startEffects(){
+    startFloatingHearts(12);
+    startConfetti();
 }
+
+// Call inside startSlideshow after first image shows
+startEffects();
 
 </script>
 </body>
