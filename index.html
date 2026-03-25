@@ -111,16 +111,20 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 
 /* PUZZLE BOX */
 #puzzle-box {
-    width:340px;
-    padding:20px;
-    background:white;
-    border-radius:16px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.15);
-    margin-top:20px;
-    display:none;
-    text-align:center;
-    position:relative;
-    z-index:30;
+    position: fixed;       /* Cover the entire screen */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    display: none;         /* Hidden by default */
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    background: rgba(255, 230, 236, 0.95); /* Soft overlay */
+    z-index: 9999;         /* Make sure it’s above everything else */
+    backdrop-filter: blur(6px); /* Optional: blur behind */
 }
 #puzzle-container {
     position:relative;
@@ -424,11 +428,6 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     background: transparent;
 }
 
-#puzzle-box {
-    position: relative; /* NOT absolute */
-    z-index: 10;
-}
-
 #scramble-container {
     position: fixed;
     z-index: 0;
@@ -648,7 +647,7 @@ messageBtn.addEventListener("click", () => {
     closeAllSections(); //  closes others
 
     attemptCount = 0;
-    messageBox.style.display = "block";
+    messageBox.style.display = "flex";
 
     showLoveQuestion();
 });;
@@ -727,7 +726,7 @@ function startPuzzle(size){
     tiles=[];
     document.getElementById("puzzle-message").style.display="none";
     document.getElementById("puzzle-back").style.display="inline-block";
-    document.getElementById("puzzle-box").style.display="block";
+    document.getElementById("puzzle-box").style.display="flex";
 
     const imgSrc=puzzleImages[size-2];
     const tileSize=imgSize/size;
