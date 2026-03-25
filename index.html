@@ -421,6 +421,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 #main {
     position: relative;
     z-index: 5;
+    background: transparent;
 }
 
 #puzzle-box {
@@ -712,6 +713,12 @@ const puzzleImages=["Puzzel1.JPG","Puzzel2.JPG","Puzzel3.jpeg"];
 let gridSize, tiles=[], emptyPos={}, imgSize=300;
 let puzzleSolved = false;
 
+const quizBtn = document.getElementById("quiz-btn");
+quizBtn.disabled = true;
+quizBtn.style.opacity = "0.6";
+quizBtn.style.cursor = "not-allowed";
+quizBtn.innerText = "Math Quiz";
+
 function startPuzzle(size){
     
 	gridSize=size;
@@ -747,6 +754,15 @@ function startPuzzle(size){
         }
     }
     shuffleTiles();
+	
+	setTimeout(() => {
+    if (tiles.every(tile =>
+        parseInt(tile.dataset.row) === parseInt(tile.dataset.rowOrig) &&
+        parseInt(tile.dataset.col) === parseInt(tile.dataset.colOrig)
+    )) {
+        shuffleTiles(); // reshuffle if accidentally solved
+    }
+}, 50);
 }
 
 function startBirthdayQuiz(){
@@ -1086,7 +1102,9 @@ function createScrambleWord() {
     const word = document.createElement("div");
     word.className = "scramble-word";
 
-    const text = scrambleMessages[Math.floor(Math.random() * scrambleMessages.length)];
+	const text = scrambleMessages[Math.floor(Math.random() * scrambleMessages.length)];
+
+	word.innerText = text; // 👈 THIS WAS MISSING
 
     // RANDOM POSITION (FULL SCREEN)
     word.style.left = Math.random() * 100 + "vw";
