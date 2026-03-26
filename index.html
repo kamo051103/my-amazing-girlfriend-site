@@ -429,6 +429,21 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     z-index: 0;
 }
 
+.action-btn {
+    padding:10px 20px;
+    background:#ff4d6d;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.action-btn:hover {
+    transform:scale(1.05);
+    box-shadow:0 0 10px rgba(255,77,109,0.4);
+}
+
 </style>
 </head>
 <body>
@@ -823,10 +838,9 @@ function startBirthdayQuiz(){
 
                 <br><br>
 
-                <button id="submit-answer"
-                    style="padding:10px 20px; background:#ff4d6d; color:white; border:none; border-radius:8px;">
-                    Submit 
-                </button>
+                <button id="submit-answer" class="action-btn">
+					Submit
+				</button>
 
                 <br><br>
 
@@ -1068,7 +1082,7 @@ function openSecretCode() {
 
             <br><br>
 
-            <button onclick="checkSecretCode()">Submit</button>
+            <button class="action-btn" onclick="checkSecretCode()">Submit</button>
 
             <div id="secret-error" style="margin-top:10px; color:#ff4d6d;"></div>
         </div>
