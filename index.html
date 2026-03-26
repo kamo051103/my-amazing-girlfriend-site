@@ -1058,6 +1058,14 @@ function closePuzzle(){
     puzzleSolved = false;
 }
 
+window.addEventListener("DOMContentLoaded", () => {
+      if(localStorage.getItem("loggedIn") === "true"){
+          loginForm.style.display = "none"; // hide login
+          main.style.display = "block";     // show main page
+          startScrambleEffect();             // start scrambled words
+      }
+  });
+
 function openSecretCode() {
     const container = document.getElementById("puzzle-container");
 
@@ -1201,17 +1209,12 @@ function createScrambleWord() {
     scrambleText(word, text);
 }
 
-// Ensure scramble starts if already logged in
-document.addEventListener("DOMContentLoaded", () => {
-    if (localStorage.getItem("loggedIn") === "true") {
-        loginForm.style.display = "none";
-        main.style.display = "block";
-
-        // make sure the container exists before starting
-        setTimeout(() => {
-            scrambleStarted = false; // reset to allow running
-            startScrambleEffect();
-        }, 50); // small delay ensures DOM is ready
+window.addEventListener("DOMContentLoaded", () => {
+    if(localStorage.getItem("loggedIn") === "true"){
+        loginForm.style.display = "none"; // hide login
+        main.style.display = "block"; // show main page
+        document.getElementById("loading-screen").classList.remove("active"); // hide loading if visible
+        startScrambleEffect(); // start scrambled words
     }
 });
 
