@@ -488,28 +488,6 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
         </button>
     </div>
 
-    <!-- SECRET CODE INPUT MOVED HERE -->
-    <div id="secret-code-container" style="display:none; margin-top:15px; text-align:center;">
-        <p style="color:#ff4d6d; font-weight:bold;">Spell the sentence</p>
-        <div style="font-size:14px; color:#555; margin-bottom:10px;">
-            1. First letter of your birth month<br>
-            2. First letter of your middle name<br>
-            3. First letter of our surname<br>
-            4. space<br>
-            5. First letter of your first name<br>
-            6. space<br>
-            7. What do you make me in this relationship<br>
-            8. space<br>
-            9. What is today
-        </div>
-        <input id="secret-input" type="text" placeholder="Type your answer..."
-            style="padding:10px; border-radius:8px; border:1px solid #ccc; width:80%;">
-        <br><br>
-        <button onclick="checkSecretCode()">Submit</button>
-        <div id="secret-error" style="margin-top:10px; color:#ff4d6d; display:none;">
-            Not quite… try again my love
-        </div>
-    </div>
 </div>
 		<div id="quiz-error-box">
 			Finish the Secret Code first to unlock your surprise
@@ -909,17 +887,15 @@ function startBirthdayQuiz(){
 function handleQuizClick() {
     const errorBox = document.getElementById("quiz-error-box");
     const quizBtn = document.getElementById("quiz-btn");
+    const container = document.getElementById("puzzle-container");
 
+    // If not unlocked
     if (!secretSolved) {
-
-        // Show error
         errorBox.classList.add("show");
 
-        // SHAKE BUTTON 
         quizBtn.classList.add("shake");
         setTimeout(() => quizBtn.classList.remove("shake"), 300);
 
-        // Hide error after delay
         setTimeout(() => {
             errorBox.classList.remove("show");
         }, 2500);
@@ -927,6 +903,13 @@ function handleQuizClick() {
         return;
     }
 
+    //  TOGGLE CLOSE (like puzzle)
+    if (container.innerHTML.includes("quiz-answer")) {
+        container.innerHTML = ""; // CLOSE
+        return;
+    }
+
+    //  OPEN QUIZ in SAME SPACE
     startBirthdayQuiz();
 }
 
@@ -1054,19 +1037,42 @@ function checkSolved(){
     }
 }
 function closePuzzle(){
-    document.getElementById("puzzle-container").innerHTML="";
-    document.getElementById("puzzle-message").style.display="none";
-    document.getElementById("puzzle-back").style.display="none";
-    document.getElementById("puzzle-box").style.display="none";
+    document.getElementById("puzzle-container").innerHTML = "";
+    document.getElementById("puzzle-message").style.display = "none";
+    document.getElementById("puzzle-box").style.display = "none";
+
+    puzzleSolved = false;
 }
 
 function openSecretCode() {
-    const box = document.getElementById("secret-code-container");
-    if (box.style.display === "block") {
-        box.style.display = "none";
-    } else {
-        box.style.display = "block";
-    }
+    const container = document.getElementById("puzzle-container");
+
+    container.innerHTML = `
+        <div style="text-align:center;">
+            <p style="color:#ff4d6d; font-weight:bold;">Spell the sentence</p>
+
+            <div style="font-size:14px; color:#555; margin-bottom:10px;">
+                1. First letter of your birth month<br>
+                2. First letter of your middle name<br>
+                3. First letter of our surname<br>
+                4. space<br>
+                5. First letter of your first name<br>
+                6. space<br>
+                7. What do you make me in this relationship<br>
+                8. space<br>
+                9. What is today
+            </div>
+
+            <input id="secret-input" type="text" placeholder="Type your answer..."
+                style="padding:10px; border-radius:8px; width:80%;">
+
+            <br><br>
+
+            <button onclick="checkSecretCode()">Submit</button>
+
+            <div id="secret-error" style="margin-top:10px; color:#ff4d6d;"></div>
+        </div>
+    `;
 }
 
 function checkSecretCode() {
@@ -1078,22 +1084,18 @@ function checkSecretCode() {
     const correct = "mam z happy birthday";
 
     if (input === correct) {
-		secretSolved = true;
-        document.getElementById("secret-error").style.display = "none";
-		
+        secretSolved = true;
+
         const quizBtn = document.getElementById("quiz-btn");
         quizBtn.disabled = false;
         quizBtn.style.opacity = "1";
         quizBtn.style.cursor = "pointer";
 
         document.getElementById("secret-error").innerText =
-            "Correct  You unlocked something special!";
-        document.getElementById("secret-error").style.display = "block";
-
+            "Correct ,You unlocked something special go to the math Quiz!";
     } else {
         document.getElementById("secret-error").innerText =
             "Not quite… try again my love ";
-        document.getElementById("secret-error").style.display = "block";
     }
 }
 
