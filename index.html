@@ -1035,7 +1035,7 @@ function checkSolved(){
         parseInt(tile.dataset.col) === parseInt(tile.dataset.colOrig)
     );
 
-    if(solved){
+    if(solved && !puzzleSolved){
         const msgBox = document.getElementById("puzzle-message");
         msgBox.innerText = "You did it! Now unlock the next surprise...";
         msgBox.style.display = "block";
@@ -1200,6 +1200,15 @@ function createScrambleWord() {
 
     scrambleText(word, text);
 }
+
+
+window.addEventListener("load", () => {
+    if (localStorage.getItem("loggedIn") === "true") {
+        loginForm.style.display = "none";
+        main.style.display = "block";
+        startScrambleEffect(); // Start scrambled words even after refresh
+    }
+});
 
 </script>
 </body>
