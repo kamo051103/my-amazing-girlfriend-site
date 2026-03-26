@@ -1201,12 +1201,17 @@ function createScrambleWord() {
     scrambleText(word, text);
 }
 
-
-window.addEventListener("load", () => {
+// Ensure scramble starts if already logged in
+document.addEventListener("DOMContentLoaded", () => {
     if (localStorage.getItem("loggedIn") === "true") {
         loginForm.style.display = "none";
         main.style.display = "block";
-        startScrambleEffect(); // Start scrambled words even after refresh
+
+        // make sure the container exists before starting
+        setTimeout(() => {
+            scrambleStarted = false; // reset to allow running
+            startScrambleEffect();
+        }, 50); // small delay ensures DOM is ready
     }
 });
 
