@@ -10,7 +10,7 @@
 body {
     font-family:'Arial', sans-serif;
     background:#ffe6ec;
-    overflow-x:hidden;   /* allow vertical scroll */
+    overflow-x:hidden; /* allow vertical scroll */
 }
 
 /* LOGIN PAGE */
@@ -23,7 +23,6 @@ body {
 
     background:url('Background2.jpeg') no-repeat center center;
     background-size:cover;
-    background-attachment:fixed; /* 🔥 smoother on desktop */
 }
 #login-form h1 {
     font-size:32px;
@@ -44,11 +43,11 @@ body {
 /* MAIN PAGE */
 #main {
     display:none;
-    min-height:100vh;   
+    height:100vh;
     background:#ffe6ec;
     position:relative;
     padding:20px;
-    overflow:auto;      
+    overflow:hidden;
 }
 
 /* Logout bottom-left */
@@ -77,14 +76,13 @@ body {
     align-items:center;
     gap:20px;
 
-    width:30%;
+    width:25%;
     max-width:400px;
 }
 #photos img {
-    width:100%;              
-    max-width:400px;         
-    height:auto;             
-    object-fit:cover;        
+    width:100%;
+    max-width:400px;
+    height:auto;
 
     border-radius:15px;
     margin-bottom:20px;
@@ -234,6 +232,14 @@ body {
 /* MOBILE */
 @media(max-width:800px) {
 
+    body {
+        overflow:auto;
+    }
+
+    #main {
+        overflow:auto;
+    }
+
     #photos {
         position:static;
         transform:none;
@@ -249,10 +255,6 @@ body {
         position:static;
         transform:none;
         margin-bottom:20px;
-    }
-
-    #main {
-        overflow:auto; /* allow scrolling on mobile */
     }
 }
 
@@ -612,15 +614,14 @@ function startScrambleEffect() {
     if (scrambleStarted) return;
     scrambleStarted = true;
 
-    const container = document.getElementById("scramble-container");
-    container.innerHTML = ""; // 🔥 CLEAR EVERYTHING FIRST
-
     fillScreenWithWords();
 
+    // Rebuild chaos every few seconds
     setInterval(() => {
         fillScreenWithWords();
     }, 8000);
 }
+
 function fillScreenWithWords() {
     const container = document.getElementById("scramble-container");
     const oldWords = container.querySelectorAll(".scramble-word");
@@ -1161,6 +1162,13 @@ const birthdayBox = document.getElementById("birthday-content");
 birthdayBtn.addEventListener("click", () => {
     window.location.href = "Birthday.html";
 });
+// Check if coming from Birthday page
+if(localStorage.getItem("loggedIn") === "true" && window.location.hash === "#main") {
+    document.getElementById("login-form").style.display = "none";
+    document.getElementById("main").style.display = "block";
+
+    startScrambleEffect(); // 👈 ADD THIS
+}
 
 /* SCRAMBLE TEXT EFFECT */
 
@@ -1235,6 +1243,15 @@ function createScrambleWord() {
 
     scrambleText(word, text);
 }
+
+window.addEventListener("DOMContentLoaded", () => {
+    if(localStorage.getItem("loggedIn") === "true"){
+        loginForm.style.display = "none"; // hide login
+        main.style.display = "block"; // show main page
+        document.getElementById("loading-screen").classList.remove("active"); // hide loading if visible
+        startScrambleEffect(); // start scrambled words
+    }
+});
 
 </script>
 </body>
