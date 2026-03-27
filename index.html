@@ -573,16 +573,18 @@ document.getElementById("logout").onclick = () => {
     location.reload();
 };
 
-let scrambleStarted = false;
+let scrambleInterval;
 
 function startScrambleEffect() {
-    if (scrambleStarted) return;
-    scrambleStarted = true;
+    const container = document.getElementById("scramble-container");
+
+    container.innerHTML = "";
+
+    if (scrambleInterval) clearInterval(scrambleInterval);
 
     fillScreenWithWords();
 
-    // Rebuild chaos every few seconds
-    setInterval(() => {
+    scrambleInterval = setInterval(() => {
         fillScreenWithWords();
     }, 8000);
 }
@@ -1058,14 +1060,6 @@ function closePuzzle(){
     puzzleSolved = false;
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-      if(localStorage.getItem("loggedIn") === "true"){
-          loginForm.style.display = "none"; // hide login
-          main.style.display = "block";     // show main page
-          startScrambleEffect();             // start scrambled words
-      }
-  });
-
 function openSecretCode() {
     const container = document.getElementById("puzzle-container");
 
@@ -1127,13 +1121,6 @@ const birthdayBox = document.getElementById("birthday-content");
 birthdayBtn.addEventListener("click", () => {
     window.location.href = "Birthday.html";
 });
-// Check if coming from Birthday page
-if(localStorage.getItem("loggedIn") === "true" && window.location.hash === "#main") {
-    document.getElementById("login-form").style.display = "none";
-    document.getElementById("main").style.display = "block";
-
-    startScrambleEffect(); // 👈 ADD THIS
-}
 
 /* SCRAMBLE TEXT EFFECT */
 
@@ -1214,8 +1201,6 @@ window.addEventListener("DOMContentLoaded", () => {
         loginForm.style.display = "none";
         main.style.display = "block";
 
-        // ✅ RESET + RESTART SCRAMBLE
-        scrambleStarted = false;
         startScrambleEffect();
     }
 });
