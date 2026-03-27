@@ -67,15 +67,13 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     display:flex;
     flex-direction:column;
     z-index:10;
-    max-width:50%; /* prevent overflow on huge screens */
 }
-
 #photos img {
-    width:100%; /* fill parent container */
-    height:auto; /* maintain aspect ratio */
+    width:350px;
     border-radius:15px;
     margin-bottom:20px;
     box-shadow:0 4px 12px rgba(0,0,0,0.2);
+    max-width:90vw;
 }
 
 /* Tabs Left */
@@ -219,19 +217,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 
 
 /* MOBILE */
-
-@media (max-width: 1200px) {
-    #photos { max-width: 40%; }
-}
-
 @media(max-width:800px) {
-	#photos { position: relative; 
-	top: auto;
-	right: auto; 
-	transform: none; 
-	margin: 0 auto; 
-	max-width: 90%; 
-	}
     #photos img { width:240px; }
     .tab-btn { width:150px; font-size:15px; }
     #message-content { max-width:300px; }
@@ -412,7 +398,7 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 0; /* keep behind all content */
+    z-index: 0;
 }
 
 .scramble-word {
@@ -595,20 +581,11 @@ function startScrambleEffect() {
 
     fillScreenWithWords();
 
-    // Keep regenerating words
+    // Rebuild chaos every few seconds
     setInterval(() => {
         fillScreenWithWords();
     }, 8000);
 }
-
-const scrambleMessages = [
-    "Zodwa",
-    "You",
-    "are",
-    "amazing",
-    "I love you",
-    "Happy Birthday"
-];
 
 function fillScreenWithWords() {
     const container = document.getElementById("scramble-container");
@@ -1145,20 +1122,11 @@ function checkSecretCode() {
 }
 
 const birthdayBtn = document.getElementById("birthday-btn");
-const birthdayContent = document.getElementById("birthday-content");
-const birthdayBack = document.getElementById("birthday-back");
+const birthdayBox = document.getElementById("birthday-content");
 
 birthdayBtn.addEventListener("click", () => {
-    closeAllSections(); // hide other content
-    birthdayContent.style.display = "block";
+    window.location.href = "Birthday.html";
 });
-
-birthdayBack.addEventListener("click", () => {
-    birthdayContent.style.display = "none";
-    main.style.display = "block"; // show main again
-    startScrambleEffect(); // restart scramble words if needed
-});
-
 // Check if coming from Birthday page
 if(localStorage.getItem("loggedIn") === "true" && window.location.hash === "#main") {
     document.getElementById("login-form").style.display = "none";
@@ -1247,14 +1215,6 @@ window.addEventListener("DOMContentLoaded", () => {
         main.style.display = "block"; // show main page
         document.getElementById("loading-screen").classList.remove("active"); // hide loading if visible
         startScrambleEffect(); // start scrambled words
-    }
-});
-
-
-window.addEventListener("DOMContentLoaded", () => {
-    if(localStorage.getItem("loggedIn") === "true") {
-        main.style.display = "block"; // show main page
-        startScrambleEffect();         // start the floating words
     }
 });
 
