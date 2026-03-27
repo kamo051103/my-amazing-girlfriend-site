@@ -7,11 +7,7 @@
 
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-body {
-    font-family:'Arial', sans-serif;
-    background:#ffe6ec;
-    overflow-x:hidden; /* allow vertical scroll */
-}
+body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 
 /* LOGIN PAGE */
 #login-form {
@@ -20,9 +16,7 @@ body {
     align-items:center;
     justify-content:center;
     height:100vh;
-
-    background:url('Background2.jpeg') no-repeat center center;
-    background-size:cover;
+    background:url('Background2.jpeg') center/cover no-repeat;
 }
 #login-form h1 {
     font-size:32px;
@@ -70,23 +64,16 @@ body {
     right:40px;
     top:50%;
     transform:translateY(-50%);
-
     display:flex;
     flex-direction:column;
-    align-items:center;
-    gap:20px;
-
-    width:25%;
-    max-width:400px;
+    z-index:10;
 }
 #photos img {
-    width:100%;
-    max-width:400px;
-    height:auto;
-
+    width:350px;
     border-radius:15px;
     margin-bottom:20px;
     box-shadow:0 4px 12px rgba(0,0,0,0.2);
+    max-width:90vw;
 }
 
 /* Tabs Left */
@@ -231,31 +218,9 @@ body {
 
 /* MOBILE */
 @media(max-width:800px) {
-
-    body {
-        overflow:auto;
-    }
-
-    #main {
-        overflow:auto;
-    }
-
-    #photos {
-        position:static;
-        transform:none;
-        width:100%;
-        margin-top:20px;
-    }
-
-    #photos img {
-        max-width:90%;
-    }
-
-    .tabs {
-        position:static;
-        transform:none;
-        margin-bottom:20px;
-    }
+    #photos img { width:240px; }
+    .tab-btn { width:150px; font-size:15px; }
+    #message-content { max-width:300px; }
 }
 
 #memories-content {
