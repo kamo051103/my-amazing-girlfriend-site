@@ -1058,14 +1058,6 @@ function closePuzzle(){
     puzzleSolved = false;
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-      if(localStorage.getItem("loggedIn") === "true"){
-          loginForm.style.display = "none"; // hide login
-          main.style.display = "block";     // show main page
-          startScrambleEffect();             // start scrambled words
-      }
-  });
-
 function openSecretCode() {
     const container = document.getElementById("puzzle-container");
 
@@ -1211,10 +1203,11 @@ function createScrambleWord() {
 
 window.addEventListener("DOMContentLoaded", () => {
     if(localStorage.getItem("loggedIn") === "true"){
-        loginForm.style.display = "none"; // hide login
-        main.style.display = "block"; // show main page
-        document.getElementById("loading-screen").classList.remove("active"); // hide loading if visible
-        startScrambleEffect(); // start scrambled words
+        loginForm.style.display = "none";
+        main.style.display = "block";
+
+        scrambleStarted = false;
+        startScrambleEffect();
     }
 });
 
