@@ -1136,11 +1136,20 @@ function checkSecretCode() {
 }
 
 const birthdayBtn = document.getElementById("birthday-btn");
-const birthdayBox = document.getElementById("birthday-content");
+const birthdayContent = document.getElementById("birthday-content");
+const birthdayBack = document.getElementById("birthday-back");
 
 birthdayBtn.addEventListener("click", () => {
-    window.location.href = "Birthday.html";
+    closeAllSections(); // hide other content
+    birthdayContent.style.display = "block";
 });
+
+birthdayBack.addEventListener("click", () => {
+    birthdayContent.style.display = "none";
+    main.style.display = "block"; // show main again
+    startScrambleEffect(); // restart scramble words if needed
+});
+
 // Check if coming from Birthday page
 if(localStorage.getItem("loggedIn") === "true" && window.location.hash === "#main") {
     document.getElementById("login-form").style.display = "none";
