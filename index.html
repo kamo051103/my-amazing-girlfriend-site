@@ -601,6 +601,15 @@ function startScrambleEffect() {
     }, 8000);
 }
 
+const scrambleMessages = [
+    "Zodwa",
+    "You",
+    "are",
+    "amazing",
+    "I love you",
+    "Happy Birthday"
+];
+
 function fillScreenWithWords() {
     const container = document.getElementById("scramble-container");
     const oldWords = container.querySelectorAll(".scramble-word");
@@ -1238,6 +1247,14 @@ window.addEventListener("DOMContentLoaded", () => {
         main.style.display = "block"; // show main page
         document.getElementById("loading-screen").classList.remove("active"); // hide loading if visible
         startScrambleEffect(); // start scrambled words
+    }
+});
+
+
+window.addEventListener("DOMContentLoaded", () => {
+    if(localStorage.getItem("loggedIn") === "true") {
+        main.style.display = "block"; // show main page
+        startScrambleEffect();         // start the floating words
     }
 });
 
