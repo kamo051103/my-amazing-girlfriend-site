@@ -579,14 +579,15 @@ function startScrambleEffect() {
     if (scrambleStarted) return;
     scrambleStarted = true;
 
+    const container = document.getElementById("scramble-container");
+    container.innerHTML = ""; // 🔥 CLEAR EVERYTHING FIRST
+
     fillScreenWithWords();
 
-    // Rebuild chaos every few seconds
     setInterval(() => {
         fillScreenWithWords();
     }, 8000);
 }
-
 function fillScreenWithWords() {
     const container = document.getElementById("scramble-container");
     const oldWords = container.querySelectorAll(".scramble-word");
@@ -1127,13 +1128,6 @@ const birthdayBox = document.getElementById("birthday-content");
 birthdayBtn.addEventListener("click", () => {
     window.location.href = "Birthday.html";
 });
-// Check if coming from Birthday page
-if(localStorage.getItem("loggedIn") === "true" && window.location.hash === "#main") {
-    document.getElementById("login-form").style.display = "none";
-    document.getElementById("main").style.display = "block";
-
-    startScrambleEffect(); // 👈 ADD THIS
-}
 
 /* SCRAMBLE TEXT EFFECT */
 
@@ -1208,15 +1202,6 @@ function createScrambleWord() {
 
     scrambleText(word, text);
 }
-
-window.addEventListener("DOMContentLoaded", () => {
-    if(localStorage.getItem("loggedIn") === "true"){
-        loginForm.style.display = "none"; // hide login
-        main.style.display = "block"; // show main page
-        document.getElementById("loading-screen").classList.remove("active"); // hide loading if visible
-        startScrambleEffect(); // start scrambled words
-    }
-});
 
 </script>
 </body>
