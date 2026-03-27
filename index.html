@@ -16,8 +16,11 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     align-items:center;
     justify-content:center;
     height:100vh;
-    background:url('Background2.jpeg') center/cover no-repeat;
+
+    background: url('Background2.jpeg') no-repeat center center;
+    background-size: cover;
 }
+
 #login-form h1 {
     font-size:32px;
     margin-bottom:20px;
@@ -38,10 +41,12 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 #main {
     display:none;
     height:100vh;
-    background:#ffe6ec;
     position:relative;
     padding:20px;
     overflow:hidden;
+
+    background: url('Background1.jpeg') no-repeat center center;
+    background-size: cover;
 }
 
 /* Logout bottom-left */
@@ -66,14 +71,16 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
     transform:translateY(-50%);
     display:flex;
     flex-direction:column;
-    z-index:10;
+    align-items:center;
+    gap:20px;
 }
 #photos img {
-    width:350px;
+    width:100%;
+    max-width:320px;
+    height:auto;
     border-radius:15px;
     margin-bottom:20px;
     box-shadow:0 4px 12px rgba(0,0,0,0.2);
-    max-width:90vw;
 }
 
 /* Tabs Left */
@@ -488,7 +495,6 @@ body { font-family:'Arial', sans-serif; background:#ffe6ec; overflow:hidden; }
 
     <div id="photos">
         <img src="cover.jpeg" />
-        <img src="Background1.jpeg" />
     </div>
 
     <!-- PUZZLE BOX -->
